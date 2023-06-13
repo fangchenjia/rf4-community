@@ -126,11 +126,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d;
+var _a, _b, _c, _d, _e;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AuthController = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+const cache_manager_1 = __webpack_require__(/*! @nestjs/cache-manager */ "@nestjs/cache-manager");
+const cache_manager_2 = __webpack_require__(/*! cache-manager */ "cache-manager");
 const auth_dto_1 = __webpack_require__(/*! ./auth.dto */ "./apps/admin/src/auth/auth.dto.ts");
 const nestjs_typegoose_1 = __webpack_require__(/*! nestjs-typegoose */ "nestjs-typegoose");
 const user_model_1 = __webpack_require__(/*! libs/db/models/user.model */ "./libs/db/src/models/user.model.ts");
@@ -139,13 +141,25 @@ const passport_1 = __webpack_require__(/*! @nestjs/passport */ "@nestjs/passport
 const jwt_1 = __webpack_require__(/*! @nestjs/jwt */ "@nestjs/jwt");
 const req_user_decorator_1 = __webpack_require__(/*! ./req-user.decorator */ "./apps/admin/src/auth/req-user.decorator.ts");
 let AuthController = exports.AuthController = class AuthController {
-    constructor(jwtServer, userModel) {
+    constructor(cacheManager, jwtServer, userModel) {
+        this.cacheManager = cacheManager;
         this.jwtServer = jwtServer;
         this.userModel = userModel;
     }
     async login(loginDto, req) {
+        const accessToken = this.jwtServer.sign({ id: String(req.user._id) }, {
+            expiresIn: Number(process.env.ACCESS_TOKEN_VALIDITY_SEC),
+        });
+        const accessTokenRedisKey = `accessToken:${req.user._id}`;
+        this.cacheManager.set(accessTokenRedisKey, accessToken, Number(process.env.ACCESS_TOKEN_VALIDITY_SEC));
+        const refreshToken = this.jwtServer.sign({ id: String(req.user._id) }, {
+            expiresIn: Number(process.env.REFRESH_TOKEN_VALIDITY_SEC),
+        });
+        const refreshTokenRedisKey = `refreshToken:${req.user._id}`;
+        this.cacheManager.set(refreshTokenRedisKey, refreshToken, Number(process.env.REFRESH_TOKEN_VALIDITY_SEC));
         return {
-            accessToken: this.jwtServer.sign(String(req.user._id)),
+            accessToken,
+            refreshToken,
         };
     }
     async userInfo(user) {
@@ -159,7 +173,7 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_c = typeof auth_dto_1.loginDto !== "undefined" && auth_dto_1.loginDto) === "function" ? _c : Object, Object]),
+    __metadata("design:paramtypes", [typeof (_d = typeof auth_dto_1.loginDto !== "undefined" && auth_dto_1.loginDto) === "function" ? _d : Object, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "login", null);
 __decorate([
@@ -169,14 +183,15 @@ __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt-admin')),
     __param(0, (0, req_user_decorator_1.ReqUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_d = typeof user_model_1.UserDocument !== "undefined" && user_model_1.UserDocument) === "function" ? _d : Object]),
+    __metadata("design:paramtypes", [typeof (_e = typeof user_model_1.UserDocument !== "undefined" && user_model_1.UserDocument) === "function" ? _e : Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "userInfo", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     (0, swagger_1.ApiTags)('用户授权'),
-    __param(1, (0, nestjs_typegoose_1.InjectModel)(user_model_1.User)),
-    __metadata("design:paramtypes", [typeof (_a = typeof jwt_1.JwtService !== "undefined" && jwt_1.JwtService) === "function" ? _a : Object, typeof (_b = typeof typegoose_1.ReturnModelType !== "undefined" && typegoose_1.ReturnModelType) === "function" ? _b : Object])
+    __param(0, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
+    __param(2, (0, nestjs_typegoose_1.InjectModel)(user_model_1.User)),
+    __metadata("design:paramtypes", [typeof (_a = typeof cache_manager_2.Cache !== "undefined" && cache_manager_2.Cache) === "function" ? _a : Object, typeof (_b = typeof jwt_1.JwtService !== "undefined" && jwt_1.JwtService) === "function" ? _b : Object, typeof (_c = typeof typegoose_1.ReturnModelType !== "undefined" && typegoose_1.ReturnModelType) === "function" ? _c : Object])
 ], AuthController);
 
 
@@ -283,27 +298,39 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.JwtStrategy = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const cache_manager_1 = __webpack_require__(/*! @nestjs/cache-manager */ "@nestjs/cache-manager");
+const cache_manager_2 = __webpack_require__(/*! cache-manager */ "cache-manager");
 const passport_jwt_1 = __webpack_require__(/*! passport-jwt */ "passport-jwt");
 const passport_1 = __webpack_require__(/*! @nestjs/passport */ "@nestjs/passport");
 const nestjs_typegoose_1 = __webpack_require__(/*! nestjs-typegoose */ "nestjs-typegoose");
 const user_model_1 = __webpack_require__(/*! libs/db/models/user.model */ "./libs/db/src/models/user.model.ts");
 let JwtStrategy = exports.JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy, 'jwt-admin') {
-    constructor(userModel) {
+    constructor(cacheManager, userModel) {
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
             secretOrKey: process.env.JWT_SECRET,
+            passReqToCallback: true,
         });
+        this.cacheManager = cacheManager;
         this.userModel = userModel;
     }
-    async validate(id) {
-        return await this.userModel.findById(id);
+    async validate(req, payload) {
+        const token = passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+        const redisToken = await this.cacheManager.get(`accessToken:${payload.id}`);
+        if (!redisToken || redisToken !== token) {
+            throw new common_1.UnauthorizedException('登录已过期');
+        }
+        return await this.userModel.findById(payload.id);
     }
 };
 exports.JwtStrategy = JwtStrategy = __decorate([
-    __param(0, (0, nestjs_typegoose_1.InjectModel)(user_model_1.User)),
-    __metadata("design:paramtypes", [Object])
+    __param(0, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
+    __param(1, (0, nestjs_typegoose_1.InjectModel)(user_model_1.User)),
+    __metadata("design:paramtypes", [typeof (_a = typeof cache_manager_2.Cache !== "undefined" && cache_manager_2.Cache) === "function" ? _a : Object, Object])
 ], JwtStrategy);
 
 
@@ -472,6 +499,8 @@ const common_service_1 = __webpack_require__(/*! ./common.service */ "./libs/com
 const config_1 = __webpack_require__(/*! @nestjs/config */ "@nestjs/config");
 const db_1 = __webpack_require__(/*! libs/db */ "./libs/db/src/index.ts");
 const jwt_1 = __webpack_require__(/*! @nestjs/jwt */ "@nestjs/jwt");
+const cache_manager_1 = __webpack_require__(/*! @nestjs/cache-manager */ "@nestjs/cache-manager");
+const cache_manager_redis_store_1 = __webpack_require__(/*! cache-manager-redis-store */ "cache-manager-redis-store");
 let CommonModule = exports.CommonModule = class CommonModule {
 };
 exports.CommonModule = CommonModule = __decorate([
@@ -483,6 +512,15 @@ exports.CommonModule = CommonModule = __decorate([
                 envFilePath: [`.env.${process.env.NODE_ENV}`, '.env'],
             }),
             db_1.DbModule,
+            cache_manager_1.CacheModule.registerAsync({
+                useFactory: () => ({
+                    store: cache_manager_redis_store_1.redisStore,
+                    host: process.env.REDIS_HOST,
+                    port: process.env.REDIS_PORT,
+                    db: process.env.REDIS_DB,
+                    auth_pass: process.env.REDIS_PASSPORT,
+                }),
+            }),
             jwt_1.JwtModule.registerAsync({
                 useFactory() {
                     return {
@@ -492,7 +530,7 @@ exports.CommonModule = CommonModule = __decorate([
             }),
         ],
         providers: [common_service_1.CommonService],
-        exports: [common_service_1.CommonService, jwt_1.JwtModule],
+        exports: [common_service_1.CommonService, jwt_1.JwtModule, cache_manager_1.CacheModule],
     })
 ], CommonModule);
 
@@ -708,6 +746,16 @@ exports.User = User = __decorate([
 
 /***/ }),
 
+/***/ "@nestjs/cache-manager":
+/*!****************************************!*\
+  !*** external "@nestjs/cache-manager" ***!
+  \****************************************/
+/***/ ((module) => {
+
+module.exports = require("@nestjs/cache-manager");
+
+/***/ }),
+
 /***/ "@nestjs/common":
 /*!*********************************!*\
   !*** external "@nestjs/common" ***!
@@ -785,6 +833,26 @@ module.exports = require("@typegoose/typegoose");
 /***/ ((module) => {
 
 module.exports = require("bcryptjs");
+
+/***/ }),
+
+/***/ "cache-manager":
+/*!********************************!*\
+  !*** external "cache-manager" ***!
+  \********************************/
+/***/ ((module) => {
+
+module.exports = require("cache-manager");
+
+/***/ }),
+
+/***/ "cache-manager-redis-store":
+/*!********************************************!*\
+  !*** external "cache-manager-redis-store" ***!
+  \********************************************/
+/***/ ((module) => {
+
+module.exports = require("cache-manager-redis-store");
 
 /***/ }),
 
