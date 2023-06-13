@@ -9,6 +9,7 @@ async function bootstrap() {
     .setTitle('俄钓4社区admin API')
     .setDescription('俄钓4社区后台管理界面的API')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api-docs', app, document);

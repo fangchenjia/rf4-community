@@ -21,4 +21,9 @@ npm run start:prod:admin # 生产环境
 npm run start:dev server # 测试环境
 npm run start:prod:server # 生产环境
 ```
+## 接口文档
+
+> 服务端接口文档使用swagger生成
+> admin访问地址为`http://localhost:{process.env.ADMIN_PORT}/api-docs`
+> server访问地址为`http://localhost:{process.env.SERVER_PORT}/api-docs`
 

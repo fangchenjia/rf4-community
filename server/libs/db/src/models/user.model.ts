@@ -1,5 +1,8 @@
-import { prop, modelOptions } from '@typegoose/typegoose';
+import { prop, modelOptions, DocumentType } from '@typegoose/typegoose';
 import { ApiProperty } from '@nestjs/swagger';
+import { hashSync } from 'bcryptjs';
+
+export type UserDocument = DocumentType<User>;
 
 @modelOptions({
   schemaOptions: {
@@ -10,7 +13,13 @@ export class User {
   @prop()
   @ApiProperty({ description: '用户名', example: 'user1' })
   username: string;
-  @prop()
+  @prop({
+    // 从数据库中查询时默认不返回密码
+    select: false,
+    get: (val) => val,
+    // 存入数据库时对密码进行散列
+    set: (val) => (val ? hashSync(val) : val),
+  })
   @ApiProperty({ description: '密码', example: 'pass1' })
   password: string;
   @prop()
