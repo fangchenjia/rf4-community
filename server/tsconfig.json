@@ -29,6 +29,16 @@
       ],
       "common/common/*": [
         "libs/common/src/*"
+      ],
+      "auth/auth": [
+        "libs/auth/src",
+        "libs/auth/src",
+        "libs/auth/src"
+      ],
+      "auth/auth/*": [
+        "libs/auth/src/*",
+        "libs/auth/src/*",
+        "libs/auth/src/*"
       ]
     }
   }

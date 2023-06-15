@@ -21,7 +21,7 @@ import { ReqUser } from './req-user.decorator';
 
 @Controller('auth')
 @ApiTags('用户授权')
-export class AuthController {
+export class AdminAuthController {
   constructor(
     @Inject(CACHE_MANAGER)
     private cacheManager: Cache,

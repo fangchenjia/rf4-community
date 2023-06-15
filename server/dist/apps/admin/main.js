@@ -65,12 +65,12 @@ const admin_controller_1 = __webpack_require__(/*! ./admin.controller */ "./apps
 const admin_service_1 = __webpack_require__(/*! ./admin.service */ "./apps/admin/src/admin.service.ts");
 const common_2 = __webpack_require__(/*! common/common */ "./libs/common/src/index.ts");
 const users_module_1 = __webpack_require__(/*! ./users/users.module */ "./apps/admin/src/users/users.module.ts");
-const auth_module_1 = __webpack_require__(/*! ./auth/auth.module */ "./apps/admin/src/auth/auth.module.ts");
+const auth_1 = __webpack_require__(/*! auth/auth */ "./libs/auth/src/index.ts");
 let AdminModule = exports.AdminModule = class AdminModule {
 };
 exports.AdminModule = AdminModule = __decorate([
     (0, common_1.Module)({
-        imports: [common_2.CommonModule, users_module_1.UsersModule, auth_module_1.AuthModule],
+        imports: [common_2.CommonModule, users_module_1.UsersModule, auth_1.AuthModule.forRoot('admin')],
         controllers: [admin_controller_1.AdminController],
         providers: [admin_service_1.AdminService],
     })
@@ -103,306 +103,6 @@ let AdminService = exports.AdminService = class AdminService {
 exports.AdminService = AdminService = __decorate([
     (0, common_1.Injectable)()
 ], AdminService);
-
-
-/***/ }),
-
-/***/ "./apps/admin/src/auth/auth.controller.ts":
-/*!************************************************!*\
-  !*** ./apps/admin/src/auth/auth.controller.ts ***!
-  \************************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
-var _a, _b, _c, _d, _e;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AuthController = void 0;
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
-const cache_manager_1 = __webpack_require__(/*! @nestjs/cache-manager */ "@nestjs/cache-manager");
-const cache_manager_2 = __webpack_require__(/*! cache-manager */ "cache-manager");
-const auth_dto_1 = __webpack_require__(/*! ./auth.dto */ "./apps/admin/src/auth/auth.dto.ts");
-const nestjs_typegoose_1 = __webpack_require__(/*! nestjs-typegoose */ "nestjs-typegoose");
-const user_model_1 = __webpack_require__(/*! libs/db/models/user.model */ "./libs/db/src/models/user.model.ts");
-const typegoose_1 = __webpack_require__(/*! @typegoose/typegoose */ "@typegoose/typegoose");
-const passport_1 = __webpack_require__(/*! @nestjs/passport */ "@nestjs/passport");
-const jwt_1 = __webpack_require__(/*! @nestjs/jwt */ "@nestjs/jwt");
-const req_user_decorator_1 = __webpack_require__(/*! ./req-user.decorator */ "./apps/admin/src/auth/req-user.decorator.ts");
-let AuthController = exports.AuthController = class AuthController {
-    constructor(cacheManager, jwtServer, userModel) {
-        this.cacheManager = cacheManager;
-        this.jwtServer = jwtServer;
-        this.userModel = userModel;
-    }
-    async login(loginDto, req) {
-        const accessToken = this.jwtServer.sign({ id: String(req.user._id) }, {
-            expiresIn: Number(process.env.ACCESS_TOKEN_VALIDITY_SEC),
-        });
-        const accessTokenRedisKey = `accessToken:${req.user._id}`;
-        this.cacheManager.set(accessTokenRedisKey, accessToken, Number(process.env.ACCESS_TOKEN_VALIDITY_SEC));
-        const refreshToken = this.jwtServer.sign({ id: String(req.user._id) }, {
-            expiresIn: Number(process.env.REFRESH_TOKEN_VALIDITY_SEC),
-        });
-        const refreshTokenRedisKey = `refreshToken:${req.user._id}`;
-        this.cacheManager.set(refreshTokenRedisKey, refreshToken, Number(process.env.REFRESH_TOKEN_VALIDITY_SEC));
-        return {
-            accessToken,
-            refreshToken,
-        };
-    }
-    async userInfo(user) {
-        return user;
-    }
-};
-__decorate([
-    (0, common_1.Post)('login'),
-    (0, swagger_1.ApiOperation)({ summary: '用户登录' }),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('local-admin')),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_d = typeof auth_dto_1.loginDto !== "undefined" && auth_dto_1.loginDto) === "function" ? _d : Object, Object]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "login", null);
-__decorate([
-    (0, common_1.Get)('user'),
-    (0, swagger_1.ApiOperation)({ summary: '获取用户信息' }),
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt-admin')),
-    __param(0, (0, req_user_decorator_1.ReqUser)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_e = typeof user_model_1.UserDocument !== "undefined" && user_model_1.UserDocument) === "function" ? _e : Object]),
-    __metadata("design:returntype", Promise)
-], AuthController.prototype, "userInfo", null);
-exports.AuthController = AuthController = __decorate([
-    (0, common_1.Controller)('auth'),
-    (0, swagger_1.ApiTags)('用户授权'),
-    __param(0, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
-    __param(2, (0, nestjs_typegoose_1.InjectModel)(user_model_1.User)),
-    __metadata("design:paramtypes", [typeof (_a = typeof cache_manager_2.Cache !== "undefined" && cache_manager_2.Cache) === "function" ? _a : Object, typeof (_b = typeof jwt_1.JwtService !== "undefined" && jwt_1.JwtService) === "function" ? _b : Object, typeof (_c = typeof typegoose_1.ReturnModelType !== "undefined" && typegoose_1.ReturnModelType) === "function" ? _c : Object])
-], AuthController);
-
-
-/***/ }),
-
-/***/ "./apps/admin/src/auth/auth.dto.ts":
-/*!*****************************************!*\
-  !*** ./apps/admin/src/auth/auth.dto.ts ***!
-  \*****************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.loginDto = exports.registerDto = void 0;
-const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
-class registerDto {
-}
-exports.registerDto = registerDto;
-__decorate([
-    (0, swagger_1.ApiProperty)({ description: '用户名', example: '2362414624' }),
-    __metadata("design:type", String)
-], registerDto.prototype, "username", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ description: '密码', example: '123456' }),
-    __metadata("design:type", String)
-], registerDto.prototype, "password", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ description: '昵称', example: '大帅比' }),
-    __metadata("design:type", String)
-], registerDto.prototype, "nickname", void 0);
-class loginDto {
-}
-exports.loginDto = loginDto;
-__decorate([
-    (0, swagger_1.ApiProperty)({ description: '用户名', example: '2362414624' }),
-    __metadata("design:type", String)
-], loginDto.prototype, "username", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({ description: '密码', example: '123456' }),
-    __metadata("design:type", String)
-], loginDto.prototype, "password", void 0);
-
-
-/***/ }),
-
-/***/ "./apps/admin/src/auth/auth.module.ts":
-/*!********************************************!*\
-  !*** ./apps/admin/src/auth/auth.module.ts ***!
-  \********************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.AuthModule = void 0;
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const auth_controller_1 = __webpack_require__(/*! ./auth.controller */ "./apps/admin/src/auth/auth.controller.ts");
-const local_strategy_1 = __webpack_require__(/*! ./local.strategy */ "./apps/admin/src/auth/local.strategy.ts");
-const passport_1 = __webpack_require__(/*! @nestjs/passport */ "@nestjs/passport");
-const jwt_strategy_1 = __webpack_require__(/*! ./jwt.strategy */ "./apps/admin/src/auth/jwt.strategy.ts");
-let AuthModule = exports.AuthModule = class AuthModule {
-};
-exports.AuthModule = AuthModule = __decorate([
-    (0, common_1.Module)({
-        imports: [passport_1.PassportModule],
-        controllers: [auth_controller_1.AuthController],
-        providers: [local_strategy_1.LocalStrategy, jwt_strategy_1.JwtStrategy],
-    })
-], AuthModule);
-
-
-/***/ }),
-
-/***/ "./apps/admin/src/auth/jwt.strategy.ts":
-/*!*********************************************!*\
-  !*** ./apps/admin/src/auth/jwt.strategy.ts ***!
-  \*********************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
-var _a;
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.JwtStrategy = void 0;
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const cache_manager_1 = __webpack_require__(/*! @nestjs/cache-manager */ "@nestjs/cache-manager");
-const cache_manager_2 = __webpack_require__(/*! cache-manager */ "cache-manager");
-const passport_jwt_1 = __webpack_require__(/*! passport-jwt */ "passport-jwt");
-const passport_1 = __webpack_require__(/*! @nestjs/passport */ "@nestjs/passport");
-const nestjs_typegoose_1 = __webpack_require__(/*! nestjs-typegoose */ "nestjs-typegoose");
-const user_model_1 = __webpack_require__(/*! libs/db/models/user.model */ "./libs/db/src/models/user.model.ts");
-let JwtStrategy = exports.JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy, 'jwt-admin') {
-    constructor(cacheManager, userModel) {
-        super({
-            jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
-            secretOrKey: process.env.JWT_SECRET,
-            passReqToCallback: true,
-        });
-        this.cacheManager = cacheManager;
-        this.userModel = userModel;
-    }
-    async validate(req, payload) {
-        const token = passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken()(req);
-        const redisToken = await this.cacheManager.get(`accessToken:${payload.id}`);
-        if (!redisToken || redisToken !== token) {
-            throw new common_1.UnauthorizedException('登录已过期');
-        }
-        return await this.userModel.findById(payload.id);
-    }
-};
-exports.JwtStrategy = JwtStrategy = __decorate([
-    __param(0, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
-    __param(1, (0, nestjs_typegoose_1.InjectModel)(user_model_1.User)),
-    __metadata("design:paramtypes", [typeof (_a = typeof cache_manager_2.Cache !== "undefined" && cache_manager_2.Cache) === "function" ? _a : Object, Object])
-], JwtStrategy);
-
-
-/***/ }),
-
-/***/ "./apps/admin/src/auth/local.strategy.ts":
-/*!***********************************************!*\
-  !*** ./apps/admin/src/auth/local.strategy.ts ***!
-  \***********************************************/
-/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
-
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.LocalStrategy = void 0;
-const passport_local_1 = __webpack_require__(/*! passport-local */ "passport-local");
-const passport_1 = __webpack_require__(/*! @nestjs/passport */ "@nestjs/passport");
-const nestjs_typegoose_1 = __webpack_require__(/*! nestjs-typegoose */ "nestjs-typegoose");
-const user_model_1 = __webpack_require__(/*! libs/db/models/user.model */ "./libs/db/src/models/user.model.ts");
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-const bcryptjs_1 = __webpack_require__(/*! bcryptjs */ "bcryptjs");
-let LocalStrategy = exports.LocalStrategy = class LocalStrategy extends (0, passport_1.PassportStrategy)(passport_local_1.Strategy, 'local-admin') {
-    constructor(userModel) {
-        super({
-            usernameField: 'username',
-            passwordField: 'password',
-        });
-        this.userModel = userModel;
-    }
-    async validate(username, password) {
-        const user = await this.userModel.findOne({ username }).select('+password');
-        if (!user) {
-            throw new common_1.BadRequestException('用户名不存在');
-        }
-        if (!(0, bcryptjs_1.compareSync)(password, user.password)) {
-            throw new common_1.BadRequestException('密码错误');
-        }
-        return user;
-    }
-};
-exports.LocalStrategy = LocalStrategy = __decorate([
-    __param(0, (0, nestjs_typegoose_1.InjectModel)(user_model_1.User)),
-    __metadata("design:paramtypes", [Object])
-], LocalStrategy);
-
-
-/***/ }),
-
-/***/ "./apps/admin/src/auth/req-user.decorator.ts":
-/*!***************************************************!*\
-  !*** ./apps/admin/src/auth/req-user.decorator.ts ***!
-  \***************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.ReqUser = void 0;
-const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
-exports.ReqUser = (0, common_1.createParamDecorator)((data, ctx) => {
-    return ctx.switchToHttp().getRequest().user;
-});
 
 
 /***/ }),
@@ -475,6 +175,369 @@ exports.UsersModule = UsersModule = __decorate([
         controllers: [users_controller_1.UsersController]
     })
 ], UsersModule);
+
+
+/***/ }),
+
+/***/ "./libs/auth/src/admin-auth.controller.ts":
+/*!************************************************!*\
+  !*** ./libs/auth/src/admin-auth.controller.ts ***!
+  \************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a, _b, _c, _d, _e;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AdminAuthController = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+const cache_manager_1 = __webpack_require__(/*! @nestjs/cache-manager */ "@nestjs/cache-manager");
+const cache_manager_2 = __webpack_require__(/*! cache-manager */ "cache-manager");
+const auth_dto_1 = __webpack_require__(/*! ./auth.dto */ "./libs/auth/src/auth.dto.ts");
+const nestjs_typegoose_1 = __webpack_require__(/*! nestjs-typegoose */ "nestjs-typegoose");
+const user_model_1 = __webpack_require__(/*! libs/db/models/user.model */ "./libs/db/src/models/user.model.ts");
+const typegoose_1 = __webpack_require__(/*! @typegoose/typegoose */ "@typegoose/typegoose");
+const passport_1 = __webpack_require__(/*! @nestjs/passport */ "@nestjs/passport");
+const jwt_1 = __webpack_require__(/*! @nestjs/jwt */ "@nestjs/jwt");
+const req_user_decorator_1 = __webpack_require__(/*! ./req-user.decorator */ "./libs/auth/src/req-user.decorator.ts");
+let AdminAuthController = exports.AdminAuthController = class AdminAuthController {
+    constructor(cacheManager, jwtServer, userModel) {
+        this.cacheManager = cacheManager;
+        this.jwtServer = jwtServer;
+        this.userModel = userModel;
+    }
+    async login(loginDto, req) {
+        const accessToken = this.jwtServer.sign({ id: String(req.user._id) }, {
+            expiresIn: Number(process.env.ACCESS_TOKEN_VALIDITY_SEC),
+        });
+        const accessTokenRedisKey = `accessToken:${req.user._id}`;
+        this.cacheManager.set(accessTokenRedisKey, accessToken, Number(process.env.ACCESS_TOKEN_VALIDITY_SEC));
+        const refreshToken = this.jwtServer.sign({ id: String(req.user._id) }, {
+            expiresIn: Number(process.env.REFRESH_TOKEN_VALIDITY_SEC),
+        });
+        const refreshTokenRedisKey = `refreshToken:${req.user._id}`;
+        this.cacheManager.set(refreshTokenRedisKey, refreshToken, Number(process.env.REFRESH_TOKEN_VALIDITY_SEC));
+        return {
+            accessToken,
+            refreshToken,
+        };
+    }
+    async userInfo(user) {
+        return user;
+    }
+};
+__decorate([
+    (0, common_1.Post)('login'),
+    (0, swagger_1.ApiOperation)({ summary: '用户登录' }),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('local-admin')),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_d = typeof auth_dto_1.loginDto !== "undefined" && auth_dto_1.loginDto) === "function" ? _d : Object, Object]),
+    __metadata("design:returntype", Promise)
+], AdminAuthController.prototype, "login", null);
+__decorate([
+    (0, common_1.Get)('user'),
+    (0, swagger_1.ApiOperation)({ summary: '获取用户信息' }),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt-admin')),
+    __param(0, (0, req_user_decorator_1.ReqUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_e = typeof user_model_1.UserDocument !== "undefined" && user_model_1.UserDocument) === "function" ? _e : Object]),
+    __metadata("design:returntype", Promise)
+], AdminAuthController.prototype, "userInfo", null);
+exports.AdminAuthController = AdminAuthController = __decorate([
+    (0, common_1.Controller)('auth'),
+    (0, swagger_1.ApiTags)('用户授权'),
+    __param(0, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
+    __param(2, (0, nestjs_typegoose_1.InjectModel)(user_model_1.User)),
+    __metadata("design:paramtypes", [typeof (_a = typeof cache_manager_2.Cache !== "undefined" && cache_manager_2.Cache) === "function" ? _a : Object, typeof (_b = typeof jwt_1.JwtService !== "undefined" && jwt_1.JwtService) === "function" ? _b : Object, typeof (_c = typeof typegoose_1.ReturnModelType !== "undefined" && typegoose_1.ReturnModelType) === "function" ? _c : Object])
+], AdminAuthController);
+
+
+/***/ }),
+
+/***/ "./libs/auth/src/auth.dto.ts":
+/*!***********************************!*\
+  !*** ./libs/auth/src/auth.dto.ts ***!
+  \***********************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.loginDto = exports.registerDto = void 0;
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+class registerDto {
+}
+exports.registerDto = registerDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: '用户名', example: '2362414624' }),
+    __metadata("design:type", String)
+], registerDto.prototype, "username", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: '密码', example: '123456' }),
+    __metadata("design:type", String)
+], registerDto.prototype, "password", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: '昵称', example: '大帅比' }),
+    __metadata("design:type", String)
+], registerDto.prototype, "nickname", void 0);
+class loginDto {
+}
+exports.loginDto = loginDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: '用户名', example: '2362414624' }),
+    __metadata("design:type", String)
+], loginDto.prototype, "username", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: '密码', example: '123456' }),
+    __metadata("design:type", String)
+], loginDto.prototype, "password", void 0);
+
+
+/***/ }),
+
+/***/ "./libs/auth/src/auth.module.ts":
+/*!**************************************!*\
+  !*** ./libs/auth/src/auth.module.ts ***!
+  \**************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var AuthModule_1;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AuthModule = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const admin_auth_controller_1 = __webpack_require__(/*! ./admin-auth.controller */ "./libs/auth/src/admin-auth.controller.ts");
+const local_strategy_1 = __webpack_require__(/*! ./local.strategy */ "./libs/auth/src/local.strategy.ts");
+const passport_1 = __webpack_require__(/*! @nestjs/passport */ "@nestjs/passport");
+const jwt_strategy_1 = __webpack_require__(/*! ./jwt.strategy */ "./libs/auth/src/jwt.strategy.ts");
+let AuthModule = exports.AuthModule = AuthModule_1 = class AuthModule {
+    static forRoot(AuthType) {
+        const controllers = [];
+        if (AuthType === 'admin') {
+            controllers.push(admin_auth_controller_1.AdminAuthController);
+        }
+        return {
+            module: AuthModule_1,
+            imports: [passport_1.PassportModule],
+            controllers,
+            providers: [local_strategy_1.LocalStrategy, jwt_strategy_1.JwtStrategy],
+        };
+    }
+};
+exports.AuthModule = AuthModule = AuthModule_1 = __decorate([
+    (0, common_1.Global)(),
+    (0, common_1.Module)({})
+], AuthModule);
+
+
+/***/ }),
+
+/***/ "./libs/auth/src/auth.service.ts":
+/*!***************************************!*\
+  !*** ./libs/auth/src/auth.service.ts ***!
+  \***************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.AuthService = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+let AuthService = exports.AuthService = class AuthService {
+};
+exports.AuthService = AuthService = __decorate([
+    (0, common_1.Injectable)()
+], AuthService);
+
+
+/***/ }),
+
+/***/ "./libs/auth/src/index.ts":
+/*!********************************!*\
+  !*** ./libs/auth/src/index.ts ***!
+  \********************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __exportStar = (this && this.__exportStar) || function(m, exports) {
+    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+__exportStar(__webpack_require__(/*! ./auth.module */ "./libs/auth/src/auth.module.ts"), exports);
+__exportStar(__webpack_require__(/*! ./auth.service */ "./libs/auth/src/auth.service.ts"), exports);
+
+
+/***/ }),
+
+/***/ "./libs/auth/src/jwt.strategy.ts":
+/*!***************************************!*\
+  !*** ./libs/auth/src/jwt.strategy.ts ***!
+  \***************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.JwtStrategy = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const cache_manager_1 = __webpack_require__(/*! @nestjs/cache-manager */ "@nestjs/cache-manager");
+const cache_manager_2 = __webpack_require__(/*! cache-manager */ "cache-manager");
+const passport_jwt_1 = __webpack_require__(/*! passport-jwt */ "passport-jwt");
+const passport_1 = __webpack_require__(/*! @nestjs/passport */ "@nestjs/passport");
+const nestjs_typegoose_1 = __webpack_require__(/*! nestjs-typegoose */ "nestjs-typegoose");
+const user_model_1 = __webpack_require__(/*! libs/db/models/user.model */ "./libs/db/src/models/user.model.ts");
+let JwtStrategy = exports.JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy, 'jwt-admin') {
+    constructor(cacheManager, userModel) {
+        super({
+            jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
+            secretOrKey: process.env.JWT_SECRET,
+            passReqToCallback: true,
+        });
+        this.cacheManager = cacheManager;
+        this.userModel = userModel;
+    }
+    async validate(req, payload) {
+        const token = passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+        const redisToken = await this.cacheManager.get(`accessToken:${payload.id}`);
+        if (!redisToken || redisToken !== token) {
+            throw new common_1.UnauthorizedException('登录已过期');
+        }
+        return await this.userModel.findById(payload.id);
+    }
+};
+exports.JwtStrategy = JwtStrategy = __decorate([
+    __param(0, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
+    __param(1, (0, nestjs_typegoose_1.InjectModel)(user_model_1.User)),
+    __metadata("design:paramtypes", [typeof (_a = typeof cache_manager_2.Cache !== "undefined" && cache_manager_2.Cache) === "function" ? _a : Object, Object])
+], JwtStrategy);
+
+
+/***/ }),
+
+/***/ "./libs/auth/src/local.strategy.ts":
+/*!*****************************************!*\
+  !*** ./libs/auth/src/local.strategy.ts ***!
+  \*****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.LocalStrategy = void 0;
+const passport_local_1 = __webpack_require__(/*! passport-local */ "passport-local");
+const passport_1 = __webpack_require__(/*! @nestjs/passport */ "@nestjs/passport");
+const nestjs_typegoose_1 = __webpack_require__(/*! nestjs-typegoose */ "nestjs-typegoose");
+const user_model_1 = __webpack_require__(/*! libs/db/models/user.model */ "./libs/db/src/models/user.model.ts");
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const bcryptjs_1 = __webpack_require__(/*! bcryptjs */ "bcryptjs");
+let LocalStrategy = exports.LocalStrategy = class LocalStrategy extends (0, passport_1.PassportStrategy)(passport_local_1.Strategy, 'local-admin') {
+    constructor(userModel) {
+        super({
+            usernameField: 'username',
+            passwordField: 'password',
+        });
+        this.userModel = userModel;
+    }
+    async validate(username, password) {
+        const user = await this.userModel.findOne({ username }).select('+password');
+        if (!user) {
+            throw new common_1.BadRequestException('用户名不存在');
+        }
+        if (!(0, bcryptjs_1.compareSync)(password, user.password)) {
+            throw new common_1.BadRequestException('密码错误');
+        }
+        return user;
+    }
+};
+exports.LocalStrategy = LocalStrategy = __decorate([
+    __param(0, (0, nestjs_typegoose_1.InjectModel)(user_model_1.User)),
+    __metadata("design:paramtypes", [Object])
+], LocalStrategy);
+
+
+/***/ }),
+
+/***/ "./libs/auth/src/req-user.decorator.ts":
+/*!*********************************************!*\
+  !*** ./libs/auth/src/req-user.decorator.ts ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ReqUser = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+exports.ReqUser = (0, common_1.createParamDecorator)((data, ctx) => {
+    return ctx.switchToHttp().getRequest().user;
+});
 
 
 /***/ }),
