@@ -218,23 +218,29 @@ let AdminAuthController = exports.AdminAuthController = class AdminAuthControlle
         this.jwtServer = jwtServer;
         this.userModel = userModel;
     }
-    async login(loginDto, req) {
+    async login(loginDto, req, session) {
+        session.test = 'test';
         const accessToken = this.jwtServer.sign({ id: String(req.user._id) }, {
             expiresIn: Number(process.env.ACCESS_TOKEN_VALIDITY_SEC),
         });
         const accessTokenRedisKey = `accessToken:${req.user._id}`;
-        this.cacheManager.set(accessTokenRedisKey, accessToken, Number(process.env.ACCESS_TOKEN_VALIDITY_SEC));
+        this.cacheManager.set(accessTokenRedisKey, accessToken, {
+            ttl: Number(process.env.ACCESS_TOKEN_VALIDITY_SEC),
+        });
         const refreshToken = this.jwtServer.sign({ id: String(req.user._id) }, {
             expiresIn: Number(process.env.REFRESH_TOKEN_VALIDITY_SEC),
         });
         const refreshTokenRedisKey = `refreshToken:${req.user._id}`;
-        this.cacheManager.set(refreshTokenRedisKey, refreshToken, Number(process.env.REFRESH_TOKEN_VALIDITY_SEC));
+        this.cacheManager.set(refreshTokenRedisKey, refreshToken, {
+            ttl: Number(process.env.REFRESH_TOKEN_VALIDITY_SEC),
+        });
         return {
             accessToken,
             refreshToken,
         };
     }
-    async userInfo(user) {
+    async userInfo(user, session) {
+        console.log(session.test);
         return user;
     }
 };
@@ -244,8 +250,9 @@ __decorate([
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('local-admin')),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Req)()),
+    __param(2, (0, common_1.Session)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_d = typeof auth_dto_1.loginDto !== "undefined" && auth_dto_1.loginDto) === "function" ? _d : Object, Object]),
+    __metadata("design:paramtypes", [typeof (_d = typeof auth_dto_1.loginDto !== "undefined" && auth_dto_1.loginDto) === "function" ? _d : Object, Object, Object]),
     __metadata("design:returntype", Promise)
 ], AdminAuthController.prototype, "login", null);
 __decorate([
@@ -254,8 +261,9 @@ __decorate([
     (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt-admin')),
     __param(0, (0, req_user_decorator_1.ReqUser)()),
+    __param(1, (0, common_1.Session)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_e = typeof user_model_1.UserDocument !== "undefined" && user_model_1.UserDocument) === "function" ? _e : Object]),
+    __metadata("design:paramtypes", [typeof (_e = typeof user_model_1.UserDocument !== "undefined" && user_model_1.UserDocument) === "function" ? _e : Object, Object]),
     __metadata("design:returntype", Promise)
 ], AdminAuthController.prototype, "userInfo", null);
 exports.AdminAuthController = AdminAuthController = __decorate([
@@ -339,7 +347,32 @@ const admin_auth_controller_1 = __webpack_require__(/*! ./admin-auth.controller 
 const local_strategy_1 = __webpack_require__(/*! ./local.strategy */ "./libs/auth/src/local.strategy.ts");
 const passport_1 = __webpack_require__(/*! @nestjs/passport */ "@nestjs/passport");
 const jwt_strategy_1 = __webpack_require__(/*! ./jwt.strategy */ "./libs/auth/src/jwt.strategy.ts");
+const connect_redis_1 = __webpack_require__(/*! connect-redis */ "connect-redis");
+const session = __webpack_require__(/*! express-session */ "express-session");
+const redis_1 = __webpack_require__(/*! redis */ "redis");
+const redisClient = (0, redis_1.createClient)({
+    url: process.env.REDIS_URL,
+    password: process.env.REDIS_PASSWORD,
+    database: Number(process.env.REDIS_DB),
+});
+redisClient.connect().catch(console.error);
+const redisStore = new connect_redis_1.default({
+    client: redisClient,
+    ttl: Number(process.env.SESSION_MAX_AGE),
+});
 let AuthModule = exports.AuthModule = AuthModule_1 = class AuthModule {
+    configure(consumer) {
+        consumer
+            .apply(session({
+            store: redisStore,
+            secret: process.env.SESSION_SECRET,
+            resave: false,
+            saveUninitialized: false,
+            rolling: true,
+            cookie: { maxAge: Number(process.env.SESSION_MAX_AGE) * 1000 },
+        }))
+            .forRoutes('*');
+    }
     static forRoot(AuthType) {
         const controllers = [];
         if (AuthType === 'admin') {
@@ -577,6 +610,7 @@ exports.CommonModule = CommonModule = __decorate([
             db_1.DbModule,
             cache_manager_1.CacheModule.registerAsync({
                 useFactory: () => ({
+                    isGlobal: true,
                     store: cache_manager_redis_store_1.redisStore,
                     host: process.env.REDIS_HOST,
                     port: process.env.REDIS_PORT,
@@ -919,6 +953,26 @@ module.exports = require("cache-manager-redis-store");
 
 /***/ }),
 
+/***/ "connect-redis":
+/*!********************************!*\
+  !*** external "connect-redis" ***!
+  \********************************/
+/***/ ((module) => {
+
+module.exports = require("connect-redis");
+
+/***/ }),
+
+/***/ "express-session":
+/*!**********************************!*\
+  !*** external "express-session" ***!
+  \**********************************/
+/***/ ((module) => {
+
+module.exports = require("express-session");
+
+/***/ }),
+
 /***/ "nestjs-mongoose-crud":
 /*!***************************************!*\
   !*** external "nestjs-mongoose-crud" ***!
@@ -956,6 +1010,16 @@ module.exports = require("passport-jwt");
 /***/ ((module) => {
 
 module.exports = require("passport-local");
+
+/***/ }),
+
+/***/ "redis":
+/*!************************!*\
+  !*** external "redis" ***!
+  \************************/
+/***/ ((module) => {
+
+module.exports = require("redis");
 
 /***/ })
 

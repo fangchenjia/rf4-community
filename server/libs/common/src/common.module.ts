@@ -17,6 +17,7 @@ import { redisStore } from 'cache-manager-redis-store';
     DbModule,
     CacheModule.registerAsync({
       useFactory: () => ({
+        isGlobal: true,
         store: redisStore as any,
         host: process.env.REDIS_HOST,
         port: process.env.REDIS_PORT,
