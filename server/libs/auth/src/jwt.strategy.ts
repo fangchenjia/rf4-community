@@ -6,7 +6,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { InjectModel } from 'nestjs-typegoose';
 import { User } from 'libs/db/models/user.model';
 
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt-admin') {
+export class JwtStrategy extends PassportStrategy(Strategy, 'jwt-login') {
   constructor(
     @Inject(CACHE_MANAGER)
     private cacheManager: Cache,

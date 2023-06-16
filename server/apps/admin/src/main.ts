@@ -4,6 +4,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AdminModule);
+  app.setGlobalPrefix('v1');
   // swagger接口文档
   const options = new DocumentBuilder()
     .setTitle('俄钓4社区admin API')

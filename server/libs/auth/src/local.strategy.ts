@@ -5,7 +5,7 @@ import { User } from 'libs/db/models/user.model';
 import { BadRequestException } from '@nestjs/common';
 import { compareSync } from 'bcryptjs';
 
-export class LocalStrategy extends PassportStrategy(Strategy, 'local-admin') {
+export class LocalStrategy extends PassportStrategy(Strategy, 'local-login') {
   constructor(@InjectModel(User) private readonly userModel) {
     super({
       usernameField: 'username',

@@ -198,7 +198,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-var _a, _b, _c, _d, _e;
+var _a, _b, _c, _d;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AdminAuthController = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
@@ -211,15 +211,14 @@ const user_model_1 = __webpack_require__(/*! libs/db/models/user.model */ "./lib
 const typegoose_1 = __webpack_require__(/*! @typegoose/typegoose */ "@typegoose/typegoose");
 const passport_1 = __webpack_require__(/*! @nestjs/passport */ "@nestjs/passport");
 const jwt_1 = __webpack_require__(/*! @nestjs/jwt */ "@nestjs/jwt");
-const req_user_decorator_1 = __webpack_require__(/*! ./req-user.decorator */ "./libs/auth/src/req-user.decorator.ts");
+const common_2 = __webpack_require__(/*! common/common */ "./libs/common/src/index.ts");
 let AdminAuthController = exports.AdminAuthController = class AdminAuthController {
     constructor(cacheManager, jwtServer, userModel) {
         this.cacheManager = cacheManager;
         this.jwtServer = jwtServer;
         this.userModel = userModel;
     }
-    async login(loginDto, req, session) {
-        session.test = 'test';
+    async login(loginDto, req) {
         const accessToken = this.jwtServer.sign({ id: String(req.user._id) }, {
             expiresIn: Number(process.env.ACCESS_TOKEN_VALIDITY_SEC),
         });
@@ -239,33 +238,17 @@ let AdminAuthController = exports.AdminAuthController = class AdminAuthControlle
             refreshToken,
         };
     }
-    async userInfo(user, session) {
-        console.log(session.test);
-        return user;
-    }
 };
 __decorate([
     (0, common_1.Post)('login'),
-    (0, swagger_1.ApiOperation)({ summary: '用户登录' }),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('local-admin')),
+    (0, swagger_1.ApiOperation)({ summary: '管理员登录' }),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('local-login'), common_2.CaptchaGuard),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Req)()),
-    __param(2, (0, common_1.Session)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_d = typeof auth_dto_1.loginDto !== "undefined" && auth_dto_1.loginDto) === "function" ? _d : Object, Object, Object]),
+    __metadata("design:paramtypes", [typeof (_d = typeof auth_dto_1.loginDto !== "undefined" && auth_dto_1.loginDto) === "function" ? _d : Object, Object]),
     __metadata("design:returntype", Promise)
 ], AdminAuthController.prototype, "login", null);
-__decorate([
-    (0, common_1.Get)('user'),
-    (0, swagger_1.ApiOperation)({ summary: '获取用户信息' }),
-    (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt-admin')),
-    __param(0, (0, req_user_decorator_1.ReqUser)()),
-    __param(1, (0, common_1.Session)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [typeof (_e = typeof user_model_1.UserDocument !== "undefined" && user_model_1.UserDocument) === "function" ? _e : Object, Object]),
-    __metadata("design:returntype", Promise)
-], AdminAuthController.prototype, "userInfo", null);
 exports.AdminAuthController = AdminAuthController = __decorate([
     (0, common_1.Controller)('auth'),
     (0, swagger_1.ApiTags)('用户授权'),
@@ -300,6 +283,10 @@ class registerDto {
 }
 exports.registerDto = registerDto;
 __decorate([
+    (0, swagger_1.ApiProperty)({ description: '验证码', example: '1234' }),
+    __metadata("design:type", String)
+], registerDto.prototype, "captcha", void 0);
+__decorate([
     (0, swagger_1.ApiProperty)({ description: '用户名', example: '2362414624' }),
     __metadata("design:type", String)
 ], registerDto.prototype, "username", void 0);
@@ -314,6 +301,10 @@ __decorate([
 class loginDto {
 }
 exports.loginDto = loginDto;
+__decorate([
+    (0, swagger_1.ApiProperty)({ description: '验证码', example: '1234' }),
+    __metadata("design:type", String)
+], loginDto.prototype, "captcha", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ description: '用户名', example: '2362414624' }),
     __metadata("design:type", String)
@@ -344,6 +335,8 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.AuthModule = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const admin_auth_controller_1 = __webpack_require__(/*! ./admin-auth.controller */ "./libs/auth/src/admin-auth.controller.ts");
+const common_auth_controller_1 = __webpack_require__(/*! ./common-auth.controller */ "./libs/auth/src/common-auth.controller.ts");
+const server_auth_controller_1 = __webpack_require__(/*! ./server-auth.controller */ "./libs/auth/src/server-auth.controller.ts");
 const local_strategy_1 = __webpack_require__(/*! ./local.strategy */ "./libs/auth/src/local.strategy.ts");
 const passport_1 = __webpack_require__(/*! @nestjs/passport */ "@nestjs/passport");
 const jwt_strategy_1 = __webpack_require__(/*! ./jwt.strategy */ "./libs/auth/src/jwt.strategy.ts");
@@ -375,8 +368,12 @@ let AuthModule = exports.AuthModule = AuthModule_1 = class AuthModule {
     }
     static forRoot(AuthType) {
         const controllers = [];
+        controllers.push(common_auth_controller_1.CommonAuthController);
         if (AuthType === 'admin') {
             controllers.push(admin_auth_controller_1.AdminAuthController);
+        }
+        if (AuthType === 'server') {
+            controllers.push(server_auth_controller_1.ServerAuthController);
         }
         return {
             module: AuthModule_1,
@@ -415,6 +412,87 @@ let AuthService = exports.AuthService = class AuthService {
 exports.AuthService = AuthService = __decorate([
     (0, common_1.Injectable)()
 ], AuthService);
+
+
+/***/ }),
+
+/***/ "./libs/auth/src/common-auth.controller.ts":
+/*!*************************************************!*\
+  !*** ./libs/auth/src/common-auth.controller.ts ***!
+  \*************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a, _b, _c, _d, _e;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CommonAuthController = void 0;
+const common_service_1 = __webpack_require__(/*! ./../../common/src/common.service */ "./libs/common/src/common.service.ts");
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+const cache_manager_1 = __webpack_require__(/*! @nestjs/cache-manager */ "@nestjs/cache-manager");
+const cache_manager_2 = __webpack_require__(/*! cache-manager */ "cache-manager");
+const nestjs_typegoose_1 = __webpack_require__(/*! nestjs-typegoose */ "nestjs-typegoose");
+const user_model_1 = __webpack_require__(/*! libs/db/models/user.model */ "./libs/db/src/models/user.model.ts");
+const typegoose_1 = __webpack_require__(/*! @typegoose/typegoose */ "@typegoose/typegoose");
+const passport_1 = __webpack_require__(/*! @nestjs/passport */ "@nestjs/passport");
+const jwt_1 = __webpack_require__(/*! @nestjs/jwt */ "@nestjs/jwt");
+const req_user_decorator_1 = __webpack_require__(/*! ./req-user.decorator */ "./libs/auth/src/req-user.decorator.ts");
+let CommonAuthController = exports.CommonAuthController = class CommonAuthController {
+    constructor(cacheManager, jwtServer, userModel, commonService) {
+        this.cacheManager = cacheManager;
+        this.jwtServer = jwtServer;
+        this.userModel = userModel;
+        this.commonService = commonService;
+    }
+    async userInfo(user) {
+        return user;
+    }
+    async captcha(session, res) {
+        const svgCaptcha = await this.commonService.captche();
+        session.captcha = svgCaptcha.text;
+        console.log(session.captcha);
+        res.type('image/svg+xml');
+        res.send(svgCaptcha.data);
+    }
+};
+__decorate([
+    (0, common_1.Get)('info'),
+    (0, swagger_1.ApiOperation)({ summary: '获取用户信息' }),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt-login')),
+    __param(0, (0, req_user_decorator_1.ReqUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_e = typeof user_model_1.UserDocument !== "undefined" && user_model_1.UserDocument) === "function" ? _e : Object]),
+    __metadata("design:returntype", Promise)
+], CommonAuthController.prototype, "userInfo", null);
+__decorate([
+    (0, common_1.Get)('captcha'),
+    (0, swagger_1.ApiOperation)({ summary: '获取图形验证码' }),
+    __param(0, (0, common_1.Session)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], CommonAuthController.prototype, "captcha", null);
+exports.CommonAuthController = CommonAuthController = __decorate([
+    (0, common_1.Controller)('auth'),
+    (0, swagger_1.ApiTags)('用户授权'),
+    __param(0, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
+    __param(2, (0, nestjs_typegoose_1.InjectModel)(user_model_1.User)),
+    __metadata("design:paramtypes", [typeof (_a = typeof cache_manager_2.Cache !== "undefined" && cache_manager_2.Cache) === "function" ? _a : Object, typeof (_b = typeof jwt_1.JwtService !== "undefined" && jwt_1.JwtService) === "function" ? _b : Object, typeof (_c = typeof typegoose_1.ReturnModelType !== "undefined" && typegoose_1.ReturnModelType) === "function" ? _c : Object, typeof (_d = typeof common_service_1.CommonService !== "undefined" && common_service_1.CommonService) === "function" ? _d : Object])
+], CommonAuthController);
 
 
 /***/ }),
@@ -476,7 +554,7 @@ const passport_jwt_1 = __webpack_require__(/*! passport-jwt */ "passport-jwt");
 const passport_1 = __webpack_require__(/*! @nestjs/passport */ "@nestjs/passport");
 const nestjs_typegoose_1 = __webpack_require__(/*! nestjs-typegoose */ "nestjs-typegoose");
 const user_model_1 = __webpack_require__(/*! libs/db/models/user.model */ "./libs/db/src/models/user.model.ts");
-let JwtStrategy = exports.JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy, 'jwt-admin') {
+let JwtStrategy = exports.JwtStrategy = class JwtStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy, 'jwt-login') {
     constructor(cacheManager, userModel) {
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -531,7 +609,7 @@ const nestjs_typegoose_1 = __webpack_require__(/*! nestjs-typegoose */ "nestjs-t
 const user_model_1 = __webpack_require__(/*! libs/db/models/user.model */ "./libs/db/src/models/user.model.ts");
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 const bcryptjs_1 = __webpack_require__(/*! bcryptjs */ "bcryptjs");
-let LocalStrategy = exports.LocalStrategy = class LocalStrategy extends (0, passport_1.PassportStrategy)(passport_local_1.Strategy, 'local-admin') {
+let LocalStrategy = exports.LocalStrategy = class LocalStrategy extends (0, passport_1.PassportStrategy)(passport_local_1.Strategy, 'local-login') {
     constructor(userModel) {
         super({
             usernameField: 'username',
@@ -571,6 +649,116 @@ const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
 exports.ReqUser = (0, common_1.createParamDecorator)((data, ctx) => {
     return ctx.switchToHttp().getRequest().user;
 });
+
+
+/***/ }),
+
+/***/ "./libs/auth/src/server-auth.controller.ts":
+/*!*************************************************!*\
+  !*** ./libs/auth/src/server-auth.controller.ts ***!
+  \*************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a, _b, _c, _d, _e, _f;
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.ServerAuthController = void 0;
+const common_service_1 = __webpack_require__(/*! ./../../common/src/common.service */ "./libs/common/src/common.service.ts");
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
+const cache_manager_1 = __webpack_require__(/*! @nestjs/cache-manager */ "@nestjs/cache-manager");
+const cache_manager_2 = __webpack_require__(/*! cache-manager */ "cache-manager");
+const auth_dto_1 = __webpack_require__(/*! ./auth.dto */ "./libs/auth/src/auth.dto.ts");
+const nestjs_typegoose_1 = __webpack_require__(/*! nestjs-typegoose */ "nestjs-typegoose");
+const user_model_1 = __webpack_require__(/*! libs/db/models/user.model */ "./libs/db/src/models/user.model.ts");
+const typegoose_1 = __webpack_require__(/*! @typegoose/typegoose */ "@typegoose/typegoose");
+const passport_1 = __webpack_require__(/*! @nestjs/passport */ "@nestjs/passport");
+const jwt_1 = __webpack_require__(/*! @nestjs/jwt */ "@nestjs/jwt");
+let ServerAuthController = exports.ServerAuthController = class ServerAuthController {
+    constructor(cacheManager, jwtServer, userModel, CommonService) {
+        this.cacheManager = cacheManager;
+        this.jwtServer = jwtServer;
+        this.userModel = userModel;
+        this.CommonService = CommonService;
+    }
+    async register(registerDto) {
+        const { username } = registerDto;
+        if (await this.userModel.findOne({ username })) {
+            return {
+                code: 1,
+                message: '用户已存在',
+            };
+        }
+        else {
+            const user = await this.userModel.create(registerDto);
+            return {
+                code: 0,
+                user,
+                message: '注册成功',
+            };
+        }
+        return registerDto;
+    }
+    async login(loginDto, req, session) {
+        session.test = 'test';
+        const accessToken = this.jwtServer.sign({ id: String(req.user._id) }, {
+            expiresIn: Number(process.env.ACCESS_TOKEN_VALIDITY_SEC),
+        });
+        const accessTokenRedisKey = `accessToken:${req.user._id}`;
+        this.cacheManager.set(accessTokenRedisKey, accessToken, {
+            ttl: Number(process.env.ACCESS_TOKEN_VALIDITY_SEC),
+        });
+        const refreshToken = this.jwtServer.sign({ id: String(req.user._id) }, {
+            expiresIn: Number(process.env.REFRESH_TOKEN_VALIDITY_SEC),
+        });
+        const refreshTokenRedisKey = `refreshToken:${req.user._id}`;
+        this.cacheManager.set(refreshTokenRedisKey, refreshToken, {
+            ttl: Number(process.env.REFRESH_TOKEN_VALIDITY_SEC),
+        });
+        return {
+            accessToken,
+            refreshToken,
+        };
+    }
+};
+__decorate([
+    (0, common_1.Post)('register'),
+    (0, swagger_1.ApiOperation)({ summary: '用户注册' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_e = typeof auth_dto_1.registerDto !== "undefined" && auth_dto_1.registerDto) === "function" ? _e : Object]),
+    __metadata("design:returntype", Promise)
+], ServerAuthController.prototype, "register", null);
+__decorate([
+    (0, common_1.Post)('login'),
+    (0, swagger_1.ApiOperation)({ summary: '用户登录' }),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('local-login')),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
+    __param(2, (0, common_1.Session)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [typeof (_f = typeof auth_dto_1.loginDto !== "undefined" && auth_dto_1.loginDto) === "function" ? _f : Object, Object, Object]),
+    __metadata("design:returntype", Promise)
+], ServerAuthController.prototype, "login", null);
+exports.ServerAuthController = ServerAuthController = __decorate([
+    (0, common_1.Controller)('auth'),
+    (0, swagger_1.ApiTags)('用户授权'),
+    __param(0, (0, common_1.Inject)(cache_manager_1.CACHE_MANAGER)),
+    __param(2, (0, nestjs_typegoose_1.InjectModel)(user_model_1.User)),
+    __metadata("design:paramtypes", [typeof (_a = typeof cache_manager_2.Cache !== "undefined" && cache_manager_2.Cache) === "function" ? _a : Object, typeof (_b = typeof jwt_1.JwtService !== "undefined" && jwt_1.JwtService) === "function" ? _b : Object, typeof (_c = typeof typegoose_1.ReturnModelType !== "undefined" && typegoose_1.ReturnModelType) === "function" ? _c : Object, typeof (_d = typeof common_service_1.CommonService !== "undefined" && common_service_1.CommonService) === "function" ? _d : Object])
+], ServerAuthController);
 
 
 /***/ }),
@@ -650,11 +838,60 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.CommonService = void 0;
 const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+const svgCaptcha = __webpack_require__(/*! svg-captcha */ "svg-captcha");
 let CommonService = exports.CommonService = class CommonService {
+    async captche(size = 4) {
+        const captcha = svgCaptcha.create({
+            size,
+            fontSize: 50,
+            width: 100,
+            height: 34,
+            background: '#cc9966',
+        });
+        return captcha;
+    }
 };
 exports.CommonService = CommonService = __decorate([
     (0, common_1.Injectable)()
 ], CommonService);
+
+
+/***/ }),
+
+/***/ "./libs/common/src/guards/captcha.guard.ts":
+/*!*************************************************!*\
+  !*** ./libs/common/src/guards/captcha.guard.ts ***!
+  \*************************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.CaptchaGuard = void 0;
+const common_1 = __webpack_require__(/*! @nestjs/common */ "@nestjs/common");
+let CaptchaGuard = exports.CaptchaGuard = class CaptchaGuard {
+    canActivate(context) {
+        const request = context.switchToHttp().getRequest();
+        const captcha = request.body.captcha;
+        const sessionCaptch = request.session.captcha;
+        request.session.captcha = null;
+        if (!captcha) {
+            throw new common_1.BadRequestException('验证码不能为空');
+        }
+        if (captcha.toLowerCase() !== (sessionCaptch === null || sessionCaptch === void 0 ? void 0 : sessionCaptch.toLowerCase())) {
+            throw new common_1.BadRequestException('验证码错误');
+        }
+        return true;
+    }
+};
+exports.CaptchaGuard = CaptchaGuard = __decorate([
+    (0, common_1.Injectable)()
+], CaptchaGuard);
 
 
 /***/ }),
@@ -683,6 +920,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 __exportStar(__webpack_require__(/*! ./common.module */ "./libs/common/src/common.module.ts"), exports);
 __exportStar(__webpack_require__(/*! ./common.service */ "./libs/common/src/common.service.ts"), exports);
+__exportStar(__webpack_require__(/*! ./guards/captcha.guard */ "./libs/common/src/guards/captcha.guard.ts"), exports);
 
 
 /***/ }),
@@ -1021,6 +1259,16 @@ module.exports = require("passport-local");
 
 module.exports = require("redis");
 
+/***/ }),
+
+/***/ "svg-captcha":
+/*!******************************!*\
+  !*** external "svg-captcha" ***!
+  \******************************/
+/***/ ((module) => {
+
+module.exports = require("svg-captcha");
+
 /***/ })
 
 /******/ 	});
@@ -1064,6 +1312,7 @@ const admin_module_1 = __webpack_require__(/*! ./admin.module */ "./apps/admin/s
 const swagger_1 = __webpack_require__(/*! @nestjs/swagger */ "@nestjs/swagger");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(admin_module_1.AdminModule);
+    app.setGlobalPrefix('v1');
     const options = new swagger_1.DocumentBuilder()
         .setTitle('俄钓4社区admin API')
         .setDescription('俄钓4社区后台管理界面的API')

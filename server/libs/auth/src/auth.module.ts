@@ -6,6 +6,8 @@ import {
   NestModule,
 } from '@nestjs/common';
 import { AdminAuthController } from './admin-auth.controller';
+import { CommonAuthController } from './common-auth.controller';
+import { ServerAuthController } from './server-auth.controller';
 import { LocalStrategy } from './local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
@@ -46,9 +48,14 @@ export class AuthModule implements NestModule {
       .forRoutes('*');
   }
   static forRoot(AuthType: string): DynamicModule {
+    // admin端登录需要校验权限，所以需要区分
     const controllers = [];
+    controllers.push(CommonAuthController);
     if (AuthType === 'admin') {
       controllers.push(AdminAuthController);
+    }
+    if (AuthType === 'server') {
+      controllers.push(ServerAuthController);
     }
     return {
       module: AuthModule,
