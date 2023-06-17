@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Req, Inject } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req, Inject, Session } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -24,7 +24,9 @@ export class AdminAuthController {
   @Post('login')
   @ApiOperation({ summary: '管理员登录' })
   @UseGuards(AuthGuard('local-login'), CaptchaGuard)
-  async login(@Body() loginDto: loginDto, @Req() req) {
+  async login(@Body() loginDto: loginDto, @Req() req, @Session() session) {
+    // 清除验证码
+    session.captcha = null;
     // 生成accessToken设置过期时间为30分钟，并且将 accessToken存入redis 中
     const accessToken = this.jwtServer.sign(
       { id: String(req.user._id) },

@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import * as svgCaptcha from 'svg-captcha';
+import * as tencentcloud from 'tencentcloud-sdk-nodejs';
+
+const SmsClient = tencentcloud.sms.v20210111.Client;
 
 @Injectable()
 export class CommonService {
@@ -14,5 +17,33 @@ export class CommonService {
       background: '#cc9966', //背景颜色
     });
     return captcha;
+  }
+
+  // 发送短信
+  async sms(phone: string, code: string) {
+    //腾讯云短信配置文件,这些在腾讯云控制台都能看见
+    const config = {
+      secretId: process.env.TENCENT_SECRET_ID,
+      secretKey: process.env.TENCENT_SECRET_KEY,
+      SmsSdkAppId: process.env.TENCENT_SMS_SDK_APP_ID,
+      SignName: process.env.TENCENT_SMS_SIGN_NAME,
+      TemplateId: process.env.TENCENT_SMS_TEMPLATE_ID,
+      Time: 5,
+    };
+    const client = new SmsClient({
+      credential: {
+        secretId: config.secretId,
+        secretKey: config.secretKey,
+      },
+      region: 'ap-guangzhou',
+    });
+    const res = await client.SendSms({
+      PhoneNumberSet: [`+86${phone}`],
+      SmsSdkAppId: config.SmsSdkAppId,
+      TemplateId: config.TemplateId,
+      SignName: config.SignName,
+      TemplateParamSet: [code],
+    });
+    return res;
   }
 }

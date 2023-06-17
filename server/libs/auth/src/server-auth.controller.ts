@@ -20,6 +20,8 @@ import { ReturnModelType } from '@typegoose/typegoose';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { ReqUser } from './req-user.decorator';
+import { CaptchaGuard } from 'common/common/guards/captcha.guard';
+import { ses } from 'tencentcloud-sdk-nodejs';
 
 @Controller('auth')
 @ApiTags('用户授权')
@@ -34,10 +36,19 @@ export class ServerAuthController {
 
   @Post('register')
   @ApiOperation({ summary: '用户注册' })
-  async register(@Body() registerDto: registerDto) {
-    const { username } = registerDto;
+  @UseGuards(CaptchaGuard)
+  async register(@Body() registerDto: registerDto, @Session() session) {
+    const { mobile, smsCode } = registerDto;
+    // 检查短信验证码
+    if (smsCode !== session.smsCode) {
+      return {
+        code: 1,
+        message: '短信验证码错误',
+      };
+    }
+    session.smsCode = null;
     // 判断用户名是否已经存在
-    if (await this.userModel.findOne({ username })) {
+    if (await this.userModel.findOne({ mobile })) {
       return {
         code: 1,
         message: '用户已存在',
@@ -56,9 +67,10 @@ export class ServerAuthController {
 
   @Post('login')
   @ApiOperation({ summary: '用户登录' })
-  @UseGuards(AuthGuard('local-login'))
+  @UseGuards(AuthGuard('local-login'), CaptchaGuard)
   async login(@Body() loginDto: loginDto, @Req() req, @Session() session) {
-    session.test = 'test';
+    // 清除验证码
+    session.captcha = null;
     // 生成accessToken设置过期时间为30分钟，并且将 accessToken存入redis 中
     const accessToken = this.jwtServer.sign(
       { id: String(req.user._id) },
