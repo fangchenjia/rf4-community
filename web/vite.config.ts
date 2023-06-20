@@ -5,8 +5,10 @@ import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
 import chalk from 'chalk'
 
-// 日志提示
+// 报错提示
 const errorLog = (msg:string) => console.log(chalk.red(`${msg}`))
+// 温馨提示
+const tipLog = (msg:string) => console.log(chalk.blue(`${msg}`))
 // 获取npm run dev --page=xxx中的xxx
 const npm_config_page:string =  process.env.npm_config_page || ''
 // 获取所有的入口文件路径
@@ -25,12 +27,14 @@ const project = getEntryPath();
 
 const getInput = () => {
   if (!npm_config_page){
-    errorLog('-----------------------请输入 --page=xxx 参数指定页面名称！-------------------------')
+    errorLog('-----------------------请输入 --page=xxx 参数指定项目名称')
+    tipLog(`-----------------------可选项目有: ${Object.keys(project).join('/')}`)
     return {}
   }
   const enterPagePath = project[npm_config_page]
   if (!enterPagePath){
-    errorLog('-----------------------不存在此项目，请检查页面名称！-------------------------')
+    errorLog('-----------------------不存在此项目，请检查项目名称！')
+    tipLog(`-----------------------可选项目有: ${Object.keys(project).join('/')}`)
     return {}
   }
   return {
