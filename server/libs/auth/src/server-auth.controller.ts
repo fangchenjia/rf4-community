@@ -8,6 +8,7 @@ import {
   Req,
   Inject,
   Session,
+  UsePipes,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
@@ -21,7 +22,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { ReqUser } from './req-user.decorator';
 import { CaptchaGuard } from 'common/common/guards/captcha.guard';
-import { ses } from 'tencentcloud-sdk-nodejs';
 
 @Controller('auth')
 @ApiTags('用户授权')

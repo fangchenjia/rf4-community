@@ -1,3 +1,6 @@
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
 import { fileURLToPath, URL } from 'url'
 import fs from "fs";
 import { defineConfig } from 'vite'
@@ -45,9 +48,25 @@ const getInput = () => {
 // https://vitejs.dev/config/
 export default defineConfig({
   root: `src/project/${npm_config_page}/`,
-  envDir: resolve(__dirname), //用于加载 .env 文件的目录。可以是一个绝对路径，也可以是相对于项目根的路径。
+  envDir: resolve(__dirname, 'src'), //用于加载 .env 文件的目录。可以是一个绝对路径，也可以是相对于项目根的路径。
   plugins: [
     vue(),
+    AutoImport({ // 自动导入NaiveUI
+      imports: [
+        'vue',
+        {
+          'naive-ui': [
+            'useDialog',
+            'useMessage',
+            'useNotification',
+            'useLoadingBar'
+          ]
+        }
+      ]
+    }),
+    Components({ // 自动导入NaiveUI
+      resolvers: [NaiveUiResolver()]
+    })
   ],
   resolve: {
     alias: {
@@ -67,4 +86,14 @@ export default defineConfig({
       }
     }
   },
+  server: {
+    port: 8090,
+    proxy: {
+      '/pc/api': {
+        target: 'http://localhost:3004',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/pc\/api/, '')
+      }
+    }
+  }
 })

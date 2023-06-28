@@ -9,6 +9,7 @@ import {
   Session,
   Res,
   Post,
+  BadRequestException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
@@ -22,6 +23,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ReqUser } from './req-user.decorator';
 import { getSmsDto } from './auth.dto';
 import { CaptchaGuard } from 'common/common';
+import { Keep } from 'common/common/decorators/keep.decorator';
 
 @Controller('auth')
 @ApiTags('用户授权')
@@ -44,6 +46,7 @@ export class CommonAuthController {
 
   @Get('captcha')
   @ApiOperation({ summary: '获取图形验证码' })
+  @Keep()
   async captcha(@Session() session, @Res() res) {
     const svgCaptcha = await this.commonService.captche(); //创建验证码
     session.captcha = svgCaptcha.text; //使用session保存验证，用于登陆时验证
@@ -63,10 +66,7 @@ export class CommonAuthController {
       if (Date.now() - +lastTime < 60 * 1000) {
         // 清空图形验证码
         session.captcha = null;
-        return {
-          code: 1,
-          message: '1分钟内只能发送一次验证码',
-        };
+        throw new BadRequestException('1分钟内只能发送一次验证码');
       }
     }
     // 生成6位数验证码
