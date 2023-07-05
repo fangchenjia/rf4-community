@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { userRegister } from '@project/pc/services/user'
+import { userRegister } from '@pc/services/user'
+import loginModal from '@pc/components/LoginModal'
+import { useAppStore } from '../stores/app';
 
-userRegister({})
+loginModal.open()
+const appStore = useAppStore()
 </script>
 
 <template>
@@ -12,10 +15,10 @@ userRegister({})
     <n-button type="tertiary">
       Tertiary
     </n-button>
-    <n-button type="primary">
+    <n-button type="primary" @click="appStore.setTheme('dark')">
       Primary
     </n-button>
-    <n-button type="info">
+    <n-button type="info"  @click="appStore.theme='light'">
       Info
     </n-button>
     <n-button type="success">
@@ -30,3 +33,4 @@ userRegister({})
   </n-space>
   </div>
 </template>
+@/project/pc/components/LoginModal

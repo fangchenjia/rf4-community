@@ -1,6 +1,6 @@
 import axios, { type AxiosResponse, type InternalAxiosRequestConfig, type AxiosRequestConfig, AxiosError, type AxiosInstance,  } from 'axios';
 import { useUserStore } from '@/store/user';
-import type { Response } from './types';
+import type { Response, MyAxiosRequestConfig } from './types';
 import { ContentTypeEnum } from './enum';
 
 axios.defaults.timeout = 1000 * 30;
@@ -13,7 +13,7 @@ const userStore = useUserStore();
 
 export class RequestHttp {
   service: AxiosInstance;
-  public constructor(config: AxiosRequestConfig) {
+  public constructor(config: MyAxiosRequestConfig) {
     // 实例化axios
     this.service = axios.create(config);
     // 请求拦截器
@@ -38,11 +38,11 @@ export class RequestHttp {
         const { code, message } = response.data;
         let errMessage = '';
         switch (code) {
-          case 2000:
+          case 200:
             break;
           case 4003: // token过期
             errMessage = '登录过期';
-            window.location.hash == '#/login';
+            config.noPermissionHandler?.();
             break;
           default:
             errMessage = message;
@@ -58,7 +58,7 @@ export class RequestHttp {
         const message = error?.response?.data?.message || error.message;
         const code = error?.response?.data?.code;
         if (code === 403) {
-          window.location.hash = '#/login';
+          config.noPermissionHandler?.();
         }
         $message?.error(message);
         return Promise.reject(error);

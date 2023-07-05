@@ -15,6 +15,7 @@ import { JwtStrategy } from './jwt.strategy';
 import RedisStore from 'connect-redis';
 import * as session from 'express-session';
 import { createClient } from 'redis';
+import { AuthService } from './auth.service';
 
 // 连接redis储存session
 const redisClient = createClient({
@@ -61,7 +62,7 @@ export class AuthModule implements NestModule {
       module: AuthModule,
       imports: [PassportModule],
       controllers,
-      providers: [LocalStrategy, JwtStrategy],
+      providers: [LocalStrategy, JwtStrategy, AuthService],
     };
   }
 }

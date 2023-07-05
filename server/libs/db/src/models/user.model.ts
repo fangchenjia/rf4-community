@@ -11,8 +11,8 @@ export type UserDocument = DocumentType<User>;
 })
 export class User {
   @prop()
-  @ApiProperty({ description: '用户名', example: 'user1' })
-  username: string;
+  @ApiProperty({ description: '手机号', example: '18711003418' })
+  mobile: string;
   @prop({
     // 从数据库中查询时默认不返回密码
     select: false,

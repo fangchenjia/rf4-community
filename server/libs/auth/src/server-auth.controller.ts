@@ -1,4 +1,3 @@
-import { CommonService } from './../../common/src/common.service';
 import {
   Controller,
   Post,
@@ -9,6 +8,7 @@ import {
   Inject,
   Session,
   UsePipes,
+  BadRequestException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 
@@ -22,6 +22,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
 import { ReqUser } from './req-user.decorator';
 import { CaptchaGuard } from 'common/common/guards/captcha.guard';
+import { AuthService } from './auth.service';
 
 @Controller('auth')
 @ApiTags('用户授权')
@@ -31,46 +32,43 @@ export class ServerAuthController {
     private cacheManager: Cache, // 缓存
     private jwtServer: JwtService, // jwt
     @InjectModel(User) private userModel: ReturnModelType<typeof User>, // 用户模型
-    private CommonService: CommonService, // 公共服务
+    private authService: AuthService, // 公共服务
   ) {}
 
   @Post('register')
   @ApiOperation({ summary: '用户注册' })
-  @UseGuards(CaptchaGuard)
   async register(@Body() registerDto: registerDto, @Session() session) {
     const { mobile, smsCode } = registerDto;
     // 检查短信验证码
     if (smsCode !== session.smsCode) {
-      return {
-        code: 1,
-        message: '短信验证码错误',
-      };
+      console.log(smsCode, session.smsCode);
+      const smsCodeErrMessage = session.smsCode
+        ? '短信验证码错误'
+        : '短信验证码已过期';
+      throw new BadRequestException(smsCodeErrMessage);
     }
     session.smsCode = null;
     // 判断用户名是否已经存在
     if (await this.userModel.findOne({ mobile })) {
-      return {
-        code: 1,
-        message: '用户已存在',
-      };
+      throw new BadRequestException('用户已存在');
     } else {
-      // 创建用户
-      const user = await this.userModel.create(registerDto);
+      // 创建用户 并生成随机昵称 不返回密码
+      const user = await this.userModel.create({
+        ...registerDto,
+        nickname: this.authService.getRandomNickname(),
+      });
       return {
-        code: 0,
-        user,
-        message: '注册成功',
+        id: user._id,
+        mobile: user.mobile,
+        nickname: user.nickname,
       };
     }
-    return registerDto;
   }
 
   @Post('login')
   @ApiOperation({ summary: '用户登录' })
-  @UseGuards(AuthGuard('local-login'), CaptchaGuard)
+  @UseGuards(AuthGuard('local-login'))
   async login(@Body() loginDto: loginDto, @Req() req, @Session() session) {
-    // 清除验证码
-    session.captcha = null;
     // 生成accessToken设置过期时间为30分钟，并且将 accessToken存入redis 中
     const accessToken = this.jwtServer.sign(
       { id: String(req.user._id) },
