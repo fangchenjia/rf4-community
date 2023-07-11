@@ -32,27 +32,45 @@
       "type": "library",
       "root": "libs/db",
       "entryFile": "index",
-      "sourceRoot": "libs/db/src",
+      "sourceRoot": "libs/modules/db/",
       "compilerOptions": {
-        "tsConfigPath": "libs/db/tsconfig.lib.json"
+        "tsConfigPath": "libs/modules/db/tsconfig.lib.json"
+      }
+    },
+    "cache": {
+      "type": "library",
+      "root": "libs/cache",
+      "entryFile": "index",
+      "sourceRoot": "libs/modules/cache/",
+      "compilerOptions": {
+        "tsConfigPath": "libs/modules/cache/tsconfig.lib.json"
+      }
+    },
+    "log": {
+      "type": "library",
+      "root": "libs/log",
+      "entryFile": "index",
+      "sourceRoot": "libs/modules/log/",
+      "compilerOptions": {
+        "tsConfigPath": "libs/modules/log/tsconfig.lib.json"
       }
     },
     "common": {
       "type": "library",
       "root": "libs/common",
       "entryFile": "index",
-      "sourceRoot": "libs/common/src",
+      "sourceRoot": "libs/modules/common/",
       "compilerOptions": {
-        "tsConfigPath": "libs/common/tsconfig.lib.json"
+        "tsConfigPath": "libs/modules/common/tsconfig.lib.json"
       }
     },
     "auth": {
       "type": "library",
       "root": "libs/auth",
       "entryFile": "index",
-      "sourceRoot": "libs/auth/src",
+      "sourceRoot": "libs/modules/auth/",
       "compilerOptions": {
-        "tsConfigPath": "libs/auth/tsconfig.lib.json"
+        "tsConfigPath": "libs/modules/auth/tsconfig.lib.json"
       }
     }
   }

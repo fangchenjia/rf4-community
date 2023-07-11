@@ -18,27 +18,17 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "libs/db": [
-        "libs/db/src"
+      "libs/": [
+        "libs/modules/"
       ],
-      "libs/db/*": [
-        "libs/db/src/*"
+      "libs/*": [
+        "libs/modules/*"
       ],
-      "common/common": [
-        "libs/common/src"
+      "shared/": [
+        "libs/shared/"
       ],
-      "common/common/*": [
-        "libs/common/src/*"
-      ],
-      "auth/auth": [
-        "libs/auth/src",
-        "libs/auth/src",
-        "libs/auth/src"
-      ],
-      "auth/auth/*": [
-        "libs/auth/src/*",
-        "libs/auth/src/*",
-        "libs/auth/src/*"
+      "shared/*": [
+        "libs/shared/*"
       ]
     }
   }
