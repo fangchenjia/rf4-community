@@ -20,9 +20,12 @@ const getEntryPath = () => {
   const PAGE_PATH = resolve(__dirname, './src/project')  //指定要查询的目录
   const entryFiles = fs.readdirSync(PAGE_PATH)   //获取到指定目录下的所有文件名
   entryFiles.forEach(filePath => {   //遍历处理每个子页面的入口
+    const stats = fs.statSync(resolve(__dirname,  `src/Project/${filePath}`));
+    if (stats.isDirectory()) {
       map[filePath] = resolve(__dirname,
       `src/Project/${filePath}/index.html`
       )
+    }
   })
   return map
 }
