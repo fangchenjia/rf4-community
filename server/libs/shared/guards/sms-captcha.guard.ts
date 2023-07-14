@@ -12,6 +12,12 @@ export class SmsCaptchaGuard implements CanActivate {
     const mobile = request.body.mobile;
     const smsCodeCacheKey = generateSmsCodeKey(mobile);
     const smsCache = await this.redisCacheService.cacheGet(smsCodeCacheKey);
+    // 测试环境代码
+    if (process.env.NODE_ENV === 'dev') {
+      if (smsCode === '123456') {
+        return true;
+      }
+    }
     if (!smsCode || !mobile) {
       throw new ApiException(ErrorEnum.INVALID_INPUT); // 手机号或验证码不能为空
     }

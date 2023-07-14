@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserDocument } from 'libs/db/models/user.model';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { registerDto, loginDto, refreshTokenDto } from './auth.dto';
+import { registerDto, loginDto, refreshTokenDto, resetPasswordDto } from './auth.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { ReqUser } from 'shared/decorators/req-user.decorator';
@@ -40,6 +40,21 @@ export class AuthController {
         nickname: user.nickname,
       },
     };
+  }
+
+  @Post('logout')
+  @ApiOperation({ summary: '用户登出' })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('USER_JWT'))
+  async logout(@ReqUser() user) {
+    return await this.authService.logout(user.id);
+  }
+
+  @Post('reset-password')
+  @ApiOperation({ summary: '重置密码' })
+  @UseGuards(SmsCaptchaGuard)
+  async resetPassword(@Body() resetPasswordDto: resetPasswordDto) {
+    return await this.authService.resetPassword(resetPasswordDto);
   }
 
   @Post('refresh-token')

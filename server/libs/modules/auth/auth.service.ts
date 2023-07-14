@@ -111,6 +111,34 @@ export class AuthService {
       };
     }
   }
+  // 登出
+  async logout(userId: string) {
+    // 删除redis中的token
+    await this.redisCacheService.cacheDel(generateAccessTokenKey(userId));
+    await this.redisCacheService.cacheDel(generateRefreshTokenKey(userId));
+    return true;
+  }
+  // 重置密码
+  async resetPassword(resetPasswordDto) {
+    // 判断用户是否存在
+    const user = await this.userModel.findOne({
+      mobile: resetPasswordDto.mobile,
+    });
+    if (!user) {
+      throw new ApiException(ErrorEnum.USER_NOT_EXIST); // 用户不存在
+    }
+    // 更新密码
+    await this.userModel.findOneAndUpdate(
+      {
+        mobile: resetPasswordDto.mobile,
+      },
+      {
+        password: resetPasswordDto.password,
+      },
+    );
+    return true;
+  }
+
   // 刷新token
   async refreshToken(refreshToken: string) {
     // 从token中解析出用户信息
