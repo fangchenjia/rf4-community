@@ -75,6 +75,7 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       '@pc': fileURLToPath(new URL('./src/project/pc', import.meta.url)),
+      '@public': fileURLToPath(new URL('./public', import.meta.url)),
     }
   },
   build: {
