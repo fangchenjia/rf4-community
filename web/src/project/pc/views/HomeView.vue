@@ -1,10 +1,19 @@
 <script setup lang="ts">
-import { userRegister } from '@pc/services/user'
-import loginModal from '@pc/components/LoginModal'
+import { userInfo, userLogin } from '@/api'
 import { useAppStore } from '../stores/app';
-
-loginModal.open()
+import { useUserStore } from '@/store/user';
+userInfo()
 const appStore = useAppStore()
+const test = () => {
+  console.log('test')
+  for(let i=0;i<6;i++){
+    userInfo().then(res=>{
+      console.log(res.code)
+    }).catch(err=>{
+      console.log(err.code)
+    })
+  }
+}
 </script>
 
 <template>
@@ -12,17 +21,17 @@ const appStore = useAppStore()
     <p class="mt-6">pc端开发中</p>
     <n-space>
     <n-button>Default</n-button>
-    <n-button type="tertiary">
-      Tertiary
+    <n-button type="tertiary" @click="test">
+      获取用户信息
     </n-button>
     <n-button type="primary" @click="appStore.setTheme('dark')">
-      Primary
+      切换黑夜模式
     </n-button>
     <n-button type="info"  @click="appStore.theme='light'">
-      Info
+      切换白天模式
     </n-button>
-    <n-button type="success">
-      Success
+    <n-button type="success" @click="useUserStore().clearUser()">
+      清除缓存
     </n-button>
     <n-button type="warning">
       Warning
@@ -33,4 +42,3 @@ const appStore = useAppStore()
   </n-space>
   </div>
 </template>
-@/project/pc/components/LoginModal

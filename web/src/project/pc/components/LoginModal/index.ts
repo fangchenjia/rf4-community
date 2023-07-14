@@ -1,3 +1,4 @@
+import { setupStore } from '@/store';
 import LoginModal from './LoginModal.vue'
 import { createApp } from "vue";
 
@@ -7,5 +8,7 @@ const rootNode = document.createElement("div");
 document.body.appendChild(rootNode);
 // 创建应用实例（第一个参数是根组件。第二个参数可选，它是要传递给根组件的 props）
 const loginModal = createApp(LoginModal);
+// 注册全局 store
+setupStore(loginModal);
 // 挂载应用实例
-export default loginModal.mount(rootNode);
+export default loginModal.mount(rootNode) as unknown as InstanceType<typeof LoginModal>;

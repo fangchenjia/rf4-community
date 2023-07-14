@@ -10,14 +10,19 @@ import router from './router'
 
 import App from './App.vue'
 
+import requestSetup from '@/project/pc/request'
+
 const app = createApp(App)
 // 注册全局 store
 setupStore(app)
+// 注册全局路由
 app.use(router)
-
-const { message, notification, dialog, loadingBar } = createDiscreteApi(
+// 注册全局组件
+const { message } = createDiscreteApi(
   ['message', 'dialog', 'notification', 'loadingBar']
 )
 window.$message = message
+// 注册全局请求
+requestSetup()
 
 app.mount('#app')

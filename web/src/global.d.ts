@@ -1,5 +1,5 @@
 declare interface Window {
-  $message?: {
+  $message: {
     success: (message: string) => void;
     error: (message: string) => void;
   };

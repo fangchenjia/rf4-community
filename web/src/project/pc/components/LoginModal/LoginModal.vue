@@ -164,7 +164,7 @@
             <n-button
               text
               tag="a"
-              href="../../assets/我们的俄钓4 用户协议.html"
+              :href="userAgreement"
               target="_blank"
               type="primary"
             >
@@ -173,7 +173,7 @@
             <n-button
               text
               tag="a"
-              href="../../assets/我们的俄钓4 隐私政策 .html"
+              :href="privacyAgreement"
               target="_blank"
               type="primary"
             >
@@ -190,14 +190,19 @@
 import { darkTheme } from "naive-ui";
 import { useAppStore } from "@pc/stores/app";
 import { ref, computed, watch } from "vue";
-import { FormInst } from "naive-ui";
+import { type FormInst } from "naive-ui";
 import { useLoginForm } from "./useLoginForm";
 import { useRegisterForm } from "./useRegisterForm";
 import { MobileAlt, Lock } from "@vicons/fa";
 import { ChevronBackSharp } from "@vicons/ionicons5";
 import { VerifiedUserRound, SmsRound } from "@vicons/material";
+import { useUserStore } from '@/store/user';
+
+import userAgreement from "@public/protocol/我们的俄钓4 用户协议.html?url";
+import privacyAgreement from "@public/protocol/我们的俄钓4 隐私政策.html?url";
 
 const appStore = useAppStore();
+const useStore = useUserStore();
 // 路由队列 用于记录登录，注册，忘记密码 模拟路由跳转
 const routeQueue = ref<modalType[]>([]);
 // 是否显示modal
@@ -229,7 +234,9 @@ const loginHandle = () => {
   loginFormRef.value?.validate((errors) => {
     if (!errors) {
       if(protocolChecked.value){
-        login().then(() => {
+        login().then(({data}) => {
+          useStore.setToken(data.accessToken);
+          useStore.setRefreshToken(data.refreshToken);
           // 登录成功
           showModal.value = false;
           window.$message.success("登录成功");
@@ -251,7 +258,7 @@ const smsClickHandle = () => {
   registerFormRef.value?.validate(
     (errors) => {
       if (!errors) {
-        getSmsCode().catch(() => {
+        getSmsCode()?.catch(() => {
           // 获取验证码失败
           getCaptchaImg();
         })
@@ -270,21 +277,16 @@ const registerHandle = () => {
         window.$message.error("请先同意用户协议");
         return;
       }
-      registerFormSubmit().then((res) => {
+      registerFormSubmit().then(() => {
         // 注册成功后自动登录
-        window.$message.success("注册成功,正在登录...");
+        window.$message.success("注册成功,即将自动登录...");
         currentModalType.value = modalType.LOGIN;
         loginForm.value.mobile = registerForm.value.mobile;
         loginForm.value.password = registerForm.value.password;
         setTimeout(() => {
-          login().then(() => {
-            // 登录成功
-            showModal.value = false
-          });
-        }, 0);
-      }).catch((err) => {
-        console.log(err);
-      })
+          loginHandle();
+        }, 1000);
+      });
     }
   });
 };

@@ -1,4 +1,4 @@
-import { userLogin } from '../../services/user';
+import { userLogin } from '@/api/user';
 
 export const useLoginForm = () => {
   const loginForm = ref({

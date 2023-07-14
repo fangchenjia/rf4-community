@@ -1,6 +1,6 @@
-import { userRegister } from '../../services/user';
+import { userRegister } from '@/api/user';
 import { CAPTCHA } from '@/api';
-import { smsCode } from '../../services/common';
+import { smsCode } from '@/api/common';
 
 export const useRegisterForm = () => {
   const registerForm = ref({
@@ -96,7 +96,7 @@ export const useRegisterForm = () => {
     return smsCode({
       mobile: registerForm.value.mobile,
       captcha: registerForm.value.captcha
-    }).then(res => {
+    }).then(() => {
       smsCodeCountDownFn();
     });
   }
