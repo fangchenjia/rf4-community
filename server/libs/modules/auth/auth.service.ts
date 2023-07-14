@@ -111,4 +111,29 @@ export class AuthService {
       };
     }
   }
+  // 刷新token
+  async refreshToken(refreshToken: string) {
+    // 从token中解析出用户信息
+    const payload = this.jwtService.decode(refreshToken) as jwtPayload;
+    if (!payload) {
+      throw new ApiException(ErrorEnum.TOKEN_ERROR); // token无效 其他设备登录
+    }
+    // 从redis中获取token
+    const redisToken = await this.redisCacheService.cacheGet(
+      generateRefreshTokenKey(payload.id),
+    );
+    // 判断与redis token是否相等 如果不相等则说明 token 已经过期（如非唯一登录）
+    if (!redisToken) {
+      throw new ApiException(ErrorEnum.REFRESH_TOKEN_EXPIRED); // token已过期
+    } else if (redisToken !== refreshToken) {
+      throw new ApiException(ErrorEnum.INVALID_TOKEN); // token无效 其他设备登录
+    }
+    // 生成新的accessToken
+    const accessToken = await this.generateAccessToken({
+      id: payload.id,
+    });
+    return {
+      accessToken,
+    };
+  }
 }

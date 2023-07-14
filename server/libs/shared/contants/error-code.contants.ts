@@ -63,12 +63,20 @@ export const ErrorEnum = {
     message: '用户不存在',
   },
   // token相关
+  TOKEN_ERROR: {
+    code: 11000,
+    message: '错误的token',
+  },
   INVALID_TOKEN: {
     code: 11001,
     message: '登录无效或在别处登录',
   },
   TOKEN_EXPIRED: {
     code: 11002,
+    message: 'accessToken过期',
+  },
+  REFRESH_TOKEN_EXPIRED: {
+    code: 11004,
     message: '登录已过期',
   },
   NO_PERMISSION: {

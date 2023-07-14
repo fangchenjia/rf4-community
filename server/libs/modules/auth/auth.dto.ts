@@ -17,10 +17,14 @@ export class registerDto {
 }
 
 export class loginDto {
-  @ApiProperty({ description: '验证码', example: '1234' })
-  captcha: string;
   @ApiProperty({ description: '手机号', example: '18711003418' })
   mobile: string;
   @ApiProperty({ description: '密码', example: '123456' })
   password: string;
+}
+
+export class refreshTokenDto {
+  @ApiProperty({ description: 'refreshToken', example: 'sfsafdafadsfas' })
+  @IsNotEmpty({ message: 'refreshToken 不能为空' })
+  refreshToken: string;
 }

@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { validate } from 'class-validator';
+import { ApiException } from 'shared/exceptions/api.exception';
+import { ErrorEnum } from 'shared/contants/error-code.contants';
 
 /**
  * 这是一个全局的参数验证管道，基于class-transformer
@@ -24,7 +26,10 @@ export class DtoValidationPipe implements PipeTransform {
     const errors = await validate(object);
     if (errors.length > 0) {
       const msg = Object.values(errors[0].constraints)[0]; // 只需要取第一个错误信息并返回即可
-      throw new BadRequestException(`Validation failed: ${msg}`);
+      throw new ApiException({
+        code: ErrorEnum.INVALID_INPUT.code,
+        message: msg,
+      });
     }
     return value;
   }

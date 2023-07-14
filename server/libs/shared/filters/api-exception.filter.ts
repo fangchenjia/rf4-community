@@ -18,7 +18,7 @@ export class ApiExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     // 如果不是HttpException，则为500错误
-    const status =
+    let status =
       exception instanceof HttpException
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
@@ -37,6 +37,10 @@ export class ApiExceptionFilter implements ExceptionFilter {
       this.logger.error(exception as string, ApiExceptionFilter.name);
     }
     const result = new ResponseDto(code, null, message);
+    // 重写401错误
+    if (status === HttpStatus.UNAUTHORIZED) {
+      status = HttpStatus.OK;
+    }
     response.status(status).send(result);
   }
 }
