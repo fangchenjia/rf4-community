@@ -72,6 +72,7 @@
               size="small"
               @click="
                 () => {
+                  resetRegisterForm();
                   currentModalType = modalType.REGISTER;
                   routeQueue.push(modalType.LOGIN);
                 }
@@ -79,95 +80,111 @@
             >
               注册账号
             </n-button>
-            <n-button text type="primary" size="small">
+            <n-button
+              text
+              type="primary"
+              size="small"
+              @click="
+                () => {
+                  resetRegisterForm();
+                  currentModalType = modalType.FORGET_PASSWORD;
+                  routeQueue.push(modalType.LOGIN);
+                }
+              "
+            >
               忘记密码
             </n-button>
           </div>
         </template>
 
         <!-- 注册表单 -->
-        <n-form
-          ref="registerFormRef"
-          :model="registerForm"
-          size="large"
-          :show-label="false"
-          :rules="registerFormRules"
-          v-if="currentModalType === modalType.REGISTER"
-        >
-          <n-form-item path="mobile">
-            <n-input v-model:value="registerForm.mobile" round placeholder="请输入手机号">
-              <template #prefix>
-                <n-icon :component="MobileAlt" />
-              </template>
-            </n-input>
-          </n-form-item>
-          <n-form-item path="password">
-            <n-input
-              v-model:value="registerForm.password"
-              round
-              type="password"
-              show-password-on="click"
-              :placeholder="passwordInputNum === 1 ? '请再次输入密码确认' : '请输入密码'"
-            >
-              <template #prefix>
-                <n-icon :component="Lock" />
-              </template>
-            </n-input>
-          </n-form-item>
-          <!-- 图形验证码 -->
-          <n-form-item path="captcha">
-            <n-row>
-              <n-col :span="14">
-                <n-input
-                  v-model:value="registerForm.captcha"
-                  round
-                  placeholder="请输入图形验证码"
-                >
-                  <template #prefix>
-                    <n-icon :component="VerifiedUserRound" />
-                  </template>
-                </n-input>
-              </n-col>
-              <n-col  :span="9" :offset="1">
-                <img class="w-full h-full" :src="captchaImg" @click="getCaptchaImg()">
-              </n-col>
-            </n-row>
-          </n-form-item>
-          <n-form-item path="smsCode">
-            <n-input v-model:value="registerForm.smsCode" round placeholder="请输入短信验证码">
-              <template #prefix>
-                <n-icon :component="SmsRound" />
-              </template>
-              <template #suffix>
-                <n-button text type="primary" @click="smsClickHandle"> {{ smsCodeText }} </n-button>
-              </template>
-            </n-input>
-          </n-form-item>
-          <n-form-item>
-            <n-button
-              class="w-full"
-              attr-type="button"
-              type="primary"
-              round
-              :loading="registerFormLoading"
-              @click="registerHandle"
-            >
-              注册
-            </n-button>
-          </n-form-item>
-        </n-form>
+        <template v-if="currentModalType === modalType.REGISTER || currentModalType === modalType.FORGET_PASSWORD">
+          <n-form
+            ref="registerFormRef"
+            :model="registerForm"
+            size="large"
+            :show-label="false"
+            :rules="registerFormRules"
+          >
+            <n-form-item path="mobile">
+              <n-input
+                v-model:value="registerForm.mobile"
+                round
+                placeholder="请输入手机号"
+              >
+                <template #prefix>
+                  <n-icon :component="MobileAlt" />
+                </template>
+              </n-input>
+            </n-form-item>
+            <!-- 图形验证码 -->
+            <n-form-item path="captcha">
+              <n-row>
+                <n-col :span="14">
+                  <n-input
+                    v-model:value="registerForm.captcha"
+                    round
+                    placeholder="请输入图形验证码"
+                  >
+                    <template #prefix>
+                      <n-icon :component="VerifiedUserRound" />
+                    </template>
+                  </n-input>
+                </n-col>
+                <n-col :span="9" :offset="1">
+                  <img class="w-full h-full" :src="captchaImg" @click="getCaptchaImg()" />
+                </n-col>
+              </n-row>
+            </n-form-item>
+            <n-form-item path="smsCode">
+              <n-input
+                v-model:value="registerForm.smsCode"
+                round
+                placeholder="请输入短信验证码"
+              >
+                <template #prefix>
+                  <n-icon :component="SmsRound" />
+                </template>
+                <template #suffix>
+                  <n-button text type="primary" @click="smsClickHandle">
+                    {{ smsCodeText }}
+                  </n-button>
+                </template>
+              </n-input>
+            </n-form-item>
+            <n-form-item path="password">
+              <n-input
+                v-model:value="registerForm.password"
+                round
+                type="password"
+                show-password-on="click"
+                :placeholder="passwordPlaceholder"
+              >
+                <template #prefix>
+                  <n-icon :component="Lock" />
+                </template>
+              </n-input>
+            </n-form-item>
+            <n-form-item>
+              <n-button
+                class="w-full"
+                attr-type="button"
+                type="primary"
+                round
+                :loading="registerFormLoading"
+                @click="currentModalType === modalType.REGISTER ? registerHandle() : resetPasswordHandle()"
+              >
+                {{ currentModalType === modalType.REGISTER ? '注册' : '重置密码' }}
+              </n-button>
+            </n-form-item>
+          </n-form>
+        </template>
 
         <!-- 底部协议 -->
         <template #footer>
           <div class="ml-1 mb-2">
             <n-checkbox v-model:checked="protocolChecked" />&nbsp;我已阅读并同意
-            <n-button
-              text
-              tag="a"
-              :href="userAgreement"
-              target="_blank"
-              type="primary"
-            >
+            <n-button text tag="a" :href="userAgreement" target="_blank" type="primary">
               《用户协议》
             </n-button>
             <n-button
@@ -248,7 +265,7 @@ const loginHandle = () => {
   });
 };
 /*************************注册表单部分******************/
-const { registerForm, registerFormRules, registerFormLoading, passwordInputNum, captchaImg, getCaptchaImg, smsCodeText, getSmsCode, registerFormSubmit } = useRegisterForm();
+const { registerForm, registerFormRules, registerFormLoading, passwordPlaceholder, captchaImg, getCaptchaImg, smsCodeText, getSmsCode, registerFormSubmit, resetPass, resetForm: resetRegisterForm} = useRegisterForm();
 // 获取图形验证码
 getCaptchaImg();
 const registerFormRef = ref<FormInst | null>(null);
@@ -268,7 +285,7 @@ const smsClickHandle = () => {
       return rule?.key === 'mobile' || rule?.key === 'captcha'
     }
   )
-}; 
+};
 // 注册按钮点击事件
 const registerHandle = () => {
   registerFormRef.value?.validate((errors) => {
@@ -290,6 +307,23 @@ const registerHandle = () => {
     }
   });
 };
+// 重置密码提交事件
+const resetPasswordHandle = async () => {
+  registerFormRef.value?.validate((errors) => {
+    if (!errors) {
+      resetPass().then(() => {
+        // 重置密码成功后自动登录
+        window.$message.success("重置密码成功");
+        currentModalType.value = modalType.LOGIN;
+        loginForm.value.mobile = registerForm.value.mobile;
+        loginForm.value.password = '';
+      });
+    }
+  });
+}
+
+
+
 
 // 协议是否勾选
 const protocolChecked = ref(true);

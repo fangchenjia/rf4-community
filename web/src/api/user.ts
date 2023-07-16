@@ -2,6 +2,7 @@ export const USER_LOGIN = '/v1/auth/login'
 export const USER_REGISTER = '/v1/auth/register'
 export const USER_INFO = '/v1/auth/info'
 export const REFRESH_TOKEN = '/v1/auth/refresh-token'
+export const RESET_PASSWORD = '/v1/auth/reset-password'
 
 import request from '@/utils/request'
 
@@ -35,6 +36,10 @@ export const userLogin = (params: userLoginPrarms) => {
 
 export const userRegister = (params: userRegisterPrarms) => {
   return request.post(USER_REGISTER, params)
+}
+
+export const resetPassword = (params: userRegisterPrarms) => {
+  return request.post(RESET_PASSWORD, params)
 }
 
 export const getRefreshToken = (params: refreshTokenPrarms) => {

@@ -1,4 +1,4 @@
-import { userRegister } from '@/api/user';
+import { userRegister, resetPassword } from '@/api/user';
 import { CAPTCHA } from '@/api';
 import { smsCode } from '@/api/common';
 
@@ -13,37 +13,37 @@ export const useRegisterForm = () => {
   let passwordCache = '';
   // 第几次输入密码
   const passwordInputNum = ref(0);
+  const passwordPlaceholder = ref('请输入密码');
   const validatePasswordConfirm = (rule: any, value: string, callback: any) => {
     if(!value) {
       callback(new Error('请输入密码'));
-      passwordCache = '';
       return;
     }
     // 校验格式
     if(!/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/.test(value)) {
       callback(new Error('请输入6-20位数字和字母组合'));
-      passwordCache = '';
+      return;
+    }
+    // 当用户已经输入过密码时，第二次输入密码也校验成功后，如果用户再次点击输入框而不修改时，不再校验
+    if(passwordCache && passwordCache === value) {
+      passwordInputNum.value = 0;
+      callback();
       return;
     }
     passwordInputNum.value++;
-    console.log(passwordInputNum.value);
     if (passwordInputNum.value === 1) {
-      // 当用户已经输入过密码时，第二次输入密码也校验成功后，如果用户再次点击输入框而不修改时，不再校验
-      if(passwordCache === value) {
-        passwordInputNum.value = 0;
-        callback();
-        return;
-      }
       // 第一次输入密码缓存和第二次比较
       passwordCache = value;
       registerForm.value.password = '';
+      passwordPlaceholder.value = '请再次输入密码确认';
       callback();
     }else if (passwordInputNum.value === 2) {
       if(value !== passwordCache) {
-        callback(new Error('两次输入密码不一致'));
         registerForm.value.password = '';
+        callback(new Error('两次输入密码不一致'));
       }
       passwordInputNum.value = 0;
+      passwordPlaceholder.value = '请输入密码';
     }
   }
   const registerFormRules = ref({
@@ -112,6 +112,24 @@ export const useRegisterForm = () => {
     });
   }
 
+  // 重置密码 因为重置密码和注册的逻辑一样，所以这里直接复用注册的逻辑
+  const resetPass = () => {
+    registerFormLoading.value = true;
+    return resetPassword({
+      mobile: registerForm.value.mobile,
+      password: registerForm.value.password,
+      smsCode: registerForm.value.smsCode
+    }).finally(() => {
+      registerFormLoading.value = false;
+    });
+  }
+   
+  const resetForm = () => {
+    registerForm.value.mobile = '';
+    registerForm.value.password = '';
+    registerForm.value.captcha = '';
+    registerForm.value.smsCode = '';
+  }
 
 
   const registerFormLoading = ref(false);
@@ -120,11 +138,13 @@ export const useRegisterForm = () => {
     registerForm,
     registerFormRules,
     registerFormLoading,
-    passwordInputNum,
+    passwordPlaceholder,
     captchaImg,
     getCaptchaImg,
     smsCodeText,
     getSmsCode,
-    registerFormSubmit
+    registerFormSubmit,
+    resetPass,
+    resetForm
   }
 };
