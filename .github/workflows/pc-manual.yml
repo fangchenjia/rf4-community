@@ -41,7 +41,6 @@ jobs:
           file: ./web/src/project/pc/Dockerfile
           push: true
           tags: rf4-community-pc:latest
-
       - name: Deploy to Docker
         uses: appleboy/ssh-action@master
         with:
