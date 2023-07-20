@@ -43,12 +43,12 @@ jobs:
           tags: rf4-community-pc:latest
 
       - name: Deploy to Docker
-          uses: appleboy/ssh-action@master
+          uses: garygrossgarten/github-action-ssh@0.7.0
           with:
             host: 110.42.213.115
             username: root
             password: ${{ secrets.SSH_PASSWORD }}
-            script: |
+            command: |
               docker stop rf4-community-pc || true
               docker rm rf4-community-pc || true
               docker pull rf4-community-pc
