@@ -43,14 +43,14 @@ jobs:
           tags: rf4-community-pc:latest
 
       - name: Deploy to Docker
-          uses: appleboy/ssh-action@master
-          with:
-            host: 110.42.213.115
-            username: root
-            password: ${{ secrets.SSH_PASSWORD }}
-            script: |
-              docker stop rf4-community-pc || true
-              docker rm rf4-community-pc || true
-              docker pull rf4-community-pc
-              docker run -d -p 8081:80 --name rf4-community-pc rf4-community-pc
+        uses: appleboy/ssh-action@master
+        with:
+          host: 110.42.213.115
+          username: root
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            docker stop rf4-community-pc || true
+            docker rm rf4-community-pc || true
+            docker pull rf4-community-pc
+            docker run -d -p 8081:80 --name rf4-community-pc rf4-community-pc
   
