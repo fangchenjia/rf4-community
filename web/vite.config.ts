@@ -20,10 +20,10 @@ const getEntryPath = () => {
   const PAGE_PATH = resolve(__dirname, './src/project')  //指定要查询的目录
   const entryFiles = fs.readdirSync(PAGE_PATH)   //获取到指定目录下的所有文件名
   entryFiles.forEach(filePath => {   //遍历处理每个子页面的入口
-    const stats = fs.statSync(resolve(__dirname,  `src/Project/${filePath}`));
+    const stats = fs.statSync(resolve(__dirname,  `src/project/${filePath}`));
     if (stats.isDirectory()) {
       map[filePath] = resolve(__dirname,
-      `src/Project/${filePath}/index.html`
+      `src/project/${filePath}/index.html`
       )
     }
   })
@@ -50,6 +50,7 @@ const getInput = () => {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: `/${npm_config_page}/`,
   root: `src/project/${npm_config_page}/`,
   envDir: resolve(__dirname, 'src'), //用于加载 .env 文件的目录。可以是一个绝对路径，也可以是相对于项目根的路径。
   plugins: [

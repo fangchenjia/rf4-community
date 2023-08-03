@@ -15,6 +15,8 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api-docs', app, document);
   await app.listen(process.env.ADMIN_PORT || 3000);
-  console.log(`admin server run: http://localhost:${process.env.ADMIN_PORT}`);
+  console.log(
+    `admin server run: http://${process.env.ADMIN_HOST}:${process.env.ADMIN_PORT}`,
+  );
 }
 bootstrap();

@@ -1,0 +1,15 @@
+# 使用指定的基础镜像作为基础
+FROM nginx:latest
+
+# 将前端项目的构建产物复制到Nginx的默认网站目录
+ADD ./web/dist/pc /usr/share/nginx/html/pc
+ADD ./web/dist/mobile /usr/share/nginx/html/mobile
+ADD ./web/dist/admin /usr/share/nginx/html/admin
+# 配置文件 nginx.conf 在前端项目中
+ADD ./web/nginx/nginx.conf /etc/nginx/nginx.conf
+
+# 暴露80端口
+EXPOSE 80
+
+# 启动Nginx并指定配置文件
+CMD ["nginx", "-g", "daemon off;"]

@@ -33,6 +33,8 @@ async function bootstrap() {
     new ApiExceptionFilter(app.get(WINSTON_MODULE_PROVIDER)),
   );
   await app.listen(process.env.SERVER_PORT || 3001);
-  console.log(`server run: http://localhost:${process.env.SERVER_PORT}`);
+  console.log(
+    `server run: http://${process.env.SERVER_HOST}:${process.env.SERVER_PORT}`,
+  );
 }
 bootstrap();

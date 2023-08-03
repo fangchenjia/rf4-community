@@ -59,7 +59,7 @@ export const useRegisterForm = () => {
   const captchaImg = ref('');
   // 获取图形验证码
   const getCaptchaImg = () => {
-    captchaImg.value = `${import.meta.env.VITE_PC_API_PREFIX}${CAPTCHA}?t=${new Date().getTime()}`;
+    captchaImg.value = `${import.meta.env.VITE_PC_API_BASE_URL}${CAPTCHA}?t=${new Date().getTime()}`;
   }
 
   // 短信验证码部分

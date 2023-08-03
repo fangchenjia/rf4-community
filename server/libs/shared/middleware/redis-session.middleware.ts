@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 
 import RedisStore from 'connect-redis';
 import * as session from 'express-session';
-import { Redis } from 'ioredis';
+import { createClient } from 'redis';
 
 type RedisOption = {
   port: number;
@@ -14,15 +14,14 @@ type RedisOption = {
 };
 
 export function RedisSessionMiddleware(redisOption: RedisOption) {
-  // 连接redis储存session
-  const redisClient = new Redis({
-    port: redisOption.port,
-    host: redisOption.host,
-    password: redisOption.password,
+  const client = createClient({
+    url: `redis://default:${redisOption.password}@${redisOption.host}:${redisOption.port}`,
   });
+  client.on('error', (err) => console.log('Redis Client Error', err));
+  client.connect();
 
   const redisStore = new RedisStore({
-    client: redisClient,
+    client: client,
     ttl: redisOption.maxAge,
   });
   const fn = session({

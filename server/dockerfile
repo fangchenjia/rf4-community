@@ -1,0 +1,28 @@
+FROM node:16-alpine
+
+RUN mkdir -p /logs
+RUN mkdir -p /app
+RUN mkdir -p /
+WORKDIR /app
+
+# 复制源文件
+COPY ./package.json /app
+COPY ./package-lock.json /app
+# 安装依赖
+RUN npm install
+# 复制源文件 忽略 node_modules
+COPY . /app
+# 编译
+RUN npm run build
+# 设置环境变量
+ENV NODE_ENV=prod
+# 设置端口
+EXPOSE 3003
+EXPOSE 3004
+# 启动服务 默认启动server服务  启动web服务 npm run start:prod:admin 启动容器时覆盖即可
+CMD npm run start:prod:server
+
+
+
+
+

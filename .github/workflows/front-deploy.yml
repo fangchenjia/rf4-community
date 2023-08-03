@@ -1,19 +1,19 @@
 # This is a basic workflow that is manually triggered
 
-name: pc Manual workflow
+name: front Manual workflow
 
 # Controls when the action will run. Workflow runs when manually triggered using the UI
 # or API.
 on:
   push:
     paths:
-      - web/src/project/pc/**/*
+      - web/**
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-       # 检出代码到工作目录
+       # 检出代码到工作目录 
       - name: Checkout code
         uses: actions/checkout@v2
       # 安装 Node.js
@@ -23,10 +23,16 @@ jobs:
           node-version: '16'
       # 安装项目依赖
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd web/
+          npm install
        # 构建前端项目
       - name: Build project
-        run: npm run build --page=pc
+        run: |
+          cd web/
+          npm run build --page=pc
+          npm run build --page=mobile
+          npm run build --page=admin
       # 登录到 Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v1
@@ -38,9 +44,9 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: ./web/src/project/pc/Dockerfile
+          file: ./web/dockerfile
           push: true
-          tags: rf4-community-pc:latest
+          tags: fangchenjia/rf4-community-front:latest
       - name: Deploy to Docker
         uses: appleboy/ssh-action@master
         with:
@@ -48,8 +54,10 @@ jobs:
           username: root
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            docker stop rf4-community-pc || true
-            docker rm rf4-community-pc || true
-            docker pull rf4-community-pc
-            docker run -d -p 8081:80 --name rf4-community-pc rf4-community-pc
+            docker stop rf4-community-front || true
+            docker rm rf4-community-front || true
+            docker rmi fangchenjia/rf4-community-front || true
+            docker pull fangchenjia/rf4-community-front
+            docker run -d -p 8081:80 --name rf4-community-front fangchenjia/rf4-community-front
+
   
