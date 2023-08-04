@@ -13,10 +13,12 @@ import { RedisCacheService } from './redis-cache.service';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
         const store = await redisStore({
-          host: configService.get('REDIS_HOST'),
-          port: configService.get('REDIS_PORT'),
-          db: configService.get('REDIS_DB'), //目标库,
-          password: configService.get('REDIS_PASSWORD'), // 密码,没有可以不写
+          socket: {
+            host: configService.get('REDIS_HOST'),
+            port: configService.get('REDIS_PORT'),
+          },
+          database: configService.get('REDIS_DB'),
+          password: configService.get('REDIS_PASSWORD'),
         } as any);
         return {
           store: store as any,
