@@ -4,3 +4,7 @@
 > 项目后台采用nestjs框架，详情请查看[server/README.md](./server/README.md)
 
 > 项目前台采用vue3+ts，详情请查看[web/README.md](./web/README.md)
+
+## 项目介绍
+
+项目预览地址：[https://rf4.cosycosy.cn](https://rf4.cosycosy.cn)
