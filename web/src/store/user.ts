@@ -2,9 +2,10 @@ import { defineStore } from 'pinia';
 
 export const useUserStore = defineStore('user',{
   state: () => ({
+    isLogin: false,
     token: '',
     refreshToken: '',
-    userInfo: {},
+    userInfo: {} as any,
   }),
   persist: true,
   getters: {
@@ -17,8 +18,6 @@ export const useUserStore = defineStore('user',{
   },
   actions: {
     setToken(token: string): void {
-      // 虽然已经配置了persist，这里是为了在axios中方便获取token
-      localStorage.setItem('access-token', token);
       this.token = token;
     },
     setRefreshToken(refreshToken: string): void {
@@ -28,6 +27,7 @@ export const useUserStore = defineStore('user',{
       this.userInfo = userInfo;
     },
     clearUser(): void {
+      this.isLogin = false;
       this.token = '';
       this.refreshToken = '';
       this.userInfo = {};

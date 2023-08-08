@@ -26,8 +26,17 @@ type refreshTokenPrarms = {
   refreshToken: string
 }
 
+type userInfoResponse = {
+  id: string
+  mobile: string
+  nickname: string
+  avatar: string
+  role: string
+  status: string
+}
+
 export const userInfo = () => {
-  return request.get(USER_INFO)
+  return request.get<userInfoResponse>(USER_INFO)
 }
 
 export const userLogin = (params: userLoginPrarms) => {

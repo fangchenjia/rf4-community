@@ -3,13 +3,14 @@
     :theme="appStore.theme === 'dark' ? darkTheme : undefined"
     :theme-overrides="appStore.themeOverrides"
   >
-    <n-modal v-model:show="showModal">
+    <n-modal v-model:show="showModal" :mask-closable="false">
       <n-card
         closable
         class="login-modal"
         :bordered="false"
         size="small"
         role="dialog"
+        :on-close="()=> showModal = false"
         aria-modal="true"
       >
         <template #header> {{ modalTitle }} </template>
@@ -204,9 +205,10 @@
 </template>
 
 <script lang="ts" setup name="loginModal">
+import { userInfo } from "@/api/user";
 import { darkTheme } from "naive-ui";
 import { useAppStore } from "@pc/stores/app";
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { type FormInst } from "naive-ui";
 import { useLoginForm } from "./useLoginForm";
 import { useRegisterForm } from "./useRegisterForm";
@@ -254,6 +256,11 @@ const loginHandle = () => {
         login().then(({data}) => {
           useStore.setToken(data.accessToken);
           useStore.setRefreshToken(data.refreshToken);
+          // 获取用户信息
+          userInfo().then(({data}) => {
+            useStore.setUserInfo(data);
+            useStore.isLogin = true;
+          });
           // 登录成功
           showModal.value = false;
           window.$message.success("登录成功");

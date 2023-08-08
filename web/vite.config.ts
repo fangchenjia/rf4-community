@@ -94,10 +94,10 @@ export default defineConfig({
   server: {
     port: 8090,
     proxy: {
-      '/pc/api': {
+      '/api-server': {
         target: 'http://localhost:3004',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/pc\/api/, '')
+        rewrite: (path) => path.replace(/^\/api-server/, '')
       }
     }
   }

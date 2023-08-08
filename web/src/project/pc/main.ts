@@ -19,7 +19,12 @@ setupStore(app)
 app.use(router)
 // 注册全局组件
 const { message } = createDiscreteApi(
-  ['message', 'dialog', 'notification', 'loadingBar']
+  ['message', 'dialog', 'notification', 'loadingBar'],
+  {
+    messageProviderProps: {
+      max: 2,
+    }
+  }
 )
 window.$message = message
 // 注册全局请求
