@@ -62,8 +62,8 @@ import LoginModal from './LoginModal'
 const userStore = useUserStore()
 const appStore = useAppStore()
 // 主题切换
-const themeSwitch = appStore.theme === 'dark'
-const themeUpdate = (value : boolean) => {
+let themeSwitch = appStore.theme === 'dark'
+let themeUpdate = (value : boolean) => {
   appStore.setTheme(value ? 'dark' : 'light')
 }
 // 用户菜单配置
