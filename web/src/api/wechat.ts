@@ -2,6 +2,9 @@ import axios from 'axios';
 const ARTICLELIST = '/https://mp.weixin.qq.com/mp/appmsgalbum';
 const request = axios.create({
   baseURL: import.meta.env.VITE_PROXY_SERVER,
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest', // 设置该请求为ajax请求
+  }
 });
 // 根据__biz获取公众号最新文章
 type ArticleListParams = {
