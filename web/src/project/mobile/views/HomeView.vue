@@ -2,36 +2,8 @@
 </script>
 
 <template>
-  <div>
-    <p class="mt-6">h5端开发中</p>
-    <ul class="space-y-4">
-    <li>
-      <div class="w-64 h-3 bg-gradient-to-br from-fuchsia-500 to-purple-600"></div>
-    </li>
-    <li>
-      <div class="w-56 h-3 bg-gradient-to-br from-fuchsia-500 to-purple-600"></div>
-    </li>
-    <li>
-      <div class="w-48 h-3 bg-gradient-to-br from-fuchsia-500 to-purple-600"></div>
-    </li>
-    <li>
-      <div class="w-40 h-3 bg-gradient-to-br from-fuchsia-500 to-purple-600"></div>
-    </li>
-    <li>
-      <div class="w-32 h-3 bg-gradient-to-br from-fuchsia-500 to-purple-600"></div>
-    </li>
-    <li>
-      <div class="w-24 h-3 bg-gradient-to-br from-fuchsia-500 to-purple-600"></div>
-    </li>
-    <li>
-      <div class="w-20 h-3 bg-gradient-to-br from-fuchsia-500 to-purple-600"></div>
-    </li>
-    <li>
-      <div class="w-16 h-3 bg-gradient-to-br from-fuchsia-500 to-purple-600"></div>
-    </li>
-    <li>
-      <div class="w-12 h-3 bg-gradient-to-br from-fuchsia-500 to-purple-600"></div>
-    </li>
-    </ul>
+  <!-- 开发中页面 -->
+  <div class="flex flex-col items-center justify-center h-screen">
+    <span class="mt-4">h5页面还在开发中，请在pc端访问。</span>
   </div>
 </template>

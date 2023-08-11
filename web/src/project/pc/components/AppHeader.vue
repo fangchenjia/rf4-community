@@ -1,9 +1,9 @@
 <template>
-  <div class="px-8 flex items-center">
-    <div class="flex items-center">
+  <div class="px-12 flex items-center">
+    <a class="flex items-center" href="/">
       <img class="w-10 h-11" src="../assets/logo.png" alt="">
       <h3 class="ml-4">我们的俄钓4</h3>
-    </div>
+    </a>
     <!-- 前进后退按钮 -->
     <!-- <n-space class="ml-20 w-20" align="center" justify="space-between">
       <n-button text>
@@ -47,6 +47,11 @@
           白天模式
         </template> -->
       </n-switch>
+      <!-- github地址 -->
+      <div>
+        <a target="_blank" class="mt-2" href="https://github.com/fangchenjia"><n-icon class="mt-1" :component="Github" :size="24" /></a>
+      </div>
+      
     </n-space>
   </div>
 </template>
@@ -54,7 +59,7 @@
 <script setup lang="ts">
 import { useAppStore } from '@pc/stores/app'
 import { IosMoon, IosSunny, IosArrowBack, IosArrowForward, IosArrowDown } from '@vicons/ionicons4'
-import { User } from '@vicons/fa'
+import { User, Github } from '@vicons/fa'
 import { renderIcon } from '@pc/utils/render'
 import { useUserStore } from '@/store/user'
 import LoginModal from './LoginModal'

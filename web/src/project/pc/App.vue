@@ -57,31 +57,10 @@ const userStore = useUserStore()
               <AppHeader />
             </n-layout-header>
             <!-- 主体 -->
-            <n-layout has-sider class="app-main">
-              <!-- 侧边栏 -->
-              <n-layout-sider
-                :width="240"
-                :content-style="{
-                  height: '100%',
-                }"
-                :native-scrollbar="false"
-              >
-                <n-menu
-                  :options="menuOptions"
-                />
-                <n-button round class="app-loginout" v-if="userStore.isLogin" @click="userStore.clearUser">
-                  <template #icon>
-                    <n-icon>
-                      <LogInOutlined />
-                    </n-icon>
-                  </template>
-                  退出登录
-                </n-button>
-              </n-layout-sider>
-              <!-- 内容 -->
-              <n-layout>
-                <router-view />
-              </n-layout>
+            <n-layout class="app-main">
+              <div class="max-w-5xl m-auto">
+                <router-view  />
+              </div>
             </n-layout>
           </n-layout>
         </n-dialog-provider>
