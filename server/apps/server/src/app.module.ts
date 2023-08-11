@@ -7,8 +7,10 @@ import { DbModule } from 'libs/db';
 import { RedisSessionMiddleware } from 'shared/middleware/redis-session.middleware';
 import { CommonModule } from 'libs/common';
 import { LogModule } from 'libs/log';
-// import { UserModule } from './user/user.module';
 import { AuthModule } from 'libs/auth';
+import { PointModule } from './point/point.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksService } from './schedule/task.service';
 
 @Module({
   imports: [
@@ -22,9 +24,11 @@ import { AuthModule } from 'libs/auth';
     CommonModule,
     LogModule,
     AuthModule,
+    PointModule,
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, TasksService],
 })
 export class AppModule {
   constructor(private readonly configService: ConfigService) {}

@@ -1,21 +1,44 @@
 <script setup lang="ts">
-import { ArrowForwardIosRound } from '@vicons/material'
-import { getWechatArticleList } from '@/api/wechat'
+import { ArrowForwardIosRound, KeyboardArrowDownTwotone } from '@vicons/material'
+import { getWechatArticleList, wechatArticleListLatest } from '@/api/wechat'
 import { accountList } from '@/config/wechatArticle'
 import { useThemeVars } from 'naive-ui'
 import moment from 'moment'
 const themeVars = useThemeVars()
 
-
+// 公众号列表
 const wechatAccountList: any = ref(accountList.map(account => {
+  account.mapAlbums.unshift({
+    label: '最新文章',
+    key: '0',
+  })
   return {
     ...account,
     curMapAlbum: account.mapAlbums[0],
     dataList: [],
   }
 }))
+
+// 最新文章
+let latestArticleData: any = null
+wechatArticleListLatest().then(({data}) => {
+  latestArticleData = data 
+  // 默认展示最新文章
+  wechatAccountList.value.forEach((account: any) => {
+    account.dataList = latestArticleData[account.__biz] || []
+  })
+})
+
+// 选择地图
 const mapSelectHandle = (account: any, album_id: string) => {
+  if (account.curMapAlbum.key === album_id) return
   account.curMapAlbum = account.mapAlbums.find((album: any) => album.key === album_id)
+  // 如果是最新文章
+  if (album_id === '0') {
+    account.dataList = latestArticleData[account.__biz] || []
+    return
+  }
+  
   getWechatArticleList({
     __biz: account.__biz,
     album_id,
@@ -56,8 +79,8 @@ const mapSelectHandle = (account: any, album_id: string) => {
           </span>
         </template>
         <!-- 公众号更多按钮 -->
-        <template #header-extra>
-          <n-button text size="small" tag="a" target="_blank" :href="`https://mp.weixin.qq.com/mp/appmsgalbum?__biz=${account.__biz}&action=getalbum&album_id=${account.curMapAlbum.key}&from_itemidx=1&nolastread=1#wechat_redirect`">
+        <template #header-extra >
+          <n-button v-show="account.curMapAlbum.key !== '0'" text size="small" tag="a" target="_blank" :href="`https://mp.weixin.qq.com/mp/appmsgalbum?__biz=${account.__biz}&action=getalbum&album_id=${account.curMapAlbum.key}&from_itemidx=1&nolastread=1#wechat_redirect`">
             更多
             <n-icon :size="20" :component="ArrowForwardIosRound"></n-icon>
           </n-button>
@@ -69,9 +92,10 @@ const mapSelectHandle = (account: any, album_id: string) => {
             trigger="click"
             size="small"
             :options="account.mapAlbums"
-            :on-select="(album_id) => {mapSelectHandle(account, album_id)}"
+            :menu-props="() => ({ style: 'max-height: 250px; overflow: scroll;' })"
+            :on-select="(album_id: string) => {mapSelectHandle(account, album_id)}"
           >
-            <span> {{ account.curMapAlbum.label }} </span>
+            <span class="flex items-center"> {{ account.curMapAlbum.label }} <label class="ml-2" v-show="account.curMapAlbum.key === '0'">选择地图</label> <n-icon :size="18" :component="KeyboardArrowDownTwotone"></n-icon> </span>
           </n-dropdown>
         </template>
         <n-empty description="什么也没有" v-if="account.dataList.length === 0">
@@ -82,7 +106,7 @@ const mapSelectHandle = (account: any, album_id: string) => {
             <div class="w-2/3 ml-2">
               <n-ellipsis class="text-base min-w-full" :tooltip="false">
                 <!-- 如果有() 或者 【】则去掉 -->
-                {{ item?.title.replace(/(\(|\（)[^(\)|\）]*(\)|\）)/g, '').replace(/(\[)[^(\])]*(\])/g, '')  }}
+                {{ item?.title }}
               </n-ellipsis>
               <div class="flex mt-2 items-center">
                 <span class="ml-2 mr-4">
