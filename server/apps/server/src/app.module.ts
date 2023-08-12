@@ -9,8 +9,8 @@ import { CommonModule } from 'libs/common';
 import { LogModule } from 'libs/log';
 import { AuthModule } from 'libs/auth';
 import { PointModule } from './point/point.module';
-import { ScheduleModule } from '@nestjs/schedule';
 import { TasksService } from './schedule/task.service';
+import { TaskModule } from './schedule/task.module';
 
 @Module({
   imports: [
@@ -25,10 +25,10 @@ import { TasksService } from './schedule/task.service';
     LogModule,
     AuthModule,
     PointModule,
-    ScheduleModule.forRoot(),
+    TaskModule
   ],
   controllers: [AppController],
-  providers: [AppService, TasksService],
+  providers: [AppService],
 })
 export class AppModule {
   constructor(private readonly configService: ConfigService) {}
