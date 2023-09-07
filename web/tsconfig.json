@@ -1,5 +1,11 @@
-{
-  "files": [],
+{ 
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@pc/*": ["src/project/pc/*"],
+    }
+  },
   "references": [
     {
       "path": "./tsconfig.node.json"

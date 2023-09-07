@@ -25,6 +25,7 @@ export const lightThemeOverrides = {
 
 export const darkThemeOverrides = {
   "common": {
+    "bodyColor": "#0d132aFF",
     "primaryColorSuppl": "#36ad6a",
     "primaryColor": "#519af7FF",
     "primaryColorHover": "#3274f6FF"

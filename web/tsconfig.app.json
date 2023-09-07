@@ -1,14 +1,14 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["env.d.ts", "src/global.d.ts" , "src/**/*", "src/**/*.vue"],
+  "include": ["env.d.ts", "src/global.d.ts" , "src/**/*"],
   "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
     "module": "esnext",
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@pc/*": ["./src/project/pc/*"],
+      "@/*": ["src/*"],
+      "@pc/*": ["src/project/pc/*"],
     }
   }
 }
