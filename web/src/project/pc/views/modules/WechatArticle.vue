@@ -85,16 +85,18 @@ import { getWechatArticleList, wechatArticleListLatest } from '@/api/wechat'
 import { accountList } from '@/config/wechatArticle'
 import moment from 'moment'
 import { useThemeVars } from 'naive-ui';
+import { cloneDeep } from 'lodash-es';
 const themeVars = useThemeVars();
 // 公众号列表
 const wechatAccountList: any = ref(accountList.map(account => {
-  account.mapAlbums.unshift({
+  const cloneAccount = cloneDeep(account)
+  cloneAccount.mapAlbums.unshift({
     label: '最新文章',
     key: '0',
   })
   return {
-    ...account,
-    curMapAlbum: account.mapAlbums[0],
+    ...cloneAccount,
+    curMapAlbum: cloneAccount.mapAlbums[0],
     dataList: [],
   }
 }))
