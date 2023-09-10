@@ -50,14 +50,19 @@ export class PointService {
           if (todayArticle[album.__biz].length === 0) {
             todayArticle[album.__biz].push(article);
           } else {
-            // 如果数组不为空，遍历数组，如果当前文章的发布时间大于数组中的文章发布时间，插入到数组中
+            // 如果数组不为空，遍历数组，如果当前文章的发布时间大于数组中的文章发布时间，插入到数组对应位置，否则直接推入
+            let flag = false;
             for (let i = 0; i < todayArticle[album.__biz].length; i++) {
               if (
                 article.create_time > todayArticle[album.__biz][i].create_time
               ) {
                 todayArticle[album.__biz].splice(i, 0, article);
+                flag = true;
                 break;
               }
+            }
+            if (!flag) {
+              todayArticle[album.__biz].push(article);
             }
           }
         }
