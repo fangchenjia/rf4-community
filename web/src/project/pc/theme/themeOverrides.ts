@@ -3,47 +3,33 @@
  */
 export const lightThemeOverrides = {
   "common": {
+    "diyColor": "red",
+    "bodyColor": "#f2f3f5",
     "primaryColor": '#2563eb',  // 主色
     "primaryColorHover": '#1d4ed8',  // 主色 hover
     "textColorBase": "#000",
-    "warningColorSuppl": "#fcb040"
+    "warningColorSuppl": "#fcb040",
   },
   "Layout": {
-    "textColor": "#757b93FF",
-    "color": "#f6f8fdFF"
-  },
-  "Menu": {
-    "groupTextColor": "rgb(118, 124, 130)",
-    "itemTextColor": "#757b93FF",
-    "itemTextColorHover": "rgb(51, 54, 57)",
-    "itemIconColor": "#757b93FF"
-  },
-  "Icon": {
-    "color": "#000"
+    "siderColor": "#f2f3f5FF"
   }
 }
 
 export const darkThemeOverrides = {
   "common": {
-    "bodyColor": "#0d132aFF",
+    "bodyColor": "#252525",
     "primaryColorSuppl": "#36ad6a",
     "primaryColor": "#519af7FF",
-    "primaryColorHover": "#3274f6FF"
+    "primaryColorHover": "#3274f6FF",
+  },
+  "Layout": {
+    "siderColor": "#252525",
+    "headerColor": "#2a2a2a",
+  },
+  "Card": {
+    "color": "#2a2a2a",
   },
   "Switch": {
     "railColorActive": "#519af7FF",
-  },
-  "Menu": {
-    "groupTextColor": "rgb(118, 124, 130)",
-    "itemTextColor": "#757b93FF",
-    "itemTextColorHover": "#519af7FF",
-    "itemIconColor": "#757b93FF",
-    "itemIconColorHover": "#519af7FF"
-  },
-  "Layout": {
-    "color": "#161e35FF",
-    "headerColor": "#0d132aFF",
-    "siderColor": "#0d132aFF"
   }
-
 }

@@ -11,7 +11,7 @@
       </template>
       <!-- 公众号名称 -->
       <template #header>
-        <span>
+        <span class="font-normal">
           {{ account.name }}
         </span>
         <span class="ml-3 text-xs font-light">
@@ -54,27 +54,27 @@
         <li
           v-for="item in account.dataList"
           :key="item.key"
-          class="flex items-center justify-around py-3 album-item"
+          class="flex items-center justify-around py-2 album-item"
         >
-          <n-avatar :size="80" :src="item.cover_img_1_1" />
-          <div class="w-2/3 ml-2">
-            <n-ellipsis class="text-base min-w-full" :tooltip="false">
+          <n-avatar :size="50" :src="item.cover_img_1_1" />
+          <div class="w-3/4">
+            <n-ellipsis class="text-sm min-w-full" :tooltip="false">
               <!-- 如果有() 或者 【】则去掉 -->
               {{ item?.title }}
             </n-ellipsis>
-            <div class="flex mt-2 items-center">
-              <span class="ml-2 mr-4">
+            <div class="flex mt-2 items-center justify-between text-sm">
+              <span class="ml-2">
                 {{ moment(item.create_time * 1000).format("YYYY-MM-DD") }}
               </span>
-              <n-button text size="small" tag="a" target="_blank" :href="item.url">
+              <n-button class="mr-4" text size="small" tag="a" target="_blank" :href="item.url">
                 查看详情
+                <n-icon class="ml-1" :size="14" :component="ArrowForwardIosRound"></n-icon>
               </n-button>
             </div>
           </div>
         </li>
         <!-- 空白填充  -->
-        <div style="width: 30%"></div>
-        <div style="width: 30%"></div>
+        <div style="width: 48%"></div>
       </ul>
     </n-thing>
   </n-thing>
@@ -83,9 +83,9 @@
 import { ArrowForwardIosRound, KeyboardArrowDownTwotone } from '@vicons/material'
 import { getWechatArticleList, wechatArticleListLatest } from '@/api/wechat'
 import { accountList } from '@/config/wechatArticle'
-import { useThemeVars } from 'naive-ui'
 import moment from 'moment'
-const themeVars = useThemeVars()
+import { useThemeVars } from 'naive-ui';
+const themeVars = useThemeVars();
 // 公众号列表
 const wechatAccountList: any = ref(accountList.map(account => {
   account.mapAlbums.unshift({
@@ -134,10 +134,10 @@ const mapSelectHandle = (account: any, album_id: string) => {
 </script>
 <style scoped lang="scss">
 .album-item {
-  width: 30%;
+  width: 48%;
   border-top: 1px solid v-bind('themeVars.borderColor');
-  // 最后第3-6个额外加个border-bottom 排除最后俩个空白填充
-  &:nth-last-child(-n+6):not(:nth-last-child(-n+2)) {
+  // 倒数 2-3个额外加个border-bottom 排除最后一个空白填充
+  &:nth-last-child(-n+3):not(:nth-last-child(-n+1)) {
     border-bottom: 1px solid v-bind('themeVars.borderColor');
   }
 }

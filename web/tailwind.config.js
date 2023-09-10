@@ -8,8 +8,15 @@ module.exports = {
     './src/**/*.{vue,js,ts,jsx,tsx}'
   ],
   theme: {
-    extend: {},
+    extend: {
+      // 底部shadow 白色和黑色
+      dropShadow: {
+        'dark': '0 0 10px rgba(255, 255, 255, 0.2)',
+        'light': '0 0 10px rgba(0, 0, 0, 0.1)',
+      }
+    }
   },
+  darkMode: ['class'],
   plugins: [],
 }
 

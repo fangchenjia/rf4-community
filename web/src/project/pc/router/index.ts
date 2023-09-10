@@ -10,7 +10,20 @@ const router = createRouter({
     {
       path: '/home',
       name: 'home',
-      component: () => import('../views/HomeView.vue')
+      redirect: '/recommend',
+      component: () => import('../views/HomeView.vue'),
+      children: [
+        {
+          path: '/map-point',
+          name: 'mapPoint',
+          component: () => import('../views/MapPoint.vue')
+        },
+        {
+          path: '/recommend',
+          name: 'recommend',
+          component: () => import('../views/HomeRecommend.vue')
+        }
+      ]
     },
     {
       path: '/developing',
