@@ -22,6 +22,11 @@ const router = createRouter({
           path: '/recommend',
           name: 'recommend',
           component: () => import('../views/HomeRecommend.vue')
+        },
+        {
+          path: '/contribute',
+          name: 'contribute',
+          component: () => import('../views/HomeContribute.vue')
         }
       ]
     },

@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { useWindowScroll } from '@vueuse/core'
 import { Map } from '@vicons/fa'
-import { PhotoFilterTwotone } from '@vicons/material'
-import { RouterLink } from 'vue-router'
+import { PhotoFilterTwotone, AccessTimeRound } from '@vicons/material'
+import { RouterLink, useRouter } from 'vue-router'
 import { MenuOption } from 'naive-ui'
 import { renderIcon } from '@/project/pc/utils/render'
+import { useThemeVars } from 'naive-ui'
+
+const router = useRouter()
+const themeVars = useThemeVars()
 
 // 滚动超过200 header会隐藏 所以左边nav需要上移 
 const { y } = useWindowScroll()
@@ -86,8 +90,18 @@ const now = useNow()
     </main>
     <!-- 右部 aside -->
     <aside class="w-64">
-      <n-card :bordered="false" class="rounded">
-        游戏时间：{{ convertToGameTime(now.getTime()) }}
+      <n-card :bordered="false" class="rounded" content-style="display: flex; align-items: center; justify-content: space-around; padding: 1rem;">
+        <div>
+          <span class="">当前游戏时间</span>
+          <p class="flex items-center mb-0 mt-1">
+            <n-icon size="20" :component="AccessTimeRound" :color="themeVars.primaryColor"></n-icon>
+            <n-gradient-text type="primary" class="ml-2 text-base">
+              {{ convertToGameTime(now) }}
+            </n-gradient-text>
+          </p>
+
+        </div>
+        <n-button type="primary" ghost @click="router.push('/contribute')">去投稿</n-button>
       </n-card>
     </aside>
   </section>
