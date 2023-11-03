@@ -26,4 +26,15 @@ export class RedisCacheService {
   async cacheClear(): Promise<any> {
     return this.cacheManager.reset();
   }
+
+  async cacheClearKey(key): Promise<any> {
+    // 获取所有key
+    const keys = await this.cacheManager.store.keys();
+    // 删除包含key的缓存
+    keys
+      .filter((k) => k.includes(key))
+      .forEach((k) => {
+        this.cacheManager.del(k);
+      });
+  }
 }

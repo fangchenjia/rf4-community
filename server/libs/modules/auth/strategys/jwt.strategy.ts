@@ -24,6 +24,9 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'USER_JWT') {
   async validate(req, payload) {
     // 获取token
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
-    return this.authService.validateToken(token);
+    await this.authService.validateToken(token);
+    delete payload.iat;
+    delete payload.exp;
+    return payload;
   }
 }

@@ -4,7 +4,9 @@ import { TypegooseModule } from 'nestjs-typegoose';
 import { ConfigService } from '@nestjs/config';
 
 import { User } from './models/user.model';
-const models = TypegooseModule.forFeature([User]);
+import { Role } from './models/role.model';
+import { Menu } from './models/menu.model';
+const models = TypegooseModule.forFeature([User, Role, Menu]);
 
 @Global()
 @Module({

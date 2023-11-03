@@ -11,6 +11,7 @@
     "start": "nest start",
     "start:dev:server": "cross-env NODE_ENV=dev nest start --watch server",
     "start:dev:admin": "cross-env NODE_ENV=dev nest start --watch admin",
+    "start:debug:admin": "cross-env NODE_ENV=dev nest start --debug --watch admin",
     "start:debug": "nest start --debug --watch",
     "start:prod:server": "cross-env NODE_ENV=prod nest start server",
     "start:prod:admin": "cross-env NODE_ENV=prod nest start admin",

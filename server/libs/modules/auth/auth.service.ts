@@ -84,8 +84,7 @@ export class AuthService {
     } else if (redisToken !== token) {
       throw new ApiException(ErrorEnum.INVALID_TOKEN); // token无效 其他设备登录
     }
-    // 返回用户信息
-    return await this.userModel.findById(payload.id);
+    return true;
   }
   // 生成随机昵称 用户+随机字符串
   getRandomNickname() {
@@ -163,5 +162,15 @@ export class AuthService {
     return {
       accessToken,
     };
+  }
+
+  // 获取用户信息
+  async getUserInfo(user: UserDocument) {
+    const userId = user.id;
+    // 根据用户id聚合查询获取roles, 不返回menus
+    const userInfo = await this.userModel.findById(userId).populate('roles', {
+      menus: 0,
+    });
+    return userInfo;
   }
 }

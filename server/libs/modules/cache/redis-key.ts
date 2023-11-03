@@ -8,3 +8,8 @@ export function generateRefreshTokenKey(userId: string): string {
 export function generateSmsCodeKey(phone: string, suffix?: string): string {
   return `smsCode:${phone}${suffix ? `:${suffix}` : ''}`;
 }
+
+// 用户权限校验key
+export function generateUserPermissionKey(userId: string): string {
+  return `userPermission:${userId}`;
+}

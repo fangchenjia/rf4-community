@@ -2,7 +2,12 @@ import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserDocument } from 'libs/db/models/user.model';
 import { ReturnModelType } from '@typegoose/typegoose';
-import { registerDto, loginDto, refreshTokenDto, resetPasswordDto } from './auth.dto';
+import {
+  registerDto,
+  loginDto,
+  refreshTokenDto,
+  resetPasswordDto,
+} from './auth.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { ReqUser } from 'shared/decorators/req-user.decorator';
@@ -26,12 +31,18 @@ export class AuthController {
   @ApiOperation({ summary: '用户登录' })
   @UseGuards(AuthGuard('USER_LOGIN'))
   async login(@Body() loginDto: loginDto, @ReqUser() user) {
-    const accessToken = await this.authService.generateAccessToken({
+    const tokenPayload = {
       id: String(user._id),
-    });
-    const refreshToken = await this.authService.generateRefreshToken({
-      id: String(user._id),
-    });
+      mobile: user.mobile,
+      nickname: user.nickname,
+      avatar: user.avatar,
+    };
+    const accessToken = await this.authService.generateAccessToken(
+      tokenPayload,
+    );
+    const refreshToken = await this.authService.generateRefreshToken(
+      tokenPayload,
+    );
     return {
       accessToken,
       refreshToken,
@@ -69,6 +80,7 @@ export class AuthController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('USER_JWT'))
   async userInfo(@ReqUser() user: UserDocument) {
-    return user;
+    const userInfo = this.authService.getUserInfo(user);
+    return userInfo;
   }
 }
