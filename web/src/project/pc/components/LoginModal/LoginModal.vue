@@ -124,6 +124,7 @@
                 <n-col :span="14">
                   <n-input
                     v-model:value="registerForm.captcha"
+                    :input-props="{ autocomplete: 'off' }"
                     round
                     placeholder="请输入图形验证码"
                   >
@@ -141,6 +142,7 @@
               <n-input
                 v-model:value="registerForm.smsCode"
                 round
+                :input-props="{ autocomplete: 'off' }"
                 placeholder="请输入短信验证码"
               >
                 <template #prefix>
@@ -157,6 +159,7 @@
               <n-input
                 v-model:value="registerForm.password"
                 round
+                :input-props="{ autocomplete: 'off' }"
                 type="password"
                 show-password-on="click"
                 :placeholder="passwordPlaceholder"
