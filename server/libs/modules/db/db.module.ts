@@ -6,7 +6,19 @@ import { ConfigService } from '@nestjs/config';
 import { User } from './models/user.model';
 import { Role } from './models/role.model';
 import { Menu } from './models/menu.model';
-const models = TypegooseModule.forFeature([User, Role, Menu]);
+import { Position } from './models/position.model';
+import { Map } from './models/map.model';
+import { Fish } from './models/fish.model';
+import { Bait } from './models/bait.model';
+const models = TypegooseModule.forFeature([
+  User,
+  Role,
+  Menu,
+  Position,
+  Map,
+  Fish,
+  Bait,
+]);
 
 @Global()
 @Module({

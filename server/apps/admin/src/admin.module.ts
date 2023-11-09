@@ -11,6 +11,7 @@ import { RedisSessionMiddleware } from 'shared/middleware/redis-session.middlewa
 import { RoleModule } from './system/role/role.module';
 import { MenuModule } from './system/menu/menu.module';
 import { UserModule } from './system/user/user.module';
+import { CrawlerModule } from './crawler/crawler.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -26,6 +27,7 @@ import { UserModule } from './system/user/user.module';
     RoleModule,
     MenuModule,
     UserModule,
+    CrawlerModule,
   ],
   controllers: [AdminController],
   providers: [AdminService],

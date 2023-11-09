@@ -9,7 +9,6 @@ import { CommonModule } from 'libs/common';
 import { LogModule } from 'libs/log';
 import { AuthModule } from 'libs/auth';
 import { PointModule } from './point/point.module';
-import { TasksService } from './schedule/task.service';
 import { TaskModule } from './schedule/task.module';
 
 @Module({
