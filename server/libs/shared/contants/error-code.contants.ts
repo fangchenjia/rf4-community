@@ -83,6 +83,11 @@ export const ErrorEnum = {
     code: 11003,
     message: '无权限，请联系管理员申请权限',
   },
+  // dist管理
+  DIST_EXIST: {
+    code: 12000,
+    message: '字典项已存在',
+  },
 } as const;
 
 export type ErrorEnumType = {

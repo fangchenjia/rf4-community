@@ -12,6 +12,7 @@ import { RoleModule } from './system/role/role.module';
 import { MenuModule } from './system/menu/menu.module';
 import { UserModule } from './system/user/user.module';
 import { CrawlerModule } from './crawler/crawler.module';
+import { DictModule } from './system/dict/dict.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -28,6 +29,7 @@ import { CrawlerModule } from './crawler/crawler.module';
     MenuModule,
     UserModule,
     CrawlerModule,
+    DictModule,
   ],
   controllers: [AdminController],
   providers: [AdminService],
