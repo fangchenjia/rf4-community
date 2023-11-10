@@ -44,6 +44,21 @@
           </n-icon>
         </n-dropdown>
 
+        <!-- 管理员入口 -->
+        <n-tooltip
+          placement="bottom"
+          trigger="hover"
+        >
+          <template #trigger>
+            <div>
+              <a target="_blank" href="/admin">
+                <n-icon :size="20" :component="UsersCog"></n-icon>
+              </a>
+            </div>
+          </template> 
+          管理员入口
+        </n-tooltip>
+
         <div class="flex items-center">
           <!-- 头像框 -->
           <n-dropdown v-if="userStore.isLogin" :options="userOptions" trigger="hover" @select="userSelectHandle">
@@ -67,6 +82,7 @@ import { useAppStore } from '@pc/stores/app'
 import { LogInOutlined, ModeCommentOutlined } from '@vicons/material'
 import { User, Bell, MessageCircle, ThumbUp } from '@vicons/tabler'
 import { IosArrowBack, IosArrowForward } from '@vicons/ionicons4'
+import { UsersCog } from '@vicons/fa'
 import { renderIcon } from '@pc/utils/render'
 import { useUserStore } from '@/store/user'
 import LoginModal from './LoginModal'

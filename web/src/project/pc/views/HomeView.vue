@@ -7,7 +7,8 @@ import { MenuOption } from 'naive-ui'
 import { renderIcon } from '@/project/pc/utils/render'
 import { useThemeVars } from 'naive-ui'
 import { useLoadingBar } from 'naive-ui'
-import globelRouter from '@/project/pc/router'
+import globelRouter from '@pc/router'
+import SiteRecommend from '@pc/views/modules/SiteRecommend.vue'
 
 // 跳转路由添加progress
 const loadingBar = useLoadingBar()
@@ -117,6 +118,7 @@ const now = useNow()
         </div>
         <n-button type="primary" ghost @click="router.push('/contribute')">去投稿</n-button>
       </n-card>
+      <SiteRecommend />
     </aside>
   </section>
 </template>

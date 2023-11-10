@@ -27,7 +27,8 @@ const router = createRouter({
         {
           path: '/contribute',
           name: 'contribute',
-          component: () => import('../views/HomeContribute.vue')
+          redirect: '/developing',
+          // component: () => import('../views/HomeContribute.vue')
         }
       ]
     },
