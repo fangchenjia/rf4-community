@@ -22,7 +22,9 @@ onMounted(() => {
         <n-dialog-provider>
           <AppHeader />
           <section id="app-main">
-            <router-view />
+            <n-loading-bar-provider>
+              <router-view />
+            </n-loading-bar-provider>
           </section>
         </n-dialog-provider>
       </n-message-provider>

@@ -6,6 +6,20 @@ import { RouterLink, useRouter } from 'vue-router'
 import { MenuOption } from 'naive-ui'
 import { renderIcon } from '@/project/pc/utils/render'
 import { useThemeVars } from 'naive-ui'
+import { useLoadingBar } from 'naive-ui'
+import globelRouter from '@/project/pc/router'
+
+// 跳转路由添加progress
+const loadingBar = useLoadingBar()
+globelRouter.beforeEach((to, from, next) => {
+  if (to.path !== from.path) {
+    loadingBar.start()
+  }
+  next()
+})
+globelRouter.afterEach(() => {
+  loadingBar.finish()
+})
 
 const router = useRouter()
 const themeVars = useThemeVars()
