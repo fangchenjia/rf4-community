@@ -1,8 +1,10 @@
-import { ConfigService } from '@nestjs/config';
-import { RedisCacheService } from 'libs/cache';
-import { Controller, Get } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PointService } from './point.service';
+import { AuthGuard } from '@nestjs/passport';
+import { ReqUser } from 'shared/decorators/req-user.decorator';
+import { UserDocument } from 'libs/db/models/user.model';
+import { SubmitPointDto } from './point.dto';
 
 @Controller('point')
 @ApiTags('点位模块')
@@ -13,5 +15,15 @@ export class PointController {
   @ApiOperation({ summary: '获取微信公众号最新文章' })
   async register() {
     return await this.pointService.getWechatArticleList();
+  }
+
+  @Post('submitPoint')
+  @ApiOperation({ summary: '投稿' })
+  @UseGuards(AuthGuard('USER_JWT'))
+  async submitPoint(
+    @ReqUser() user: UserDocument,
+    @Body() body: SubmitPointDto,
+  ) {
+    return await this.pointService.submitPoint(user, body);
   }
 }

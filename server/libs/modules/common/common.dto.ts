@@ -11,3 +11,9 @@ export class getSmsDto {
   @Length(4, 4, { message: '图形验证码长度为4位' })
   captcha: string;
 }
+
+export class QueryDictDto {
+  @ApiProperty({ description: '字典项类型', example: '' })
+  @IsNotEmpty()
+  type: string;
+}

@@ -9,6 +9,9 @@ import { useThemeVars } from 'naive-ui'
 import { useLoadingBar } from 'naive-ui'
 import globelRouter from '@pc/router'
 import SiteRecommend from '@pc/views/modules/SiteRecommend.vue'
+import { useMapStore } from '@/store/map'
+// 首页初始化地图
+useMapStore().getMaps()
 
 // 跳转路由添加progress
 const loadingBar = useLoadingBar()

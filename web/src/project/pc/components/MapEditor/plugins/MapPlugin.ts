@@ -32,8 +32,11 @@ class MapPlugin {
 
   // 设置当前地图
   setCurMap(mapKey: string) {
-    const mapItem = mapItems.find((item) => item.value === mapKey)
-    if (!mapItem) return
+    // 没找到则模糊匹配 写法有点乱mapItems 应该从后台取，而不是前端一份后台一份，后续优化！！！
+    const mapItem = mapItems.find((item) => item.value === mapKey) || mapItems.find((item) => item.label.includes(mapKey))
+    if (!mapItem) {
+      return 
+    }
     this.curMap = mapItem
     this._setMapImage(mapItem.imageUrl)
     // 清空所有arrow path

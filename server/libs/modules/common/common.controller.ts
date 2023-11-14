@@ -8,15 +8,20 @@ import {
   Session,
   Res,
   Post,
+  Query,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { CommonService } from './common.service';
 import { Keep } from 'shared/decorators/keep.decorator';
 import { CaptchaGuard } from 'shared/guards/captcha.guard';
-import { getSmsDto } from './common.dto';
+import { QueryDictDto, getSmsDto } from './common.dto';
 import { generateSmsCodeKey } from 'libs/cache';
 import { ErrorEnum } from 'shared/contants/error-code.contants';
 import { ApiException } from 'shared/exceptions/api.exception';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('common')
 @ApiTags('公共服务')
@@ -40,5 +45,37 @@ export class CommonController {
   async sms(@Body() body: getSmsDto) {
     const { mobile } = body;
     return this.commonService.getSmsCaptcha(mobile);
+  }
+
+  @Get('dict')
+  @ApiOperation({ summary: '获取字典项' })
+  async dict(@Query() queryParam: QueryDictDto) {
+    return this.commonService.dict(queryParam);
+  }
+
+  @Post('uploadImage')
+  @ApiOperation({ summary: '上传图片' })
+  @UseGuards(AuthGuard('USER_JWT'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: {
+        fileSize: 1024 * 1024 * 4,
+      },
+      fileFilter: (req, file, cb) => {
+        if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+          return cb(new ApiException(ErrorEnum.FILE_TYPE_ERROR), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  async uploadImage(@UploadedFile() file: Express.Multer.File) {
+    return this.commonService.uploadImage(file);
+  }
+
+  @Get('ossClear')
+  @ApiOperation({ summary: 'oss文件清理' })
+  async ossClear() {
+    return this.commonService.ossClear();
   }
 }

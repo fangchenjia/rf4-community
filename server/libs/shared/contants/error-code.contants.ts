@@ -88,6 +88,15 @@ export const ErrorEnum = {
     code: 12000,
     message: '字典项已存在',
   },
+  // 上传文件
+  MAX_FILE_SIZE: {
+    code: 13000,
+    message: '文件大小超过限制',
+  },
+  FILE_TYPE_ERROR: {
+    code: 13001,
+    message: '文件类型错误',
+  },
 } as const;
 
 export type ErrorEnumType = {

@@ -23,6 +23,10 @@ export class Position {
   @ApiProperty({ description: '点位标题', example: '83145暴口' })
   title: string;
 
+  @prop()
+  @ApiProperty({ description: '关键字', example: '刷水底' })
+  keywords: string[];
+
   @prop({ ref: () => User })
   @ApiProperty({ description: '作者' })
   author: Ref<User>;
@@ -35,21 +39,57 @@ export class Position {
   @ApiProperty({ description: '鱼' })
   fish: Ref<Fish>[];
 
-  @prop({ ref: () => Bait })
+  @prop()
   @ApiProperty({ description: '鱼饵' })
-  baits: string[] | Ref<Bait>[];
+  baits: string;
+
+  @prop()
+  @ApiProperty({ description: '卡米' })
+  distance: string;
+
+  @prop()
+  @ApiProperty({ description: '引线' })
+  line: string;
+
+  @prop()
+  @ApiProperty({ description: '钩子' })
+  hook: string;
 
   @prop()
   @ApiProperty({ description: '经纬度' })
-  position: string;
+  position: number[];
+
+  @prop()
+  @ApiProperty({ description: '钓具' })
+  fishingTackle: string;
+
+  @prop()
+  @ApiProperty({ description: '钓组' })
+  fishingGroup: string;
 
   @prop()
   @ApiProperty({ description: '描述' })
   description: string;
 
   @prop()
-  @ApiProperty({ description: '图片' })
-  images: string[];
+  @ApiProperty({ description: '标签' })
+  tags: string[];
+
+  @prop()
+  @ApiProperty({ description: '时间' })
+  time: string;
+
+  @prop()
+  @ApiProperty({ description: '温度' })
+  temperature: string;
+
+  @prop()
+  @ApiProperty({ description: '鱼获图片' })
+  fishImages: string[];
+
+  @prop()
+  @ApiProperty({ description: '装备图片' })
+  equipmentImages: string[];
 
   @prop()
   @ApiProperty({ description: 'canvas数据' })

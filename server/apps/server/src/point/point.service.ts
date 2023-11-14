@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { ApiException } from 'shared/exceptions/api.exception';
 import { ErrorEnum } from 'shared/contants/error-code.contants';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ArticlleAlbums } from './wechatArticleConfig';
+import { Position } from 'libs/db/models/position.model';
 import axios from 'axios';
 import { RedisCacheService } from 'libs/cache';
+import { InjectModel } from 'nestjs-typegoose';
 
 @Injectable()
 export class PointService {
   constructor(
     private redisCacheService: RedisCacheService, // 缓存
+    @InjectModel(Position) private readonly positionModel,
   ) {
     // 启动时缓存微信公众号文章
     this.captureWechatArticleList();
@@ -76,5 +78,20 @@ export class PointService {
       todayArticle,
       60 * 60 * 24,
     );
+  }
+
+  // 投稿
+  async submitPoint(user, body) {
+    const userId = user.id;
+    const position = {
+      author: userId,
+      ...body,
+      status: 'pendingReview',
+    };
+    const res = await this.positionModel.create(position);
+    return {
+      title: res.title,
+      id: res._id,
+    };
   }
 }

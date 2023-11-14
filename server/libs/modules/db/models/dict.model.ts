@@ -1,7 +1,7 @@
 import { prop, modelOptions, DocumentType } from '@typegoose/typegoose';
 import { ApiProperty } from '@nestjs/swagger';
 
-export type UserDocument = DocumentType<Dict>;
+export type DictDocument = DocumentType<Dict>;
 
 @modelOptions({
   schemaOptions: {

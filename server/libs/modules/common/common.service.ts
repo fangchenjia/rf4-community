@@ -5,6 +5,11 @@ import { ErrorEnum } from 'shared/contants/error-code.contants';
 import { ApiException } from 'shared/exceptions/api.exception';
 import * as svgCaptcha from 'svg-captcha';
 import * as tencentcloud from 'tencentcloud-sdk-nodejs';
+import { Dict } from 'libs/db/models/dict.model';
+import { InjectModel } from 'nestjs-typegoose';
+import { QueryDictDto } from './common.dto';
+import { OssService } from './oss.service';
+import { Image } from 'libs/db/models/image.model';
 
 const SmsClient = tencentcloud.sms.v20210111.Client;
 
@@ -13,7 +18,33 @@ export class CommonService {
   constructor(
     private readonly configService: ConfigService,
     private redisCacheService: RedisCacheService,
+    private ossService: OssService,
+    @InjectModel(Dict) private readonly dictModel,
+    @InjectModel(Image) private readonly imageModel,
   ) {}
+
+  async uploadImage(file: Express.Multer.File) {
+    // 生成随机文件名
+    const suffix = file.originalname?.split('.').pop() || 'png';
+    let filename = Date.now() + '.' + suffix;
+    filename = `/rf4-community/${filename}`;
+    const ossUrl = await this.ossService.putOssFile(filename, file.buffer);
+    await this.imageModel.create({
+      imageUrl: ossUrl,
+      imageName: filename,
+      used: false,
+    });
+    return ossUrl;
+  }
+
+  async ossClear() {
+    // 找到没有使用过的图片
+    const images = await this.imageModel.find({
+      used: false,
+    });
+    const imageNames = images.map((image) => image.imageName);
+    await this.ossService.deleteFile(imageNames);
+  }
   // 生成验证码
   async captche(size = 4) {
     const captcha = svgCaptcha.create({
@@ -102,5 +133,13 @@ export class CommonService {
   // 获取6位随机数验证码
   getRandomSmsCode() {
     return String(Math.floor(100000 + Math.random() * 900000));
+  }
+
+  // 获取字典
+  async dict(queryParam: QueryDictDto) {
+    const dictList = await this.dictModel.find({
+      type: queryParam.type,
+    });
+    return dictList;
   }
 }

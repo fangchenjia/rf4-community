@@ -24,7 +24,7 @@ export const mapItems = [
     pointRange: [{x:33,y:36},{x:108,y:112}],
   },
   {
-    label: '3图 唯有诺克河',
+    label: '3图 惟有诺克河',
     value: '1',
     imageUrl: 'https://rf4-qq.oss-cn-hangzhou.aliyuncs.com/rf4-map/%E6%83%9F%E6%9C%89%E8%AF%BA%E5%85%8B%E6%B2%B3-3.png',
     pointRange: [{x:48,y:57},{x:138,y:147}]
@@ -42,7 +42,7 @@ export const mapItems = [
     pointRange: [{x:3,y:-4},{x:109,y:103}],
   },
   {
-    label: '16图 阔里湖',
+    label: '16图 廓里湖',
     value: '4',
     imageUrl: 'https://rf4-qq.oss-cn-hangzhou.aliyuncs.com/maps/%E5%BB%93%E9%87%8C%E6%B9%96-16.png',
     pointRange: [{x:56,y:56},{x:146,y:146}],
@@ -60,7 +60,7 @@ export const mapItems = [
     pointRange:[{x:2,y:0},{x:201,y:199}],
   },
   {
-    label: '22图 北顿涅苏河',
+    label: '22图 北顿涅茨河',
     value: '7',
     imageUrl: 'https://rf4-qq.oss-cn-hangzhou.aliyuncs.com/maps/%E5%8C%97%E9%A1%BF%E6%B6%85%E8%8C%A8%E6%B2%B3-22.png',
     pointRange: [{x:13,y:11},{x:189,y:187}],
@@ -84,7 +84,7 @@ export const mapItems = [
     pointRange: [{x:6,y:25},{x:186,y:205}],
   },
   {
-    label: '27图 拉多加群岛',
+    label: '27图 拉多加湖群岛',
     value: '11',
     imageUrl: 'https://rf4-qq.oss-cn-hangzhou.aliyuncs.com/maps/%E6%8B%89%E5%A4%9A%E5%8A%A0%E6%B9%96%E7%BE%A4%E5%B2%9B-27.png',
     pointRange: [{x:0,y:0},{x:599,y:599}],
@@ -96,7 +96,7 @@ export const mapItems = [
     pointRange: [{x:2,y:1},{x:200,y:199}]
   },
   {
-    label: '30图 下古斯通河',
+    label: '30图 下通古斯卡河',
     value: '13',
     imageUrl: 'https://rf4-qq.oss-cn-hangzhou.aliyuncs.com/maps/%E4%B8%8B%E9%80%9A%E5%8F%A4%E6%96%AF%E5%8D%A1%E6%B2%B3-30.png',
     pointRange: [{x:0,y:0},{x:240,y:240}]

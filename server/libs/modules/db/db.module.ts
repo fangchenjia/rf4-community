@@ -11,6 +11,7 @@ import { Map } from './models/map.model';
 import { Fish } from './models/fish.model';
 import { Bait } from './models/bait.model';
 import { Dict } from './models/dict.model';
+import { Image } from './models/image.model';
 const models = TypegooseModule.forFeature([
   User,
   Role,
@@ -20,6 +21,7 @@ const models = TypegooseModule.forFeature([
   Fish,
   Bait,
   Dict,
+  Image,
 ]);
 
 @Global()
