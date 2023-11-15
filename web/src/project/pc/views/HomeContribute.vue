@@ -277,6 +277,7 @@ const baitsInputHandle = (val) => {
 const customRequest = ({ file, data, onFinish, onError }: any) => {
   const formData = new FormData();
   formData.append("file", file.file);
+  formData.append("type", "position");
   uploadImg(formData)
     .then(({ data }) => {
       file.status = "finished";

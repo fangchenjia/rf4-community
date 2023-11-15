@@ -1,10 +1,4 @@
-import {
-  DynamicModule,
-  Global,
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-} from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { CommonController } from './common.controller';
 import { CommonService } from './common.service';
 import { RedisCacheModule } from 'libs/cache';

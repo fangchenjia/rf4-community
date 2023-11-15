@@ -22,16 +22,22 @@ export class CommonService {
     @InjectModel(Dict) private readonly dictModel,
     @InjectModel(Image) private readonly imageModel,
   ) {}
-
-  async uploadImage(file: Express.Multer.File) {
+  /**
+   *
+   * @param type 图片类型 头像、点位投稿图片...
+   * @param file 图片文件
+   * @returns ossUrl 图片地址
+   */
+  async uploadImage(type: string, file: Express.Multer.File) {
     // 生成随机文件名
     const suffix = file.originalname?.split('.').pop() || 'png';
-    let filename = Date.now() + '.' + suffix;
-    filename = `/rf4-community/${filename}`;
+    let filename = type + Date.now() + '.' + suffix;
+    filename = `rf4-community/${type}/${filename}`;
     const ossUrl = await this.ossService.putOssFile(filename, file.buffer);
     await this.imageModel.create({
       imageUrl: ossUrl,
       imageName: filename,
+      type,
       used: false,
     });
     return ossUrl;

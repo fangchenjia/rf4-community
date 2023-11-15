@@ -18,6 +18,10 @@ export class Image {
   imageName: string;
 
   @prop()
+  @ApiProperty({ description: '图片类型' })
+  type: string;
+
+  @prop()
   @ApiProperty({ description: '是否被使用' })
   used: boolean;
 

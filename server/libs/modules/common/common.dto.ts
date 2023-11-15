@@ -17,3 +17,9 @@ export class QueryDictDto {
   @IsNotEmpty()
   type: string;
 }
+
+export class UploadImageDto {
+  @ApiProperty({ description: '图片类型', example: '' })
+  @IsNotEmpty()
+  type: string;
+}

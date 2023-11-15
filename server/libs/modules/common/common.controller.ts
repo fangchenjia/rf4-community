@@ -16,7 +16,7 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { CommonService } from './common.service';
 import { Keep } from 'shared/decorators/keep.decorator';
 import { CaptchaGuard } from 'shared/guards/captcha.guard';
-import { QueryDictDto, getSmsDto } from './common.dto';
+import { QueryDictDto, UploadImageDto, getSmsDto } from './common.dto';
 import { generateSmsCodeKey } from 'libs/cache';
 import { ErrorEnum } from 'shared/contants/error-code.contants';
 import { ApiException } from 'shared/exceptions/api.exception';
@@ -69,8 +69,11 @@ export class CommonController {
       },
     }),
   )
-  async uploadImage(@UploadedFile() file: Express.Multer.File) {
-    return this.commonService.uploadImage(file);
+  async uploadImage(
+    @Body() body: UploadImageDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.commonService.uploadImage(body.type, file);
   }
 
   @Get('ossClear')
