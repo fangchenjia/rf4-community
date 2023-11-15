@@ -3,15 +3,18 @@ import { ApiException } from 'shared/exceptions/api.exception';
 import { ErrorEnum } from 'shared/contants/error-code.contants';
 import { ArticlleAlbums } from './wechatArticleConfig';
 import { Position } from 'libs/db/models/position.model';
+import { Image } from 'libs/db/models/image.model';
 import axios from 'axios';
 import { RedisCacheService } from 'libs/cache';
 import { InjectModel } from 'nestjs-typegoose';
+import { SubmitPointDto } from './point.dto';
 
 @Injectable()
 export class PointService {
   constructor(
     private redisCacheService: RedisCacheService, // 缓存
     @InjectModel(Position) private readonly positionModel,
+    @InjectModel(Image) private readonly imageModel,
   ) {
     // 启动时缓存微信公众号文章
     this.captureWechatArticleList();
@@ -81,7 +84,7 @@ export class PointService {
   }
 
   // 投稿
-  async submitPoint(user, body) {
+  async submitPoint(user, body: SubmitPointDto) {
     const userId = user.id;
     const position = {
       author: userId,
@@ -89,6 +92,16 @@ export class PointService {
       status: 'pendingReview',
     };
     const res = await this.positionModel.create(position);
+    // 记录保存的图片
+    if (body.fishImages.length > 0 || body.equipmentImages.length > 0) {
+      const imgs = [...body.fishImages, ...body.equipmentImages];
+      for (const image of imgs) {
+        await this.imageModel.updateOne(
+          { imageUrl: image },
+          { $set: { used: true } },
+        );
+      }
+    }
     return {
       title: res.title,
       id: res._id,

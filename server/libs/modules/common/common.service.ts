@@ -43,7 +43,12 @@ export class CommonService {
       used: false,
     });
     const imageNames = images.map((image) => image.imageName);
+    // 删除oss
     await this.ossService.deleteFile(imageNames);
+    // 删除数据库
+    await this.imageModel.deleteMany({
+      used: false,
+    });
   }
   // 生成验证码
   async captche(size = 4) {
