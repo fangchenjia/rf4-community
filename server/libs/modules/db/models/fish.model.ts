@@ -18,6 +18,10 @@ export class Fish {
   icon: string;
 
   @prop()
+  @ApiProperty({ description: '鱼图片' })
+  image: string;
+
+  @prop()
   @ApiProperty({ description: '鱼描述', example: 'xxxxx' })
   description: string;
 

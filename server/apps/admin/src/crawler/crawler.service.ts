@@ -138,7 +138,7 @@ export class CrawlerService {
         const $html = cheerio.load(data);
         const fishItem = {
           name: item.name,
-          image: `https://rf4.info/${$html('img.fish_info_img').attr('src')}`,
+          image: `https://rf4.info${$html('img.fish_info_img').attr('src')}`,
           rare: '1',
           starWeight: $html('#f_tro').text(),
           blueWeight: $html('#f_str').text(),
