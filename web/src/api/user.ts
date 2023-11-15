@@ -9,7 +9,8 @@ import request from '@/utils/request'
 type userRegisterPrarms = {
   smsCode: string
   mobile: string
-  password: string
+  password: string,
+  avatar?: string
 }
 
 type userLoginPrarms = {

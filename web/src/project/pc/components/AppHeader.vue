@@ -62,7 +62,7 @@
         <div class="flex items-center">
           <!-- 头像框 -->
           <n-dropdown v-if="userStore.isLogin" :options="userOptions" trigger="hover" @select="userSelectHandle">
-            <n-avatar round size="small" src="https://avatars.githubusercontent.com/u/22588905?v=4" class="mr-2"/>
+            <n-avatar round size="small" :src="userStore.userInfo?.avatar || generateRandomPixelAvatar(20)" class="mr-2"/>
           </n-dropdown>
           <!-- 登录按钮 -->
           <n-button v-else text type="primary" @click="LoginModal.open()">
@@ -88,6 +88,8 @@ import { useUserStore } from '@/store/user'
 import LoginModal from './LoginModal'
 import { useRouter } from 'vue-router'
 import { useWindowScroll } from '@vueuse/core'
+import { generateRandomPixelAvatar } from '@/utils';
+
 const router = useRouter()
 const userStore = useUserStore()
 const appStore = useAppStore()

@@ -14,6 +14,9 @@ export class registerDto {
   @IsNotEmpty({ message: '密码不能为空' })
   @Length(6, 20, { message: '密码长度为6-20位' })
   password: string;
+
+  @ApiProperty({ description: '头像', example: '123456' })
+  avatar?: string;
 }
 
 export class resetPasswordDto {

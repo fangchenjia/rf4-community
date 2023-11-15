@@ -1,6 +1,7 @@
 import { userRegister, resetPassword } from '@/api/user';
 import { CAPTCHA } from '@/api';
 import { smsCode } from '@/api/common';
+import { generateRandomPixelAvatar } from '@/utils';
 
 export const useRegisterForm = () => {
   const registerForm = ref({
@@ -106,7 +107,8 @@ export const useRegisterForm = () => {
     return userRegister({
       mobile: registerForm.value.mobile,
       password: registerForm.value.password,
-      smsCode: registerForm.value.smsCode
+      smsCode: registerForm.value.smsCode,
+      avatar: generateRandomPixelAvatar(20)
     }).finally(() => {
       registerFormLoading.value = false;
     });
