@@ -10,7 +10,7 @@
         :bordered="false"
         size="small"
         role="dialog"
-        :on-close="()=> showModal = false"
+        :on-close="() => (showModal = false)"
         aria-modal="true"
       >
         <template #header> {{ modalTitle }} </template>
@@ -99,7 +99,12 @@
         </template>
 
         <!-- 注册表单 -->
-        <template v-if="currentModalType === modalType.REGISTER || currentModalType === modalType.FORGET_PASSWORD">
+        <template
+          v-if="
+            currentModalType === modalType.REGISTER ||
+            currentModalType === modalType.FORGET_PASSWORD
+          "
+        >
           <n-form
             ref="registerFormRef"
             :model="registerForm"
@@ -176,9 +181,13 @@
                 type="primary"
                 round
                 :loading="registerFormLoading"
-                @click="currentModalType === modalType.REGISTER ? registerHandle() : resetPasswordHandle()"
+                @click="
+                  currentModalType === modalType.REGISTER
+                    ? registerHandle()
+                    : resetPasswordHandle()
+                "
               >
-                {{ currentModalType === modalType.REGISTER ? '注册' : '重置密码' }}
+                {{ currentModalType === modalType.REGISTER ? "注册" : "重置密码" }}
               </n-button>
             </n-form-item>
           </n-form>
@@ -219,6 +228,9 @@ import { MobileAlt, Lock } from "@vicons/fa";
 import { ChevronBackSharp } from "@vicons/ionicons5";
 import { VerifiedUserRound, SmsRound } from "@vicons/material";
 import { useUserStore } from '@/store/user';
+
+//  LoginModal 创建的是另外一个vue实例 并没有使用vue-router,所以使用 useRouter()返回的是undefined  (最开始设计使用另外一个vue实例的方式是为了可以在任何地方都可以使用到登录框)
+// import { useRouter } from "vue-router";
 
 import userAgreement from "@public/protocol/我们的俄钓4 用户协议.html?url";
 import privacyAgreement from "@public/protocol/我们的俄钓4 隐私政策.html?url";
@@ -263,10 +275,11 @@ const loginHandle = () => {
           userInfo().then(({data}) => {
             useStore.setUserInfo(data);
             useStore.isLogin = true;
+            // 登录成功
+            showModal.value = false;
+            window.$message.success("登录成功");
+            window.location.reload();
           });
-          // 登录成功
-          showModal.value = false;
-          window.$message.success("登录成功");
         });
       }else{
         window.$message.error("请先同意用户协议");
