@@ -1,50 +1,48 @@
 <script setup lang="ts">
-import { useWindowScroll } from '@vueuse/core'
-import { Map } from '@vicons/fa'
-import { PhotoFilterTwotone, AccessTimeRound } from '@vicons/material'
-import { RouterLink, useRouter } from 'vue-router'
-import { MenuOption } from 'naive-ui'
-import { renderIcon } from '@/project/pc/utils/render'
-import { useThemeVars } from 'naive-ui'
-import { useLoadingBar } from 'naive-ui'
-import globelRouter from '@pc/router'
-import SiteRecommend from '@pc/views/modules/SiteRecommend.vue'
-import { useMapStore } from '@/store/map'
+import { Map } from "@vicons/fa";
+import { PhotoFilterTwotone, AccessTimeRound } from "@vicons/material";
+import { RouterLink, useRouter } from "vue-router";
+import { MenuOption } from "naive-ui";
+import { renderIcon } from "@/project/pc/utils/render";
+import { useThemeVars } from "naive-ui";
+import { useLoadingBar } from "naive-ui";
+import globelRouter from "@pc/router";
+import SiteRecommend from "@pc/views/modules/SiteRecommend.vue";
+import MainLayout from "../components/MainLayout.vue";
+import { useMapStore } from "@/store/map";
 // 首页初始化地图
-useMapStore().getMaps()
+useMapStore().getMaps();
 
 // 跳转路由添加progress
-const loadingBar = useLoadingBar()
+const loadingBar = useLoadingBar();
 globelRouter.beforeEach((to, from, next) => {
   if (to.path !== from.path) {
-    loadingBar.start()
+    loadingBar.start();
   }
-  next()
-})
+  next();
+});
 globelRouter.afterEach(() => {
-  loadingBar.finish()
-})
+  loadingBar.finish();
+});
 
-const router = useRouter()
-const themeVars = useThemeVars()
+const router = useRouter();
+const themeVars = useThemeVars();
 
-// 滚动超过200 header会隐藏 所以左边nav需要上移 
-const { y } = useWindowScroll()
 // 左侧菜单栏
-const menuOptions : MenuOption[] = [
+const menuOptions: MenuOption[] = [
   {
     label: () =>
       h(
         RouterLink,
         {
           to: {
-            path: '/recommend'
-          }
+            path: "/recommend",
+          },
         },
-        { default: () => '推荐' }
+        { default: () => "推荐" }
       ),
-    key: 'home',
-    icon: renderIcon(PhotoFilterTwotone)
+    key: "home",
+    icon: renderIcon(PhotoFilterTwotone),
   },
   {
     label: () =>
@@ -52,18 +50,18 @@ const menuOptions : MenuOption[] = [
         RouterLink,
         {
           to: {
-            name: 'mapPoint'
-          }
+            name: "mapPoint",
+          },
         },
-        { default: () => '地图点位查询' }
+        { default: () => "地图点位查询" }
       ),
-    key: 'map-point',
-    icon: renderIcon(Map)
-  }
-]
+    key: "map-point",
+    icon: renderIcon(Map),
+  },
+];
 
-import { useNow } from '@vueuse/core'
-const now = useNow()
+import { useNow } from "@vueuse/core";
+const now = useNow();
 
 /**
  * 将真实时间转换为游戏时间格式。
@@ -71,7 +69,7 @@ const now = useNow()
  * @param {number} realTime - 真实时间戳
  * @return {string} 游戏时间，以HH:mm格式显示。
  */
- function convertToGameTime(realTime) {
+function convertToGameTime(realTime) {
   // 计算游戏内时间的毫秒数
   const gameTimeMs = realTime * 24;
 
@@ -83,32 +81,30 @@ const now = useNow()
   const minutes = gameDate.getMinutes();
 
   // 格式化时间为字符串
-  const timeFormat = `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+  const timeFormat = `${hours < 10 ? "0" + hours : hours}:${minutes < 10 ? "0" + minutes : minutes}`;
 
   // 返回游戏内时间格式
   return timeFormat;
 }
-
-
 </script>
 
 <template>
-  <section class="flex mt-5">
+  <MainLayout>
     <!-- 左部 nav -->
-    <nav class="sticky top-5 w-44 h-12 transition-all duration-300" :class="{ 'top-18': y < 200 }">
-      <n-card :content-style="{padding: 0}" :bordered="false" class="rounded">
+    <template #left-nav>
+      <n-card :content-style="{ padding: 0 }" :bordered="false" class="rounded w-44">
         <n-menu :options="menuOptions" />
       </n-card>
-    </nav>
+    </template>
     <!-- 主体部分 -->
-    <main class="flex-1 mx-5">
+    <template #main>
       <n-card :bordered="false" class="rounded">
         <router-view />
       </n-card>
-    </main>
+    </template>
     <!-- 右部 aside -->
-    <aside class="w-64">
-      <n-card :bordered="false" class="rounded" content-style="display: flex; align-items: center; justify-content: space-around; padding: 1rem;">
+    <template #right-aside>
+      <n-card :bordered="false" class="rounded w-64" content-style="display: flex; align-items: center; justify-content: space-around; padding: 1rem;">
         <div>
           <span class="">当前游戏时间</span>
           <p class="flex items-center mb-0 mt-1">
@@ -117,13 +113,12 @@ const now = useNow()
               {{ convertToGameTime(now) }}
             </n-gradient-text>
           </p>
-
         </div>
         <n-button type="primary" ghost @click="router.push('/contribute')">去投稿</n-button>
       </n-card>
       <SiteRecommend />
-    </aside>
-  </section>
+    </template>
+  </MainLayout>
 </template>
 
 <style scoped lang="scss">
