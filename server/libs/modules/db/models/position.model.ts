@@ -98,4 +98,12 @@ export class Position {
   @prop()
   @ApiProperty({ description: '状态' })
   status: mapStatusEnum;
+
+  @prop({ ref: () => User })
+  @ApiProperty({ description: '点赞用户id' })
+  likes: Ref<User>[];
+
+  @prop({ default: 0 })
+  @ApiProperty({ description: '查看数量' })
+  views: number;
 }

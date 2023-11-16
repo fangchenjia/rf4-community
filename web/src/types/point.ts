@@ -17,3 +17,4 @@ export type Point = {
   "equipmentImages": string[],
   "canvasJson": string
 }
+

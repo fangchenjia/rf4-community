@@ -17,6 +17,12 @@ export class PointController {
     return await this.pointService.getWechatArticleList();
   }
 
+  @Get('latestPoints')
+  @ApiOperation({ summary: '获取最新点位' })
+  async latestPoints() {
+    return await this.pointService.getLatestPoints();
+  }
+
   @Post('submitPoint')
   @ApiOperation({ summary: '投稿' })
   @UseGuards(AuthGuard('USER_JWT'))

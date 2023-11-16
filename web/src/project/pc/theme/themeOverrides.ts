@@ -29,6 +29,9 @@ export const darkThemeOverrides = {
   "Card": {
     "color": "#2a2a2a",
   },
+  "List": {
+    "color": "#2a2a2a",
+  },
   "Switch": {
     "railColorActive": "#519af7FF",
   }

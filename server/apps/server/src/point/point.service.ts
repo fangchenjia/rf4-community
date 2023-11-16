@@ -107,4 +107,32 @@ export class PointService {
       id: res._id,
     };
   }
+
+  // 最新点位
+  async getLatestPoints() {
+    const positions = await this.positionModel
+      .find()
+      .select(
+        'title author views likes createdAt description fishImages equipmentImages tags map fish position',
+      )
+      .populate({
+        path: 'author',
+        select: 'avatar nickname roles',
+        populate: {
+          path: 'roles',
+          select: 'name',
+        },
+      })
+      .populate({
+        path: 'map',
+        select: 'name',
+      })
+      .populate({
+        path: 'fish',
+        select: 'name image',
+      })
+      .sort({ createTime: -1 })
+      .limit(6);
+    return positions;
+  }
 }
