@@ -17,6 +17,7 @@ export type Point = {
   "equipmentImages": string[],
   "canvasJson": string,
   "speed": string,
+  "depth": string
 }
 
 export type PointDetail = Point & {

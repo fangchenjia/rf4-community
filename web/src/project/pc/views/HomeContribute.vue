@@ -1,45 +1,17 @@
 <template>
-  <n-form
-    ref="formRef"
-    :model="positionModel"
-    :rules="positionRules"
-    label-width="auto"
-    size="small"
-  >
+  <n-form ref="formRef" :model="positionModel" :rules="positionRules" label-width="auto" size="small">
     <n-grid :cols="24" :x-gap="24">
       <n-form-item-gi :span="12" label="标题" path="title">
-        <n-input
-          v-model:value="positionModel.title"
-          placeholder="标题 如：34图抢钱啦??"
-        />
+        <n-input v-model:value="positionModel.title" placeholder="标题 如：34图抢钱啦??" />
       </n-form-item-gi>
       <n-form-item-gi :span="12" label="描述" path="description">
-        <n-input
-          v-model:value="positionModel.description"
-          placeholder="可以描述一些什么，也可以无视不填"
-          :maxlength="50"
-        />
+        <n-input v-model:value="positionModel.description" placeholder="可以描述一些什么，也可以无视不填" :maxlength="50" />
       </n-form-item-gi>
       <n-form-item-gi :span="12" label="地图" path="map">
-        <n-select
-          v-model:value="positionModel.map"
-          placeholder="选择地图"
-          value-field="_id"
-          label-field="name"
-          :options="mapStore.maps"
-          :on-update:value="mapSelectHandle"
-        />
+        <n-select v-model:value="positionModel.map" placeholder="选择地图" value-field="_id" label-field="name" :options="mapStore.maps" :on-update:value="mapSelectHandle" />
       </n-form-item-gi>
       <n-form-item-gi :span="12" label="鱼种" path="fish">
-        <n-select
-          v-model:value="positionModel.fish"
-          placeholder="选择鱼种"
-          value-field="_id"
-          label-field="name"
-          :options="fishSelectOptions"
-          max-tag-count="responsive"
-          multiple
-        />
+        <n-select v-model:value="positionModel.fish" placeholder="选择鱼种" value-field="_id" label-field="name" :options="fishSelectOptions" max-tag-count="responsive" multiple />
       </n-form-item-gi>
       <n-form-item-gi :span="24" path="tags" label="标签">
         <n-dynamic-tags v-model:value="positionModel.tags" />
@@ -47,12 +19,7 @@
 
       <n-form-item-gi :span="24" label="点位标记" path="position">
         <div class="w-full">
-          <MapEditor
-            :showMapSelector="false"
-            :show-edit="!!positionModel.map"
-            v-model:position="positionModel.position"
-            ref="mapEditorRef"
-          />
+          <MapEditor :showMapSelector="false" :show-edit="!!positionModel.map" v-model:position="positionModel.position" ref="mapEditorRef" />
         </div>
       </n-form-item-gi>
 
@@ -70,11 +37,17 @@
         />
       </n-form-item-gi>
       <n-form-item-gi :span="12" label="鱼饵" path="baits">
-        <n-auto-complete
+        <n-select
           v-model:value="positionModel.baits"
-          placeholder="请输入鱼饵"
-          @input="baitsInputHandle"
+          multiple
+          filterable
+          placeholder="选择鱼饵"
           :options="baitsOptions"
+          clearable
+          remote
+          max-tag-count="responsive"
+          :clear-filter-after-select="false"
+          @search="baitsInputHandle"
         />
       </n-form-item-gi>
       <n-form-item-gi :span="12" label="卡米" path="distance">
@@ -83,22 +56,20 @@
       <n-form-item-gi :span="12" label="引线" path="line">
         <n-input v-model:value="positionModel.line" placeholder="如：36.2" />
       </n-form-item-gi>
+      <n-form-item-gi v-if="fishingTackleFlg === 'WINCH_ROD_FISHING'" :span="12" label="转速" path="speed">
+        <n-input v-model:value="positionModel.speed" placeholder="如：50" />
+      </n-form-item-gi>
+      <n-form-item-gi v-if="fishingTackleFlg === 'FLOAT_FISHING'" :span="12" label="深度" path="depth">
+        <n-input v-model:value="positionModel.depth" placeholder="如：80" />
+      </n-form-item-gi>
       <n-form-item-gi :span="12" label="钩子" path="hook">
         <n-input v-model:value="positionModel.hook" placeholder="如：红毛巨2" />
       </n-form-item-gi>
       <n-form-item-gi :span="12" label="上鱼时间" path="time">
-        <n-time-picker
-          style="width: 100%"
-          v-model:value="positionModel.time"
-          format="hh:mm"
-          placeholder="选择上鱼时间"
-        />
+        <n-time-picker style="width: 100%" v-model:formatted-value="positionModel.time" format="HH:mm" value-format="HH:mm" placeholder="选择上鱼时间" />
       </n-form-item-gi>
       <n-form-item-gi :span="12" label="温度" path="temperature">
         <n-input v-model:value="positionModel.temperature" placeholder="请输入温度" />
-      </n-form-item-gi>
-      <n-form-item-gi :span="12">
-        <!-- 空白 -->
       </n-form-item-gi>
       <n-form-item-gi :span="12" label="鱼获截图" path="fishImages">
         <n-upload
@@ -129,13 +100,7 @@
       </n-form-item-gi>
       <!-- 提交 -->
       <n-form-item-gi :span="24">
-        <n-button
-          class="w-2/3 mx-auto"
-          type="primary"
-          @click="submitHandle"
-          :loading="submitLoading"
-          >提交</n-button
-        >
+        <n-button class="w-2/3 mx-auto" type="primary" @click="submitHandle" :loading="submitLoading">提交</n-button>
       </n-form-item-gi>
     </n-grid>
   </n-form>
@@ -171,6 +136,8 @@ getDicts("FISHING_TYPE").then(({ data }) => {
   });
   fishingGroupOptions.value = data;
 });
+
+const fishingTackleFlg = ref("");
 const mapSelectHandle = (value) => {
   positionModel.value.map = value;
   const selectedMap = mapStore.maps.find((item) => item._id === value);
@@ -194,9 +161,9 @@ const fishingGroupLoadHandle = (option) => {
   });
 };
 const fishingGroupCheckHandle = (value) => {
-  positionModel.value.fishingTackle = fishingGroupOptions.value.find((item) =>
-    item.children?.find((child) => child._id === value)
-  )._id;
+  const fishingTackleItem = fishingGroupOptions.value.find((item) => item.children?.find((child) => child._id === value));
+  positionModel.value.fishingTackle = fishingTackleItem._id;
+  fishingTackleFlg.value = fishingTackleItem.dictValue;
   positionModel.value.fishingGroup = value;
 };
 const positionModel = ref<Point>({
@@ -217,6 +184,8 @@ const positionModel = ref<Point>({
   canvasJson: null,
   equipmentImages: [],
   fishImages: [],
+  depth: null,
+  speed: null,
 });
 const positionRules = {
   title: {
@@ -302,6 +271,7 @@ const submitHandle = () => {
       params.equipmentImages = equipmentImageList.value.map((item) => item.url);
       params.fishImages = fishImageList.value.map((item) => item.url);
       params.canvasJson = JSON.stringify(mapEditorRef.value?.getJson());
+      params.baits = positionModel.value.baits?.join(",");
       submitLoading.value = true;
       submitPoint(params)
         .then(() => {

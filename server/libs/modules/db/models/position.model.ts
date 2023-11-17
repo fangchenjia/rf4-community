@@ -63,6 +63,10 @@ export class Position {
   @ApiProperty({ description: '转速' })
   speed: string;
 
+  @prop()
+  @ApiProperty({ description: '深度' })
+  depth: string;
+
   @prop({ ref: () => Dict })
   @ApiProperty({ description: '钓具' })
   fishingTackle: Dict;

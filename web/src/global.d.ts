@@ -1,5 +1,6 @@
 // axios-extension.d.ts
 import axios, { AxiosRequestConfig } from 'axios';
+
 declare interface Window {
   $message: {
     success: (message: string) => void;

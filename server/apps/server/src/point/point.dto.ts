@@ -54,6 +54,12 @@ export class SubmitPointDto {
 
   @ApiProperty({ description: 'canvas数据' })
   canvasJson: string;
+
+  @ApiProperty({ description: '转速' })
+  speed: string;
+
+  @ApiProperty({ description: '深度' })
+  depth: string;
 }
 
 export class PointDetailDto {
