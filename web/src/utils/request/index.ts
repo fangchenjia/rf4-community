@@ -1,4 +1,4 @@
-import axios, { type AxiosResponse, type InternalAxiosRequestConfig, type AxiosRequestConfig, AxiosError, type AxiosInstance,  } from 'axios';
+import axios, { type AxiosResponse, type AxiosRequestConfig, AxiosError, type AxiosInstance, type InternalAxiosRequestConfig,  } from 'axios';
 import { useUserStore } from '@/store/user';
 import type { Response, MyAxiosRequestConfig, messageComponent, refreshTokenRequestQueueItem } from './types';
 import { ContentTypeEnum } from './enum';
@@ -26,6 +26,9 @@ export class RequestHttp {
           ...config.headers,
           Authorization: `Bearer ${useUserStore().token}`, // store中获取token
         });
+        if(config.showLoading) {
+          this.hander.showLoadingHandler?.()
+        }
         return config;
       },
       (error: AxiosError) => {
@@ -37,6 +40,9 @@ export class RequestHttp {
     this.service.interceptors.response.use(
       // 2xx时触发
       (response: AxiosResponse) => {
+        if(response.config.showLoading) {
+          this.hander.hideLoadingHandler?.()
+        }
         // response.data就是后端返回的数据
         const { code, message } = response.data;
         if (code !== 200) {
@@ -72,6 +78,9 @@ export class RequestHttp {
       },
       // 非2xx时触发
       (error: AxiosError<Response>) => {
+        if(error.config?.showLoading) {
+          this.hander.hideLoadingHandler?.()
+        }
         const message = error?.message || '请求失败';
         this.messageComponent?.error(message);
         return Promise.reject(error);

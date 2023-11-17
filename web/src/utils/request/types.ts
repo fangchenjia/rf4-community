@@ -11,6 +11,8 @@ export interface MyAxiosRequestConfig extends AxiosRequestConfig {
   messageComponent?: messageComponent // 消息组件
   handler: {
     unLoginHandler?: () => void; // 未登录处理
+    showLoadingHandler?: () => void; // 显示loading
+    hideLoadingHandler?: () => void; // 隐藏loading
   } 
 }
 

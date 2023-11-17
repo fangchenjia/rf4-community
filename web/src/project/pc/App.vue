@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import { NConfigProvider, darkTheme } from 'naive-ui'
-import { useAppStore } from '@pc/stores/app'
-import AppHeader from '@pc/components/AppHeader.vue'
+import { NConfigProvider, darkTheme } from "naive-ui";
+import { useAppStore } from "@pc/stores/app";
+import AppHeader from "@pc/components/AppHeader.vue";
 
-const appStore = useAppStore()
+const appStore = useAppStore();
 onMounted(() => {
-  if (appStore.theme === 'dark') {
-    document.documentElement.classList.add('dark')
+  if (appStore.theme === "dark") {
+    document.documentElement.classList.add("dark");
   } else {
-    document.documentElement.classList.remove('dark')
+    document.documentElement.classList.remove("dark");
   }
-})
-
+});
 </script>
 
 <template>
@@ -23,7 +22,10 @@ onMounted(() => {
           <AppHeader />
           <section id="app-main">
             <n-loading-bar-provider>
-              <router-view />
+              <n-spin :show="appStore.globalLoading">
+                <template #description> 正在加载... </template>
+                <router-view />
+              </n-spin>
             </n-loading-bar-provider>
           </section>
         </n-dialog-provider>

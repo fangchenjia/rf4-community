@@ -7,6 +7,7 @@ export const useAppStore = defineStore('app',{
   persist: true,
   state: () => ({
     theme: 'light',
+    globalLoading: false
   }),
   getters: {
     themeOverrides(state): any {
