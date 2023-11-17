@@ -131,9 +131,22 @@ export class PointService {
         path: 'fish',
         select: 'name image',
       })
-      .sort({ createTime: -1 })
+      .sort({ createdAt: -1 })
       .limit(6);
     return positions;
+  }
+
+  // 点赞
+  async likePoint(useId: string, positionId: string) {
+    const position = await this.positionModel.findById(positionId);
+    if (!position.likes.includes(useId)) {
+      position.likes.push(useId);
+      await position.save();
+    } else {
+      position.likes.splice(position.likes.indexOf(useId), 1);
+      await position.save();
+    }
+    return position.likes;
   }
 
   // 点位详情

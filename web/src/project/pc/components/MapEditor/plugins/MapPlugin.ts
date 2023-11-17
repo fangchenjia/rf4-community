@@ -27,7 +27,6 @@ class MapPlugin {
   init() {
     this._initPositionObserve()
     this._initPositionClick()
-    this.setCurMap(this.curMap.value)
   }
 
   // 设置当前地图

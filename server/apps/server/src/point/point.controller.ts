@@ -29,6 +29,13 @@ export class PointController {
     return await this.pointService.getPointDetail(param._id);
   }
 
+  @Post('likePoint')
+  @ApiOperation({ summary: '点赞' })
+  @UseGuards(AuthGuard('USER_JWT'))
+  async likePoine(@ReqUser() user, @Body() body: PointDetailDto) {
+    return await this.pointService.likePoint(user.id, body._id);
+  }
+
   @Post('submitPoint')
   @ApiOperation({ summary: '投稿' })
   @UseGuards(AuthGuard('USER_JWT'))

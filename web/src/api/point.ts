@@ -1,6 +1,7 @@
 export const SUBMIT_POINT = 'v1/point/submitPoint'
 export const LAEST_POINTS = 'v1/point/latestPoints'
 export const POINT_DETAIL = 'v1/point/pointDetail'
+export const LIKE_POINT = 'v1/point/likePoint'
 
 import type { Point, PointDetail } from '@/types/point'
 import request from '@/utils/request'
@@ -16,4 +17,8 @@ export const latestPoints = () => {
 
 export const getPointDetail = (_id:string, config?: any) => {
   return request.post<PointDetail>(POINT_DETAIL, { _id }, config)
+}
+
+export const likePoint = (_id:string) => {
+  return request.post(LIKE_POINT, { _id })
 }

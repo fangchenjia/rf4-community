@@ -71,7 +71,7 @@
       <n-form-item-gi :span="12" label="温度" path="temperature">
         <n-input v-model:value="positionModel.temperature" placeholder="请输入温度" />
       </n-form-item-gi>
-      <n-form-item-gi :span="12" label="鱼获截图" path="fishImages">
+      <n-form-item-gi :span="24" label="鱼获截图" path="fishImages">
         <n-upload
           :max="3"
           accept=".jpg, .png, .jpeg"
@@ -85,7 +85,7 @@
         />
       </n-form-item-gi>
 
-      <n-form-item-gi :span="12" label="装备截图" path="equipmentImages">
+      <n-form-item-gi :span="24" label="装备截图" path="equipmentImages">
         <n-upload
           :max="3"
           accept=".jpg, .png, .jpeg"

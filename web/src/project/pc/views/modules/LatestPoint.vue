@@ -30,6 +30,7 @@
         <template #footer>
           <div class="flex items-end justify-between">
             <ul class="action-list flex items-end text-slate-500 text-xs">
+              <!-- 作者 -->
               <li>
                 <n-avatar round :size="18" :src="point.author.avatar" class="mr-2" />
                 <n-ellipsis style="max-width: 80px">
@@ -40,19 +41,28 @@
                 </n-gradient-text>
                 <n-divider vertical />
               </li>
+              <!-- 时间 -->
               <li>
                 <n-ellipsis style="max-width: 80px">
                   {{ formatTimeAgo(point.createdAt) }}
                 </n-ellipsis>
                 <n-divider vertical />
               </li>
+              <!-- 浏览量 -->
               <li>
                 <n-icon class="mr-2" :size="14" :component="EyeOutline"></n-icon>
                 <span>{{ point.views }}</span>
                 <n-divider vertical />
               </li>
+              <!-- 点赞数 -->
               <li>
-                <n-icon class="mr-2" :size="14" :component="ThumbUpAltOutlined"></n-icon>
+                <n-icon
+                  class="mr-2"
+                  :size="14"
+                  :color="point.likes.includes(userStore.userInfo._id) ? themeVars.primaryColor : ''"
+                  :component="ThumbUpAltOutlined"
+                  @click.stop="likePointHandle(point._id)"
+                ></n-icon>
                 <span>{{ point.likes.length }}</span>
               </li>
             </ul>
@@ -71,11 +81,15 @@
 <script setup lang="ts" name="latestPoint">
 import { EyeOutline } from "@vicons/ionicons5";
 import { ThumbUpAltOutlined } from "@vicons/material";
-import { latestPoints } from "@/api/point";
+import { latestPoints, likePoint } from "@/api/point";
 import { formatTimeAgo } from "@/utils";
 import { useRouter } from "vue-router";
+import { useUserStore } from "@/store/user";
+import { useThemeVars } from "naive-ui";
 
+const userStore = useUserStore();
 const router = useRouter();
+const themeVars = useThemeVars();
 
 const pointList = ref([]);
 const getLatestPoints = () => {
@@ -84,6 +98,13 @@ const getLatestPoints = () => {
   });
 };
 getLatestPoints();
+
+// 点赞
+const likePointHandle = (pointId: string) => {
+  likePoint(pointId).then(({ data }) => {
+    pointList.value.find((item: any) => item._id === pointId).likes = data;
+  });
+};
 </script>
 
 <style scoped lang="scss">

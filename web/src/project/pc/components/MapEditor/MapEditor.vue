@@ -190,6 +190,8 @@ onMounted(() => {
     curPoint.value = [val.x, val.y];
     $emits("update:position", curPoint.value);
   });
+
+  editor.setCurMap(curMapVal.value);
 });
 
 // 切换地图
