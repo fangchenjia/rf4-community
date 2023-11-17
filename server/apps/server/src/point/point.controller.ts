@@ -26,7 +26,7 @@ export class PointController {
   @Post('pointDetail')
   @ApiOperation({ summary: '获取点位详情' })
   async pointDetail(@Body() param: PointDetailDto) {
-    return await this.pointService.getPointDetail(param);
+    return await this.pointService.getPointDetail(param._id);
   }
 
   @Post('submitPoint')
