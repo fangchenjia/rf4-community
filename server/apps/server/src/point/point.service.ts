@@ -135,4 +135,32 @@ export class PointService {
       .limit(6);
     return positions;
   }
+
+  // 点位详情
+  async getPointDetail(id: string) {
+    const position = await this.positionModel
+      .findOne({ _id: id })
+      .populate({
+        path: 'author',
+        select: 'avatar nickname roles',
+        populate: {
+          path: 'roles',
+          select: 'name',
+        },
+      })
+      .populate({
+        path: 'map',
+        select: 'name',
+      })
+      .populate({
+        path: 'fish',
+        select: 'name image',
+      })
+      .populate('fishingTackle', 'dictName')
+      .populate('fishingGroup', 'dictName');
+    // 记录浏览数
+    position.views++;
+    await position.save();
+    return position;
+  }
 }

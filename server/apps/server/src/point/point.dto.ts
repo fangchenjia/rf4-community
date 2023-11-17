@@ -55,3 +55,9 @@ export class SubmitPointDto {
   @ApiProperty({ description: 'canvas数据' })
   canvasJson: string;
 }
+
+export class PointDetailDto {
+  @ApiProperty({ description: '点位ID' })
+  @IsNotEmpty({ message: '点位ID不能为空' })
+  _id: string;
+}

@@ -1,7 +1,7 @@
 <template>
   <n-list>
     <template #header> 最近点位 </template>
-    <n-list-item v-for="point in pointList" :key="point._id">
+    <n-list-item v-for="point in pointList" :key="point._id" @click="router.push(`/point-detail/${point._id}`)">
       <template #suffix>
         <img class="w-36 h-24 rounded-md" :src="point.fishImages[0] || point.fish[0].image" alt="" />
       </template>
@@ -73,6 +73,9 @@ import { EyeOutline } from "@vicons/ionicons5";
 import { ThumbUpAltOutlined } from "@vicons/material";
 import { latestPoints } from "@/api/point";
 import { formatTimeAgo } from "@/utils";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const pointList = ref([]);
 const getLatestPoints = () => {

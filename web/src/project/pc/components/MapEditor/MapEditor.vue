@@ -3,23 +3,10 @@
   <div class="flex justify-between items-center my-3">
     <div class="flex items-center" v-if="props.showMapSelector">
       <n-icon :component="Map" size="20" class="mr-4" />
-      <n-select
-        class="w-60 mr-2"
-        placeholder="请选择地图"
-        v-model:value="curMapVal"
-        :options="mapItems"
-        @update:value="mapSelectHandle"
-      />
+      <n-select class="w-60 mr-2" placeholder="请选择地图" v-model:value="curMapVal" :options="mapItems" @update:value="mapSelectHandle" />
     </div>
     <div class="flex items-center">
-      <n-input
-        pair
-        separator=":"
-        :placeholder="['-', '-']"
-        style="width: 200px"
-        v-model:value="curPoint"
-        @change="mapClickPositionChangeHandle"
-      />
+      <n-input pair separator=":" :placeholder="['-', '-']" style="width: 200px" v-model:value="curPoint" @change="mapClickPositionChangeHandle" />
       <n-icon class="ml-3" :size="20" :component="MyLocationSharp"></n-icon>
     </div>
   </div>
@@ -39,14 +26,8 @@
       :value="curMousePoint"
     />
     <!-- 模式选择 -->
-    <div class="absolute top-2 left-2 flex flex-col">
-      <n-select
-        class="w-28"
-        size="small"
-        v-model:value="mapMode"
-        :options="mapModeOptions"
-        @update:value="mapModeChangeHandle"
-      />
+    <div class="absolute top-2 left-2 flex flex-col" v-if="$props.showMenu">
+      <n-select class="w-28" size="small" v-model:value="mapMode" :options="mapModeOptions" @update:value="mapModeChangeHandle" />
       <div class="mt-3">
         <n-color-picker
           v-show="['arrow', 'paint', 'text'].indexOf(mapMode) !== -1"
@@ -55,12 +36,7 @@
           :modes="['hex']"
           :on-update:value="textColorUpdateHandle"
         />
-        <n-button
-          v-show="mapMode === 'text'"
-          circle
-          @click="editor?.addTextBox({ fill: textColor })"
-          :render-icon="renderIcon(DocumentAdd)"
-        ></n-button>
+        <n-button v-show="mapMode === 'text'" circle @click="editor?.addTextBox({ fill: textColor })" :render-icon="renderIcon(DocumentAdd)"></n-button>
         <n-input-number
           v-show="['arrow', 'paint'].indexOf(mapMode) !== -1"
           class="w-28"
@@ -78,41 +54,15 @@
       </div>
     </div>
     <!-- 清除按钮 -->
-    <n-button
-      circle
-      class="absolute bottom-12 left-6"
-      @click="editor?.clear()"
-      :render-icon="renderIcon(ClearOutlined)"
-    ></n-button>
+    <n-button v-if="$props.showMenu" circle class="absolute bottom-12 left-6" @click="editor?.clear()" :render-icon="renderIcon(ClearOutlined)"></n-button>
     <!-- 保存按钮 -->
-    <n-button
-      circle
-      class="absolute bottom-2 left-6"
-      @click="editor?.download()"
-      :render-icon="renderIcon(SaveAltFilled)"
-    ></n-button>
+    <n-button v-if="$props.showMenu" circle class="absolute bottom-2 left-6" @click="editor?.download()" :render-icon="renderIcon(SaveAltFilled)"></n-button>
     <!-- 放大缩小图标组 -->
     <n-button-group class="absolute bottom-2 right-2">
-      <n-button
-        size="small"
-        @click="editor?.big()"
-        :render-icon="renderIcon(ZoomInOutlined)"
-      ></n-button>
-      <n-button
-        size="small"
-        @click="editor?.small()"
-        :render-icon="renderIcon(ZoomOutOutlined)"
-      ></n-button>
-      <n-button
-        size="small"
-        @click="editor?.one()"
-        :render-icon="renderIcon(ZoomInMapFilled)"
-      ></n-button>
-      <n-button
-        size="small"
-        @click="editor?.auto()"
-        :render-icon="renderIcon(ZoomOutMapFilled)"
-      ></n-button>
+      <n-button size="small" @click="editor?.big()" :render-icon="renderIcon(ZoomInOutlined)"></n-button>
+      <n-button size="small" @click="editor?.small()" :render-icon="renderIcon(ZoomOutOutlined)"></n-button>
+      <n-button size="small" @click="editor?.one()" :render-icon="renderIcon(ZoomInMapFilled)"></n-button>
+      <n-button size="small" @click="editor?.auto()" :render-icon="renderIcon(ZoomOutMapFilled)"></n-button>
     </n-button-group>
   </div>
 </template>
@@ -120,14 +70,7 @@
 <script setup name="mapEditor" lang="ts">
 import { useThemeVars } from "naive-ui";
 import { Map } from "@vicons/ionicons5";
-import {
-  ZoomInOutlined,
-  ZoomOutOutlined,
-  ZoomInMapFilled,
-  ZoomOutMapFilled,
-  SaveAltFilled,
-  MyLocationSharp,
-} from "@vicons/material";
+import { ZoomInOutlined, ZoomOutOutlined, ZoomInMapFilled, ZoomOutMapFilled, SaveAltFilled, MyLocationSharp } from "@vicons/material";
 import { ClearOutlined } from "@vicons/antd";
 import { DocumentAdd } from "@vicons/carbon";
 import { DotCircleRegular } from "@vicons/fa";
@@ -142,6 +85,10 @@ import { renderIcon } from "@pc/utils/render";
 // 定义props
 const props = defineProps({
   showMapSelector: {
+    type: Boolean,
+    default: true,
+  },
+  showMenu: {
     type: Boolean,
     default: true,
   },
@@ -166,6 +113,9 @@ defineExpose({
   },
   setJson: (val: any) => {
     editor?.importObjects(val);
+  },
+  setPoint: (point: string[]) => {
+    mapClickPositionChangeHandle(point);
   },
 });
 

@@ -37,6 +37,11 @@ const router = createRouter({
       ]
     },
     {
+      path: '/point-detail/:id',
+      name: 'pointDetail',
+      component: () => import('../views/PointDetail.vue')
+    },
+    {
       path: '/developing',
       name: 'developing',
       component: () => import('../views/DevelopingView.vue')

@@ -4,7 +4,7 @@ import { PointService } from './point.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ReqUser } from 'shared/decorators/req-user.decorator';
 import { UserDocument } from 'libs/db/models/user.model';
-import { SubmitPointDto } from './point.dto';
+import { PointDetailDto, SubmitPointDto } from './point.dto';
 
 @Controller('point')
 @ApiTags('点位模块')
@@ -21,6 +21,12 @@ export class PointController {
   @ApiOperation({ summary: '获取最新点位' })
   async latestPoints() {
     return await this.pointService.getLatestPoints();
+  }
+
+  @Post('pointDetail')
+  @ApiOperation({ summary: '获取点位详情' })
+  async pointDetail(@Body() param: PointDetailDto) {
+    return await this.pointService.getPointDetail(param);
   }
 
   @Post('submitPoint')

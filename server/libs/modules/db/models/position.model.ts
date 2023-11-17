@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { User } from './user.model';
 import { Map } from './map.model';
 import { Fish } from './fish.model';
-import { Bait } from './bait.model';
+import { Dict } from './dict.model';
 
 export type UserDocument = DocumentType<Position>;
 export type mapStatusEnum =
@@ -60,12 +60,16 @@ export class Position {
   position: number[];
 
   @prop()
-  @ApiProperty({ description: '钓具' })
-  fishingTackle: string;
+  @ApiProperty({ description: '转速' })
+  speed: string;
 
-  @prop()
+  @prop({ ref: () => Dict })
+  @ApiProperty({ description: '钓具' })
+  fishingTackle: Dict;
+
+  @prop({ ref: () => Dict })
   @ApiProperty({ description: '钓组' })
-  fishingGroup: string;
+  fishingGroup: Dict;
 
   @prop()
   @ApiProperty({ description: '描述' })

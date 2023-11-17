@@ -15,6 +15,31 @@ export type Point = {
   "temperature": string,
   "fishImages": string[],
   "equipmentImages": string[],
-  "canvasJson": string
+  "canvasJson": string,
+  "speed": string,
+}
+
+export type PointDetail = Point & {
+  views: number,
+  likes: string[],
+  author: {
+    avatar: string,
+    nickname: string,
+    roles: object[],
+  },
+  createdAt: string,
+  map: {
+    name: string,
+  },
+  fishingTackle: {
+    dictName: string,
+  },
+  fishingGroup: {
+    dictName: string,
+  },
+  fish: {
+    name: string,
+    image: string,
+  }[],
 }
 
