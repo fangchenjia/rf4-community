@@ -18,7 +18,7 @@
       <n-space class="right-icons flex-1" justify="end" align="center">
         <!-- github地址 -->
         <div>
-          <a target="_blank" href="https://github.com/fangchenjia">
+          <a target="_blank" href="https://github.com/fangchenjia/rf4-community">
             <svg viewBox="0 0 24 24" width="1.5em" height="1.5em">
               <mask id="uicons-cx5pae91i8" width="24" height="24" x="0" y="0">
                 <g fill="#fff">
