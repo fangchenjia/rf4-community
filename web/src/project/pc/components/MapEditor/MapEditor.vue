@@ -84,6 +84,10 @@ import { renderIcon } from "@pc/utils/render";
 
 // 定义props
 const props = defineProps({
+  defaultMapKey: {
+    type: String,
+    default: "0",
+  },
   showMapSelector: {
     type: Boolean,
     default: true,
@@ -191,7 +195,7 @@ onMounted(() => {
     $emits("update:position", curPoint.value);
   });
 
-  editor.setCurMap(curMapVal.value);
+  editor.setCurMap(props.defaultMapKey);
 });
 
 // 切换地图

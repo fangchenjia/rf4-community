@@ -58,7 +58,7 @@
           </li>
         </ul>
         <!-- map -->
-        <MapEditor ref="mapEditor" :showMapSelector="false" :show-menu="false" />
+        <MapEditor ref="mapEditor" :default-map-key="null" :showMapSelector="false" :show-menu="false" />
       </n-card>
     </template>
     <template #right-aside>
@@ -85,11 +85,13 @@ const mapEditor = ref();
 
 const pointDetail = ref<PointDetail>({} as PointDetail);
 
-getPointDetail(route.params.id as string, { showLoading: true }).then((res) => {
-  pointDetail.value = res.data;
-  mapEditor.value.setMap(res.data.map.name);
-  mapEditor.value.setJson(JSON.parse(res.data.canvasJson));
-  mapEditor.value.setPoint(res.data.position);
+onMounted(() => {
+  getPointDetail(route.params.id as string, { showLoading: true }).then((res) => {
+    pointDetail.value = res.data;
+    mapEditor.value.setMap(res.data.map.name);
+    mapEditor.value.setJson(JSON.parse(res.data.canvasJson));
+    mapEditor.value.setPoint(res.data.position);
+  });
 });
 </script>
 <style scoped lang="scss">
