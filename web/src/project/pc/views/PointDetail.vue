@@ -2,11 +2,13 @@
   <MainLayout>
     <template #left-nav>
       <div class="flex flex-col w-36 items-end mr-6">
-        <n-badge value="6" :max="99">
-          <n-button class="mb-6" circle> <n-icon :component="ThumbUpAltOutlined" :size="20"></n-icon> </n-button>
+        <n-badge :value="pointDetail.likes?.length">
+          <n-button secondary class="mb-6" :type="pointDetail.likes?.includes(userStore.userInfo._id) ? 'primary' : 'default'" circle>
+            <n-icon :component="ThumbUpAltOutlined" :size="20" @click="likePointHandle"></n-icon>
+          </n-button>
         </n-badge>
-        <n-badge value="100" :max="99">
-          <n-button circle> <n-icon :component="MessageDots" :size="20"></n-icon> </n-button>
+        <n-badge value="0" :max="99">
+          <n-button secondary circle> <n-icon :component="MessageDots" :size="20"></n-icon> </n-button>
         </n-badge>
       </div>
     </template>
@@ -63,7 +65,7 @@
     </template>
     <template #right-aside>
       <div class="w-64">
-        <n-card :bordered="false" class="rounded" content-style="display: flex; align-items: center; justify-content: space-around; padding: 1rem;"> 作者板块... </n-card>
+        <n-card :bordered="false" class="rounded" content-style="display: flex; align-items: center; justify-content: space-around; padding: 1rem;"> </n-card>
       </div>
     </template>
   </MainLayout>
@@ -74,10 +76,13 @@ import MainLayout from "../components/MainLayout.vue";
 import { ThumbUpAltOutlined } from "@vicons/material";
 import { EyeOutline } from "@vicons/ionicons5";
 import { MessageDots } from "@vicons/tabler";
-import { getPointDetail } from "@/api/point";
+import { getPointDetail, likePoint } from "@/api/point";
 import { useRoute } from "vue-router";
 import { PointDetail } from "@/types/point";
 import { formatTimeAgo } from "@/utils";
+import { useUserStore } from "@/store/user";
+
+const userStore = useUserStore();
 
 const route = useRoute();
 
@@ -93,6 +98,13 @@ onMounted(() => {
     mapEditor.value.setPoint(res.data.position);
   });
 });
+
+// 点赞
+const likePointHandle = () => {
+  likePoint(pointDetail.value._id).then(({ data }) => {
+    pointDetail.value.likes = data;
+  });
+};
 </script>
 <style scoped lang="scss">
 .point-item {

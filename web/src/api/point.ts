@@ -20,5 +20,5 @@ export const getPointDetail = (_id:string, config?: any) => {
 }
 
 export const likePoint = (_id:string) => {
-  return request.post(LIKE_POINT, { _id })
+  return request.post<string[]>(LIKE_POINT, { _id })
 }
