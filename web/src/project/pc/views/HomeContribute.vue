@@ -276,7 +276,7 @@ const submitHandle = () => {
       submitPoint(params)
         .then(() => {
           submitLoading.value = false;
-          window.$message.success("提交成功");
+          window.$message.success("提交成功,请等待审核");
           router.push({
             path: "/recommend",
             replace: true,

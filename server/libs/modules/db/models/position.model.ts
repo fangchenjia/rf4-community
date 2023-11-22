@@ -6,7 +6,7 @@ import { Fish } from './fish.model';
 import { Dict } from './dict.model';
 
 export type UserDocument = DocumentType<Position>;
-export type mapStatusEnum =
+export type PositionStatusEnum =
   | 'approved'
   | 'disabled'
   | 'deleted'
@@ -105,7 +105,7 @@ export class Position {
 
   @prop()
   @ApiProperty({ description: '状态' })
-  status: mapStatusEnum;
+  status: PositionStatusEnum;
 
   @prop({ ref: () => User })
   @ApiProperty({ description: '点赞用户id' })

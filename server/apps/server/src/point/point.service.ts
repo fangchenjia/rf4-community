@@ -111,7 +111,7 @@ export class PointService {
   // 最新点位
   async getLatestPoints() {
     const positions = await this.positionModel
-      .find()
+      .find({ status: 'approved' })
       .select(
         'title author views likes createdAt description fishImages equipmentImages tags map fish position',
       )

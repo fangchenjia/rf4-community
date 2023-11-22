@@ -13,6 +13,7 @@ import { MenuModule } from './system/menu/menu.module';
 import { UserModule } from './system/user/user.module';
 import { CrawlerModule } from './crawler/crawler.module';
 import { DictModule } from './system/dict/dict.module';
+import { PositionModule } from './position/position.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -30,6 +31,7 @@ import { DictModule } from './system/dict/dict.module';
     UserModule,
     CrawlerModule,
     DictModule,
+    PositionModule,
   ],
   controllers: [AdminController],
   providers: [AdminService],
