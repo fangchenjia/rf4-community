@@ -12,6 +12,7 @@ import { PointModule } from './point/point.module';
 import { TaskModule } from './schedule/task.module';
 import { GameService } from './game/game.service';
 import { GameModule } from './game/game.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { GameModule } from './game/game.module';
     AuthModule,
     PointModule,
     TaskModule,
-    GameModule
+    GameModule,
+    CommentModule
   ],
   controllers: [AppController],
   providers: [AppService, GameService],

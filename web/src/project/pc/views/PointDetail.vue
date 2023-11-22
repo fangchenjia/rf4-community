@@ -62,6 +62,7 @@
         <!-- map -->
         <MapEditor ref="mapEditor" :default-map-key="null" :showMapSelector="false" :show-menu="false" />
       </n-card>
+      <PositionComment :positionId="route.params.id" class="mt-6" />
     </template>
     <template #right-aside>
       <div class="w-64">
@@ -73,6 +74,7 @@
 <script setup lang="ts" name="pointDetail">
 import MapEditor from "@pc/components/MapEditor/MapEditor.vue";
 import MainLayout from "../components/MainLayout.vue";
+import PositionComment from "./modules/PositionComment.vue";
 import { ThumbUpAltOutlined } from "@vicons/material";
 import { EyeOutline } from "@vicons/ionicons5";
 import { MessageDots } from "@vicons/tabler";

@@ -12,6 +12,7 @@ import { Fish } from './models/fish.model';
 import { Bait } from './models/bait.model';
 import { Dict } from './models/dict.model';
 import { Image } from './models/image.model';
+import { PositionComment } from './models/comment.model';
 const models = TypegooseModule.forFeature([
   User,
   Role,
@@ -22,6 +23,7 @@ const models = TypegooseModule.forFeature([
   Bait,
   Dict,
   Image,
+  PositionComment,
 ]);
 
 @Global()
