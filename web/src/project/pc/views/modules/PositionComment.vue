@@ -1,7 +1,7 @@
 <template>
   <n-card :bordered="false">
     <CommentInput class="mb-6" v-model:value="comment" :loading="commentBtnLoading" @submit="submitHandle" />
-    <CommentItem v-for="item in commentList" :key="item._id" :comment="item" @reply="replyHandle">
+    <CommentItem v-for="item in commentList" :key="item._id" :comment="item" @reply="replyHandle" @delete="deleteHandle" @like="likeHandle">
       <template #childrenComment>
         <CommentInput
           v-if="curReplyComment._id === item._id"
@@ -10,7 +10,7 @@
           :loading="secondLevelBtnLoading"
           @submit="submitSecondLevelHandle(item)"
         />
-        <CommentItem v-for="child in item.children" :key="child._id" :comment="child" @reply="replyHandle">
+        <CommentItem v-for="child in item.children" :key="child._id" :comment="child" @reply="replyHandle" @delete="deleteHandle" @like="likeHandle">
           <template #childrenComment>
             <CommentInput
               v-if="curReplyComment._id === child._id"
@@ -29,9 +29,11 @@
 <script setup lang="ts" name="positionComment">
 import CommentItem from "@pc/components/Comment/CommentItem.vue";
 import CommentInput from "@pc/components/Comment/CommentInput.vue";
-import { CreatePositionComment, QueryPositionComment } from "@/api/comment";
+import { CreatePositionComment, QueryPositionComment, RemovePositionComment, LikePositionComment } from "@/api/comment";
 import type { PositionCommentItem } from "@/types/comment";
+import { useDialog } from "naive-ui";
 
+const dialog = useDialog();
 const $props = defineProps({
   positionId: {
     type: String,
@@ -94,4 +96,32 @@ const replyHandle = (item) => {
   curReplyComment.value = item;
   secondLevelComment.value = "";
 };
+
+// 删除评论
+const deleteHandle = (item) => {
+  // 二次确认
+  dialog.error({
+    title: "警告",
+    content: "确定要删除该评论吗？",
+    positiveText: "确定",
+    negativeText: "取消",
+    onPositiveClick: () => {
+      RemovePositionComment(item._id).then(() => {
+        getCommentList();
+      });
+    },
+  });
+};
+
+// 点赞评论
+const likeHandle = (item) => {
+  LikePositionComment(item._id).then(() => {
+    getCommentList();
+  });
+};
+
+// 暴露给父组件
+defineExpose({
+  commentList,
+});
 </script>

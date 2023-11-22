@@ -7,7 +7,7 @@
             <n-icon :component="ThumbUpAltOutlined" :size="20" @click="likePointHandle"></n-icon>
           </n-button>
         </n-badge>
-        <n-badge value="0" :max="99">
+        <n-badge :value="positionCommentRef?.commentList?.reduce((pre, cur) => pre + 1 + cur.children.length, 0)" :max="99">
           <n-button secondary circle> <n-icon :component="MessageDots" :size="20"></n-icon> </n-button>
         </n-badge>
       </div>
@@ -62,7 +62,7 @@
         <!-- map -->
         <MapEditor ref="mapEditor" :default-map-key="null" :showMapSelector="false" :show-menu="false" />
       </n-card>
-      <PositionComment :positionId="route.params.id" class="mt-6" />
+      <PositionComment ref="positionCommentRef" :positionId="route.params.id as string" class="mt-6" />
     </template>
     <template #right-aside>
       <div class="w-64">
@@ -89,6 +89,8 @@ const userStore = useUserStore();
 const route = useRoute();
 
 const mapEditor = ref();
+
+const positionCommentRef = ref();
 
 const pointDetail = ref<PointDetail>({} as PointDetail);
 

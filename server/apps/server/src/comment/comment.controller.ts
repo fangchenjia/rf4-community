@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreatePositionCommentDto } from './dto/create-comment.dto';
 import { QueryPositionCommentDto } from './dto/query-comment.dto';
@@ -14,7 +23,7 @@ export class CommentController {
   @Post('position')
   @ApiOperation({ summary: '创建评论' })
   @UseGuards(AuthGuard('USER_JWT'))
-  create(@Body() createCommentDto: CreatePositionCommentDto,  @ReqUser() user) {
+  create(@Body() createCommentDto: CreatePositionCommentDto, @ReqUser() user) {
     createCommentDto.user = user.id;
     return this.commentService.createPositionComment(createCommentDto);
   }
@@ -24,13 +33,16 @@ export class CommentController {
     return this.commentService.findPositionComments(query);
   }
 
-  @Get('position:id')
-  findOne(@Param('id') id: string) {
-    return this.commentService.findOne(+id);
+  @Delete('position/:id')
+  @UseGuards(AuthGuard('USER_JWT'))
+  remove(@Param('id') id: string, @ReqUser() user) {
+    return this.commentService.removePositionComment(id, user.id);
   }
 
-  @Delete('position:id')
-  remove(@Param('id') id: string) {
-    return this.commentService.remove(+id);
+  @Post('position/like/:id')
+  @ApiOperation({ summary: '点赞评论' })
+  @UseGuards(AuthGuard('USER_JWT'))
+  likePositionComment(@Param('id') id: string, @ReqUser() user) {
+    return this.commentService.likePositionComment(id, user.id);
   }
 }

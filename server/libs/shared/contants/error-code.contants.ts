@@ -97,6 +97,11 @@ export const ErrorEnum = {
     code: 13001,
     message: '文件类型错误',
   },
+  // 评论模块
+  COMMENT_NOT_EXIST: {
+    code: 14000,
+    message: '评论不存在',
+  },
 } as const;
 
 export type ErrorEnumType = {

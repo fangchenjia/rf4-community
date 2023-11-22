@@ -6,7 +6,9 @@
     </template>
     <template #header>
       <!-- 昵称 -->
-      <span class="text-xs">{{ $props.comment.user?.nickname }}</span>
+      <span class="text-xs"
+        >{{ $props.comment.user?.nickname }} <span class="text-blue-500">{{ $props.comment.user?.roles[0]?.name }}</span>
+      </span>
       <!-- 回复人 -->
       <template v-if="$props.comment.toUser && $props.comment.toUser._id !== $props.comment.user?._id">
         <span class="mx-2 text-sm font-normal">回复</span> <span class="text-sm text-blue-500">@{{ $props.comment.toUser?.nickname }}</span>
@@ -22,10 +24,19 @@
         {{ formatTimeAgo($props.comment.createdAt) }}
       </span>
       <div class="flex items-center">
-        <n-icon class="mr-2" :size="14" :color="$props.comment.likes.includes(userStore.userInfo._id) ? themeVars.primaryColor : ''" :component="ThumbUpAltOutlined"></n-icon>
+        <n-icon
+          class="mr-2"
+          :size="14"
+          :color="$props.comment.likes.includes(userStore.userInfo._id) ? themeVars.primaryColor : ''"
+          :component="ThumbUpAltOutlined"
+          @click="$emit('like', $props.comment)"
+        ></n-icon>
         <span>{{ $props.comment.likes.length }}</span>
       </div>
-      <n-button text class="ml-2" type="primary" @click="$emits('reply', $props.comment)"> 回复 </n-button>
+      <n-button text class="mx-2" type="primary" @click="$emits('reply', $props.comment)"> 回复 </n-button>
+      <n-button text v-if="$props.comment.user?._id === userStore.userInfo._id" @click="$emit('delete', $props.comment)">
+        <n-icon :component="Delete16Regular" :size="18"></n-icon>
+      </n-button>
     </div>
     <template #footer>
       <slot name="childrenComment"></slot>
@@ -36,10 +47,11 @@
 import { formatTimeAgo } from "@/utils";
 import { useUserStore } from "@/store/user";
 import { ThumbUpAltOutlined } from "@vicons/material";
+import { Delete16Regular } from "@vicons/fluent";
 import { useThemeVars } from "naive-ui";
 import type { PositionCommentItem } from "@/types/comment";
 
-const $emits = defineEmits(["reply"]);
+const $emits = defineEmits(["reply", "delete", "like"]);
 const userStore = useUserStore();
 const themeVars = useThemeVars();
 const $props = defineProps({

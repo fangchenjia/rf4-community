@@ -6,12 +6,14 @@ export type PositionCommentItem = {
   user: {
     _id: string
     nickname: string
-    avatar: string
+    avatar: string,
+    roles: any[]
   }
   toUser?: {
     _id: string
     nickname: string
-    avatar: string
+    avatar: string,
+    roles: any[]
   }
   children: PositionCommentItem[]
   parent: string
