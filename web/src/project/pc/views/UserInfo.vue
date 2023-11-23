@@ -41,9 +41,10 @@
             accept="image/*"
             :default-file-list="[]"
             :max="1"
+            v-model:file-list="imageFileList"
             :show-file-list="false"
           >
-            <n-button>点击上传</n-button>
+            <n-button :loading="uploadImgLoading">点击上传</n-button>
           </n-upload>
         </div>
       </n-col>
@@ -97,7 +98,10 @@ const submitHandle = () => {
   });
 };
 
+const imageFileList = ref([]);
+const uploadImgLoading = ref(false);
 const uploadImgHandle = ({ file, data, onFinish, onError }: any) => {
+  uploadImgLoading.value = true;
   const formData = new FormData();
   formData.append("file", file.file);
   formData.append("type", "avatar");
@@ -107,10 +111,14 @@ const uploadImgHandle = ({ file, data, onFinish, onError }: any) => {
       file.url = data;
       userInfoModel.value.avatar = data;
       onFinish();
+      imageFileList.value = [];
+      uploadImgLoading.value = false;
     })
     .catch(() => {
       file.status = "failed";
       onError();
+      imageFileList.value = [];
+      uploadImgLoading.value = false;
     });
 };
 </script>
