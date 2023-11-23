@@ -17,5 +17,5 @@ export const captcha = () => {
 }
 
 export const uploadImg = (params: any) => {
-  return request.post(UPLOAD_IMG, params, { headers: { 'Content-Type': 'multipart/form-data' } })
+  return request.post<string>(UPLOAD_IMG, params, { headers: { 'Content-Type': 'multipart/form-data' } })
 }

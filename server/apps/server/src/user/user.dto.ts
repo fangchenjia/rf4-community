@@ -1,26 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsPhoneNumber, Length } from 'class-validator';
+import { Length } from 'class-validator';
 
-export class registerDto {
-  @ApiProperty({ description: '短信验证码', example: '123456' })
-  @IsNotEmpty({ message: '短信验证码不能为空' })
-  @Length(6, 6, { message: '短信验证码长度为6位' })
-  smsCode: string;
-  @ApiProperty({ description: '手机号', example: '18711003418' })
-  @IsNotEmpty({ message: '手机号不能为空' })
-  @IsPhoneNumber('CN', { message: '手机号格式不正确' })
-  mobile: string;
-  @ApiProperty({ description: '密码', example: '123456' })
-  @IsNotEmpty({ message: '密码不能为空' })
-  @Length(6, 20, { message: '密码长度为6-20位' })
-  password: string;
-}
+export class updateInfoDto {
+  @ApiProperty({ description: '昵称', example: 'nick1' })
+  @Length(1, 20, { message: '昵称长度为1-20位' })
+  nickname: string;
 
-export class loginDto {
-  @ApiProperty({ description: '验证码', example: '1234' })
-  captcha: string;
-  @ApiProperty({ description: '手机号', example: '18711003418' })
-  mobile: string;
-  @ApiProperty({ description: '密码', example: '123456' })
-  password: string;
+  @ApiProperty({ description: '头像' })
+  avatar: string;
+
+  @ApiProperty({ description: '描述' })
+  @Length(0, 30, { message: '描述长度为0-30位' })
+  description: string;
 }

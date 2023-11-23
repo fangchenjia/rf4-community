@@ -41,6 +41,10 @@ export class User {
   status: number;
 
   @prop()
+  @ApiProperty({ description: '描述' })
+  description: string;
+
+  @prop()
   @ApiProperty({ description: '备注，管理员可见' })
   remark: string;
 }

@@ -17,6 +17,11 @@ const router = createRouter({
       component: () => import('../views/HomeView.vue'),
       children: [
         {
+          path: '/user-info',
+          name: 'userInfo',
+          component: () => import('../views/UserInfo.vue')
+        },
+        {
           path: '/map-point',
           name: 'mapPoint',
           component: () => import('../views/MapPoint.vue')
