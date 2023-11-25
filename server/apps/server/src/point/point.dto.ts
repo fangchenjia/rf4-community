@@ -67,3 +67,12 @@ export class PointDetailDto {
   @IsNotEmpty({ message: '点位ID不能为空' })
   _id: string;
 }
+
+export class QueryPointsDto {
+  @ApiProperty({ description: '地图' })
+  @IsNotEmpty({ message: '地图不能为空' })
+  map: string;
+
+  @ApiProperty({ description: '鱼种', required: false })
+  fish: string;
+}

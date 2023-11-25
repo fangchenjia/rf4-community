@@ -7,7 +7,7 @@ import { Image } from 'libs/db/models/image.model';
 import axios from 'axios';
 import { RedisCacheService } from 'libs/cache';
 import { InjectModel } from 'nestjs-typegoose';
-import { SubmitPointDto } from './point.dto';
+import { QueryPointsDto, SubmitPointDto } from './point.dto';
 
 @Injectable()
 export class PointService {
@@ -136,6 +136,41 @@ export class PointService {
     return positions;
   }
 
+  async getPoints(query: QueryPointsDto) {
+    const queryparm = {
+      map: query.map,
+      status: 'approved',
+    };
+    if (query.fish) {
+      queryparm['fish'] = {
+        $in: query.fish,
+      };
+    }
+    const positions = await this.positionModel
+      .find(queryparm)
+      .select(
+        'title author views likes createdAt description fishImages equipmentImages tags map fish position',
+      )
+      .populate({
+        path: 'author',
+        select: 'avatar nickname roles',
+        populate: {
+          path: 'roles',
+          select: 'name',
+        },
+      })
+      .populate({
+        path: 'map',
+        select: 'name',
+      })
+      .populate({
+        path: 'fish',
+        select: 'name image',
+      })
+      .sort({ createdAt: -1 })
+      .limit(30);
+    return positions;
+  }
   // 点赞
   async likePoint(useId: string, positionId: string) {
     const position = await this.positionModel.findById(positionId);

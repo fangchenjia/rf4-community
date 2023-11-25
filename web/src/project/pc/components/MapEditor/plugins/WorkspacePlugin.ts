@@ -39,8 +39,10 @@ class WorkspacePlugin {
   clear() {
     // 清空所有arrow path
     this.canvas.getObjects().forEach((item) => {
-      if (item.type === 'arrow' || item.type === 'path') {
-        this.canvas.remove(item)
+      if (item.type === 'arrow' || item.type === 'path' || item.type === 'circle') {
+        if (item.id !== 'singleMarker') {
+          this.canvas.remove(item)
+        }
       }
     })
   }

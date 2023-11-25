@@ -27,6 +27,11 @@ const router = createRouter({
           component: () => import('../views/MapPoint.vue')
         },
         {
+          name: 'pointDistribution',
+          path: '/point-distribution',
+          component: () => import('../views/PointDistribution.vue')
+        },
+        {
           path: '/recommend',
           name: 'recommend',
           component: () => import('../views/HomeRecommend.vue')

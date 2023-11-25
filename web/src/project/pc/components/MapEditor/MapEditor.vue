@@ -80,7 +80,9 @@ import Editor from "./core";
 import WorkspacePlugin from "./plugins/WorkspacePlugin";
 import MapPlugin from "./plugins/MapPlugin";
 import DrawPlugin from "./plugins/DrawPlugin";
+import DomPlugin from "./plugins/DomPlugin";
 import { renderIcon } from "@pc/utils/render";
+import { fabric } from "fabric";
 
 // 定义props
 const props = defineProps({
@@ -120,6 +122,19 @@ defineExpose({
   },
   setPoint: (point: string[]) => {
     mapClickPositionChangeHandle(point);
+  },
+  setPointList: (pointList: { x: number; y: number; options?: fabric.ICircleOptions }[]) => {
+    editor?.clear();
+    editor?.addMarkersByPosition(pointList);
+  },
+  setDom: (dom: HTMLElement) => {
+    editor?.setDom(dom);
+  },
+  showDom: (x: number, y: number) => {
+    editor?.showDom(x, y);
+  },
+  hideDom: () => {
+    editor?.hideDom();
   },
 });
 
@@ -184,6 +199,7 @@ onMounted(() => {
   editor.use(WorkspacePlugin);
   editor.use(MapPlugin);
   editor.use(DrawPlugin);
+  editor.use(DomPlugin);
 
   mapPlugin = editor.getPlugin("MapPlugin");
   // 监听点击地图点位变化、鼠标位置点位变化

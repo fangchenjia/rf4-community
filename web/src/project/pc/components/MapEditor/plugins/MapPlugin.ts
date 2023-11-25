@@ -82,9 +82,9 @@ class MapPlugin {
     this.canvas.renderAll()
   }
 
-  addMarkersByPosition(positions: { x: number; y: number }[]) {
+  addMarkersByPosition(positions: { x: number; y: number, options?: fabric.ICircleOptions }[]) {
     positions.forEach((position) => {
-      this.addMarker(this._positionToPoint(position), { stroke: 'red' })
+      this.addMarker(this._positionToPoint(position), position.options)
     })
   }
 
@@ -93,7 +93,7 @@ class MapPlugin {
    * @param position { x: number; y: number} 坐标
    * @returns fabric.Object
    */
-  addMarker( position: { x: number; y: number }, options?: fabric.ICircleOptions) {
+  addMarker( position: { x: number; y: number }, options?: fabric.ICircleOptions & { onClick?: () => void }) {
     // 在mapWorkspace中添加点位
     const radius = options?.radius || 1.6
     const strokeWidth = options?.strokeWidth || 0.5
@@ -105,9 +105,11 @@ class MapPlugin {
       left: position.x - radius - strokeWidth/2,
       top: position.y - radius - strokeWidth/2,
       hoverCursor: 'default', // 设置鼠标样式为默认样式
-      evented: false,
       ...options
     })
+    if(options?.onClick) {
+      marker.on('mousedown', options?.onClick);
+    }
     this.canvas.add(marker)
     this.markers.push(marker)
     return marker

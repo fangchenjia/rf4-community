@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Map } from "@vicons/fa";
 import { PhotoFilterTwotone, AccessTimeRound } from "@vicons/material";
+import { Locate } from "@vicons/ionicons5";
 import { RouterLink, useRouter } from "vue-router";
 import { MenuOption } from "naive-ui";
 import { renderIcon } from "@/project/pc/utils/render";
@@ -57,6 +58,20 @@ const menuOptions: MenuOption[] = [
       ),
     key: "map-point",
     icon: renderIcon(Map),
+  },
+  {
+    label: () =>
+      h(
+        RouterLink,
+        {
+          to: {
+            name: "pointDistribution",
+          },
+        },
+        { default: () => "点位分布" }
+      ),
+    key: "point-distribution",
+    icon: renderIcon(Locate),
   },
 ];
 

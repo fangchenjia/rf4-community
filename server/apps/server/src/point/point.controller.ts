@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PointService } from './point.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ReqUser } from 'shared/decorators/req-user.decorator';
 import { UserDocument } from 'libs/db/models/user.model';
-import { PointDetailDto, SubmitPointDto } from './point.dto';
+import { PointDetailDto, QueryPointsDto, SubmitPointDto } from './point.dto';
 
 @Controller('point')
 @ApiTags('点位模块')
@@ -21,6 +21,12 @@ export class PointController {
   @ApiOperation({ summary: '获取最新点位' })
   async latestPoints() {
     return await this.pointService.getLatestPoints();
+  }
+
+  @Get('points')
+  @ApiOperation({ summary: '获取点位数据' })
+  async getPoints(@Query() query: QueryPointsDto) {
+    return await this.pointService.getPoints(query);
   }
 
   @Post('pointDetail')
