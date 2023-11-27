@@ -25,9 +25,16 @@
     </template>
   </PointList>
   <n-card ref="pointDetailRef" v-show="pointDetailShow" contentStyle="padding: 0" size="small">
-    <span class="text-xs px-1 cursor-pointer" @click="router.push(`/point-detail/${clickedPoint._id}`)">
-      {{ clickedPoint?.title }}
-    </span>
+    <ul>
+      <li
+        class="text-xs px-1 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 dark:hover:text-gray-200"
+        v-for="clickedPoint in clickedPoints"
+        :key="clickedPoint._id"
+        @click="router.push(`/point-detail/${clickedPoint._id}`)"
+      >
+        {{ clickedPoint?.title }}
+      </li>
+    </ul>
   </n-card>
 </template>
 
@@ -49,7 +56,7 @@ const pointDetailRef = ref();
 
 const pointDetailShow = ref(false);
 
-const clickedPoint = ref();
+const clickedPoints = ref();
 
 const queryFormModel = ref({
   map: mapStore.maps[0]?._id,
@@ -91,29 +98,47 @@ const pointList = ref([]);
 const updatePoints = () => {
   getPoints(queryFormModel.value, { showLoading: true }).then((res: any) => {
     pointList.value = res.data;
-    const locationArray = pointList.value.map((item) => {
-      return {
-        x: item.position[0],
-        y: item.position[1],
-        options: {
-          stroke: "white",
-          fill: "red",
-          radius: 1,
-          onClick: (opt) => {
-            if (mapEditorRef.value) {
-              clickedPoint.value = item;
-              pointDetailShow.value = true;
-              const dom = pointDetailRef.value?.$el;
-              mapEditorRef.value?.setDom(dom);
-              const { x, y } = opt.pointer;
-              mapEditorRef.value?.showDom(x, y);
-            }
+    // 遍历数组 根据点位出现的次数 设置不同的颜色 出现一次为绿色 出现两次为黄色 出现三次以上为红色
+    const locationArray = new Map();
+    pointList.value.forEach((item) => {
+      const { position } = item;
+      const [x, y] = position;
+      const key = `${x},${y}`;
+      if (!locationArray.has(key)) {
+        const itemObj = {
+          count: 1,
+          pointList: [item],
+          x: item.position[0],
+          y: item.position[1],
+          options: {
+            stroke: "white",
+            fill: "green",
+            radius: 1,
+            onClick: (opt) => {
+              if (mapEditorRef.value) {
+                clickedPoints.value = itemObj.pointList;
+                pointDetailShow.value = true;
+                const dom = pointDetailRef.value?.$el;
+                mapEditorRef.value?.setDom(dom);
+                const { x, y } = opt.pointer;
+                mapEditorRef.value?.showDom(x, y);
+              }
+            },
           },
-        },
-      };
+        };
+        locationArray.set(key, itemObj);
+      } else {
+        locationArray.get(key).count++;
+        locationArray.get(key).pointList.push(item);
+        if (locationArray.get(key).count >= 3) {
+          locationArray.get(key).options.fill = "red";
+        } else if (locationArray.get(key).count >= 2) {
+          locationArray.get(key).options.fill = "blue";
+        }
+      }
     });
     if (mapEditorRef.value) {
-      mapEditorRef.value.setPointList(locationArray);
+      mapEditorRef.value.setPointList(Array.from(locationArray.values()).sort((a, b) => a.count - b.count));
     }
   });
 };
