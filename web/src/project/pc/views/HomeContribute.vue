@@ -268,6 +268,11 @@ const submitHandle = () => {
       const params = {
         ...positionModel.value,
       };
+      // 检查是否有未上传成功的图片
+      if (equipmentImageList.value.some((item) => !item.url) || fishImageList.value.some((item) => !item.url)) {
+        window.$message.error("请检查是否有上传失败的图片并重新上传");
+        return;
+      }
       params.equipmentImages = equipmentImageList.value.map((item) => item.url);
       params.fishImages = fishImageList.value.map((item) => item.url);
       params.canvasJson = JSON.stringify(mapEditorRef.value?.getJson());
