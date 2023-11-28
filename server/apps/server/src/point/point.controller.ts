@@ -4,7 +4,12 @@ import { PointService } from './point.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ReqUser } from 'shared/decorators/req-user.decorator';
 import { UserDocument } from 'libs/db/models/user.model';
-import { PointDetailDto, QueryPointsDto, SubmitPointDto } from './point.dto';
+import {
+  PointDetailDto,
+  QueryPointsDto,
+  QueryUserDto,
+  SubmitPointDto,
+} from './point.dto';
 
 @Controller('point')
 @ApiTags('点位模块')
@@ -50,5 +55,17 @@ export class PointController {
     @Body() body: SubmitPointDto,
   ) {
     return await this.pointService.submitPoint(user, body);
+  }
+
+  @Get('userPoints')
+  @ApiOperation({ summary: '获取用户点位' })
+  async userPoints(@Query() query: QueryUserDto) {
+    return await this.pointService.userPoints(query._id);
+  }
+
+  @ApiOperation({ summary: '获取投稿次数排行榜' })
+  @Get('userRank')
+  async userRank() {
+    return await this.pointService.userRank();
   }
 }

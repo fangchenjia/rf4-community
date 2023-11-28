@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserDocument } from 'libs/db/models/user.model';
 import { updateInfoDto } from './user.dto';
@@ -19,5 +19,11 @@ export class UserController {
     @Body() updateInfo: updateInfoDto,
   ) {
     return await this.userService.updateInfo(user.id, updateInfo);
+  }
+
+  @ApiOperation({ summary: '查看用户' })
+  @Get('user-detail/:id')
+  async getUser(@Param() param) {
+    return await this.userService.getUser(param.id);
   }
 }

@@ -4,6 +4,7 @@ export const USER_INFO = '/v1/auth/info'
 export const REFRESH_TOKEN = '/v1/auth/refresh-token'
 export const RESET_PASSWORD = '/v1/auth/reset-password'
 export const UPDATE_USER = '/v1/user/update-info'
+export const USER_DETAIL = '/v1/user/user-detail'
 
 import { type UserInfo } from '@/types/user'
 
@@ -59,4 +60,8 @@ export const getRefreshToken = (params: refreshTokenPrarms) => {
 
 export const updateUser = (params: userUpdatePrarms) => {
   return request.post<UserInfo>(UPDATE_USER, params)
+}
+
+export const userDetail = (id: string, param: any, config?: any) => {
+  return request.get<UserInfo>(`${USER_DETAIL}/${id}`, param, config)
 }

@@ -37,4 +37,14 @@ export class UserService {
       new: true,
     });
   }
+
+  async getUser(id: string) {
+    return await this.userModel
+      .findById(id)
+      .select('nickname avatar description roles')
+      .populate({
+        path: 'roles',
+        select: 'name',
+      });
+  }
 }

@@ -9,6 +9,7 @@ import { useThemeVars } from "naive-ui";
 import { useLoadingBar } from "naive-ui";
 import globelRouter from "@pc/router";
 import SiteRecommend from "@pc/views/modules/SiteRecommend.vue";
+import UserPointRank from "@pc/views/modules/UserPointRank.vue";
 import MainLayout from "../components/MainLayout.vue";
 import { useMapStore } from "@/store/map";
 // 首页初始化地图
@@ -131,6 +132,7 @@ function convertToGameTime(realTime) {
         </div>
         <n-button type="primary" ghost @click="router.push('/contribute')">去投稿</n-button>
       </n-card>
+      <UserPointRank />
       <SiteRecommend />
     </template>
   </MainLayout>

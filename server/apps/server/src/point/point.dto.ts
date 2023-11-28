@@ -68,6 +68,12 @@ export class PointDetailDto {
   _id: string;
 }
 
+export class QueryUserDto {
+  @ApiProperty({ description: '用户ID' })
+  @IsNotEmpty({ message: '用户ID不能为空' })
+  _id: string;
+}
+
 export class QueryPointsDto {
   @ApiProperty({ description: '地图' })
   @IsNotEmpty({ message: '地图不能为空' })

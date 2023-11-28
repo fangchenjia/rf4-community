@@ -211,4 +211,73 @@ export class PointService {
     await position.save();
     return position;
   }
+
+  // 获取用户点位
+  async userPoints(id: string) {
+    const positions = await this.positionModel
+      .find({ author: id })
+      .select(
+        'title author views likes createdAt description fishImages equipmentImages tags map fish position',
+      )
+      .populate({
+        path: 'author',
+        select: 'avatar nickname roles',
+        populate: {
+          path: 'roles',
+          select: 'name',
+        },
+      })
+      .populate({
+        path: 'map',
+        select: 'name',
+      })
+      .populate({
+        path: 'fish',
+        select: 'name image',
+      })
+      .sort({ createdAt: -1 });
+
+    return positions;
+  }
+
+  // 排行榜
+  async userRank() {
+    const userList = await this.positionModel.aggregate([
+      {
+        $group: {
+          _id: '$author',
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: {
+          count: -1,
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+      {
+        $unwind: '$user', // 确保我们得到每个用户的详细信息而不是一个包含用户信息的数组。
+      },
+      {
+        $project: {
+          _id: 0,
+          count: 1,
+          'user.avatar': 1,
+          'user.nickname': 1,
+          'user.roles': 1,
+          'user._id': 1,
+          'user.mobile': 1,
+          'user.description': 1,
+        },
+      },
+    ]);
+    return userList;
+  }
 }
