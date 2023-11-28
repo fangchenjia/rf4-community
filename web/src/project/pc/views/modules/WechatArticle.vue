@@ -50,7 +50,7 @@
       </template>
       <n-empty description="什么也没有" v-if="account.dataList.length === 0"> </n-empty>
       <ul v-else class="flex flex-wrap justify-between">
-        <li v-for="item in account.dataList" :key="item.key" class="flex items-center justify-around py-2 album-item">
+        <li v-for="item in account.dataList" :key="item.key" class="flex items-center justify-around py-2 album-item hover:bg-gray-100 dark:hover:bg-neutral-800">
           <n-avatar :size="50" :src="item.cover_img_1_1" />
           <div class="w-3/4">
             <n-ellipsis class="text-sm min-w-full" :tooltip="false">

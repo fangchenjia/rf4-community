@@ -3,7 +3,13 @@
     <template #header>
       <slot name="header"></slot>
     </template>
-    <n-list-item v-for="point in $props.pointList" :key="point._id" @click="router.push(`/point-detail/${point._id}`)">
+    <n-list-item
+      v-for="point in $props.pointList"
+      :key="point._id"
+      @click="router.push(`/point-detail/${point._id}`)"
+      class="hover:bg-gray-100 dark:hover:bg-neutral-800"
+      style="padding-left: 12px; padding-right: 12px"
+    >
       <template #suffix>
         <img class="w-36 h-24 rounded-md" :src="point.fishImages[0] || point.fish[0].image" alt="" />
       </template>
