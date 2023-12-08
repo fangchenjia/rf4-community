@@ -16,7 +16,8 @@
       <n-card :bordered="false" class="rounded" :title="pointDetail.title">
         <!-- meta-box -->
         <div class="flex items-center text-slate-500">
-          <span class="mr-2">{{ pointDetail.author?.nickname }}</span>
+          作者：
+          <span class="mr-2 text-blue-400" @click="router.push(`/user-detail/${pointDetail.author?._id}`)">{{ pointDetail.author?.nickname }}</span>
           <span class="mr-2">{{ formatTimeAgo(pointDetail.createdAt) }}</span>
           <div class="flex items-center mr-2">
             <n-icon class="mr-1" :size="14" :component="EyeOutline"></n-icon>
@@ -79,7 +80,7 @@ import { ThumbUpAltOutlined } from "@vicons/material";
 import { EyeOutline } from "@vicons/ionicons5";
 import { MessageDots } from "@vicons/tabler";
 import { getPointDetail, likePoint } from "@/api/point";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { PointDetail } from "@/types/point";
 import { formatTimeAgo } from "@/utils";
 import { useUserStore } from "@/store/user";
@@ -87,6 +88,8 @@ import { useUserStore } from "@/store/user";
 const userStore = useUserStore();
 
 const route = useRoute();
+
+const router = useRouter();
 
 const mapEditor = ref();
 

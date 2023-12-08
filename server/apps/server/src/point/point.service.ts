@@ -242,7 +242,13 @@ export class PointService {
 
   // 排行榜
   async userRank() {
+    // 只要已经审核通过的
     const userList = await this.positionModel.aggregate([
+      {
+        $match: {
+          status: 'approved',
+        },
+      },
       {
         $group: {
           _id: '$author',
