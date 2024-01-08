@@ -1,0 +1,28 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "调试 xx 项目",
+      "runtimeExecutable": "canary",
+      "runtimeArgs": [
+          "--auto-open-devtools-for-tabs",
+          "--incognito" // 无痕模式 
+      ],
+      "userDataDir": false,
+      "url": "http://localhost:8090",
+      "webRoot": "${workspaceFolder}/web/",
+      "pathMapping": {
+        "/pc": "${webRoot}/src/project/pc"
+      },
+      "sourceMapPathOverrides": {
+        // "/*": "webRoot/*",
+        // "/./*": "webRoot/*",
+        "//pc/*": "${webRoot}/src/project/pc",
+
+        // "webpack://你的项目名/src/*": "workspaceFolder/src/*"
+      }
+    }
+  ]
+}
