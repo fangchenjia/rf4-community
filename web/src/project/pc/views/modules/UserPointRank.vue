@@ -1,7 +1,7 @@
 <template>
   <n-card class="mt-4" size="small" :bordered="false" header-style="font-size: 14px" content-style="padding: 0">
     <template #header>
-      <div class="flex items-center"><n-icon :size="14" :component="UserRegular"></n-icon> <span class="ml-2 font-normal">贡献榜</span></div>
+      <div class="flex items-center"><n-icon :size="14" :component="UserRegular"></n-icon> <span class="ml-2 font-normal">本月贡献榜</span></div>
     </template>
     <ul class="p-1">
       <li
@@ -23,8 +23,12 @@
         </div>
         <n-button size="tiny" round type="primary" secondary @click="router.push(`/user-detail/${item.user._id}`)">查看</n-button>
       </li>
+      <!-- 暂无数据 -->
+      <li v-if="!rankList.length" class="flex justify-center items-center p-2 hover:bg-gray-100 dark:hover:bg-neutral-800">
+        <n-gradient-text>本月没人投稿！！！</n-gradient-text>
+      </li>
       <!-- 展示全部 -->
-      <li class="flex justify-center items-center p-2 hover:bg-gray-100 dark:hover:bg-neutral-800" @click="isExpand = !isExpand">
+      <li v-if="rankList.length >= 5" class="flex justify-center items-center p-2 hover:bg-gray-100 dark:hover:bg-neutral-800" @click="isExpand = !isExpand">
         <n-button text type="primary">
           {{ isExpand ? "收起" : "查看所有" }} <n-icon :component="isExpand ? AngleDoubleUp : AngleDoubleDown" :size="12" class="ml-1"></n-icon
         ></n-button>
@@ -46,7 +50,7 @@ const rankList = ref([]);
 const isExpand = ref(false);
 
 onMounted(() => {
-  userRank().then((res) => {
+  userRank({ timeType: "month" }).then((res) => {
     rankList.value = res.data;
   });
 });

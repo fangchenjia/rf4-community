@@ -241,12 +241,22 @@ export class PointService {
   }
 
   // 排行榜
-  async userRank() {
+  async userRank({ timeType = '' }) {
+    // timeType 为空，获取总排行榜  month 获取月排行榜
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     // 只要已经审核通过的
     const userList = await this.positionModel.aggregate([
       {
         $match: {
           status: 'approved',
+        },
+      },
+      {
+        $match: {
+          createdAt: {
+            $gte: timeType === 'month' ? startOfMonth : new Date(0),
+          },
         },
       },
       {

@@ -82,3 +82,8 @@ export class QueryPointsDto {
   @ApiProperty({ description: '鱼种', required: false })
   fish: string;
 }
+
+export class QueryUserRankDto {
+  @ApiProperty({ description: '时间类型', required: false })
+  timeType?: '' | 'month';
+}

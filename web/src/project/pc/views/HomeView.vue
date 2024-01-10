@@ -14,7 +14,6 @@ import MainLayout from "../components/MainLayout.vue";
 import { useMapStore } from "@/store/map";
 // 首页初始化地图
 useMapStore().getMaps();
-
 // 跳转路由添加progress
 const loadingBar = useLoadingBar();
 globelRouter.beforeEach((to, from, next) => {

@@ -8,6 +8,7 @@ import {
   PointDetailDto,
   QueryPointsDto,
   QueryUserDto,
+  QueryUserRankDto,
   SubmitPointDto,
 } from './point.dto';
 
@@ -65,7 +66,7 @@ export class PointController {
 
   @ApiOperation({ summary: '获取投稿次数排行榜' })
   @Get('userRank')
-  async userRank() {
-    return await this.pointService.userRank();
+  async userRank(@Query() query: QueryUserRankDto) {
+    return await this.pointService.userRank(query);
   }
 }

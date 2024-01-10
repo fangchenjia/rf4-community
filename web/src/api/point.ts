@@ -35,6 +35,6 @@ export const userPoints = (_id:string) => {
   return request.get<Point[]>(USER_POINTS, { _id })
 }
 
-export const userRank = () => {
-  return request.get<UserInfo & {count: number}[]>(USER_RANK)
+export const userRank = (param?: { timeType?: string }) => {
+  return request.get<UserInfo & {count: number}[]>(USER_RANK, param)
 }
