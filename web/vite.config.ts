@@ -1,6 +1,9 @@
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
+import viteCompression from 'vite-plugin-compression'
+import { visualizer } from 'rollup-plugin-visualizer'
+import importToCDN from 'vite-plugin-cdn-import'
 import { fileURLToPath, URL } from 'url'
 import fs from "fs";
 import { defineConfig } from 'vite'
@@ -54,6 +57,25 @@ export default defineConfig({
   root: `src/project/${npm_config_page}/`,
   envDir: resolve(__dirname, 'src'), //用于加载 .env 文件的目录。可以是一个绝对路径，也可以是相对于项目根的路径。
   plugins: [
+    importToCDN({
+      modules: [
+        {
+          name: 'lodash',
+          var: '_',
+          path: 'https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.min.js'
+        },
+        {
+          name: 'fabric',
+          var: 'window',
+          path: 'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js'
+        },
+        {
+          name: 'moment',
+          var: 'moment',
+          path: 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js'
+        }
+      ]
+    }),
     vue(),
     AutoImport({ // 自动导入NaiveUI
       imports: [
@@ -70,6 +92,14 @@ export default defineConfig({
     }),
     Components({ // 自动导入NaiveUI
       resolvers: [NaiveUiResolver()]
+    }),
+    visualizer({open: true}),
+    viteCompression({
+      verbose: true,
+      disable: false,
+      threshold: 10240, // 大于10kb的文件才会被压缩
+      algorithm: 'gzip',
+      ext: '.gz'
     })
   ],
   resolve: {
@@ -88,6 +118,12 @@ export default defineConfig({
           chunkFileNames: 'js/[name]-[hash].js',
           entryFileNames: 'js/[name]-[hash].js',
           assetFileNames: '[ext]/[name]-[hash].[ext]',
+          manualChunks(id) {
+            if (id.includes("node_modules")) {
+              // 让每个插件都打包成独立的文件 把三方库单独打包
+              return id.toString().split("node_modules/")[1].split("/")[0].toString(); 
+            }
+          }
       }
     }
   },
@@ -95,8 +131,8 @@ export default defineConfig({
     port: 8090,
     proxy: {
       '/api-server': {
-        target: 'http://localhost:3004',
-        // target: 'http://110.42.213.115:3004',
+        // target: 'http://localhost:3004',
+        target: 'http://110.42.213.115:3004',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api-server/, '')
       }
