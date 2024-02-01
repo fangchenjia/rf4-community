@@ -8,6 +8,16 @@
     <title>我们的俄钓4</title>
   </head>
   <body>
+    <script>
+      // 自执行函数，判断是否为移动端
+      (function () {
+        var ua = navigator.userAgent
+        var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)
+        if (isMobile) {
+          location.href = 'https://rf4.cosycosy.cn/mobile/'
+        }
+      })()
+    </script>
     <div id="app"></div>
     <script type="module" src="./main.ts"></script>
   </body>

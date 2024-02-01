@@ -12,11 +12,11 @@ import App from './App.vue'
 
 import requestSetup from '@/project/pc/request'
 
-import { isMobile } from '@/utils/platform'
-// 如果是移动端，跳转到移动端页面
-if (isMobile()) {
-  location.href = 'https://rf4.cosycosy.cn/mobile/'
-}
+// import { isMobile } from '@/utils/platform'
+// // 如果是移动端，跳转到移动端页面
+// if (isMobile()) {
+//   location.href = 'https://rf4.cosycosy.cn/mobile/'
+// }
 
 const app = createApp(App)
 // 注册全局 store
