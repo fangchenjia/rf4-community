@@ -138,7 +138,6 @@ export class PointService {
 
   async getPoints(query: QueryPointsDto) {
     const queryparm = {
-      map: query.map,
       status: 'approved',
     };
     if (query.fish) {
@@ -146,6 +145,10 @@ export class PointService {
         $in: query.fish,
       };
     }
+    if (query.map) {
+      queryparm['map'] = query.map;
+    }
+    const { pageNum, pageSize } = query;
     const positions = await this.positionModel
       .find(queryparm)
       .select(
@@ -168,8 +171,14 @@ export class PointService {
         select: 'name image',
       })
       .sort({ createdAt: -1 })
-      .limit(30);
-    return positions;
+      .skip((pageNum - 1) * pageSize)
+      .limit(pageSize);
+    return {
+      positions,
+      total: await this.positionModel.countDocuments(queryparm),
+      pageNum,
+      pageSize,
+    };
   }
   // 点赞
   async likePoint(useId: string, positionId: string) {

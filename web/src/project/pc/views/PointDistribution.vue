@@ -96,8 +96,15 @@ const fishSelectHandle = (value) => {
 const pointList = ref([]);
 
 const updatePoints = () => {
-  getPoints(queryFormModel.value, { showLoading: true }).then((res: any) => {
-    pointList.value = res.data;
+  getPoints(
+    {
+      ...queryFormModel.value,
+      pageNum: 1,
+      pageSize: 30,
+    },
+    { showLoading: true }
+  ).then((res: any) => {
+    pointList.value = res.data.positions;
     // 遍历数组 根据点位出现的次数 设置不同的颜色 出现一次为绿色 出现两次为黄色 出现三次以上为红色
     const locationArray = new Map();
     pointList.value.forEach((item) => {

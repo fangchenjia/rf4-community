@@ -42,6 +42,11 @@ const router = createRouter({
           component: () => import('../views/HomeRecommend.vue')
         },
         {
+          path: '/wechatPoint',
+          name: 'wechatPoint',
+          component: () => import('../views/WechatPoint.vue')
+        },
+        {
           path: '/contribute',
           name: 'contribute',
           component: () => import('../views/HomeContribute.vue'),

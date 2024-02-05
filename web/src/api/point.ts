@@ -19,8 +19,8 @@ export const latestPoints = () => {
   return request.get(LAEST_POINTS)
 }
 
-export const getPoints = (query: { map: string, fish?: string}, config?: any) => {
-  return request.get<Point[]>(POINTS, query, config)
+export const getPoints = (query: { map?: string, fish?: string, pageNum?: number, pageSize?: number}, config?: any) => {
+  return request.get<Record<string, any>>(POINTS, query, config)
 }
 
 export const getPointDetail = (_id:string, config?: any) => {

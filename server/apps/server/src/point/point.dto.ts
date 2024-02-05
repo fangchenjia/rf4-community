@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, Length } from 'class-validator';
+import { PageOptionsDto } from 'shared/dto/page.dto';
 
 export class SubmitPointDto {
   @ApiProperty({ description: '点位标题' })
@@ -74,9 +75,8 @@ export class QueryUserDto {
   _id: string;
 }
 
-export class QueryPointsDto {
-  @ApiProperty({ description: '地图' })
-  @IsNotEmpty({ message: '地图不能为空' })
+export class QueryPointsDto extends PageOptionsDto {
+  @ApiProperty({ description: '地图', required: false })
   map: string;
 
   @ApiProperty({ description: '鱼种', required: false })
