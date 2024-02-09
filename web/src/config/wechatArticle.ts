@@ -98,3 +98,13 @@ export const accountList = [
     ]
   }
 ]
+
+export type Account = typeof accountList[0]
+export type Article = {
+  "cover_img_1_1": string,
+  "create_time": string,
+  "key": string,
+  "pos_num": string,
+  "title": string,
+  "url": string,
+}

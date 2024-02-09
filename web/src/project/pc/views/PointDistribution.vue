@@ -16,7 +16,7 @@
       </n-form-item-gi>
     </n-grid>
   </n-form>
-  <div class="w-full">
+  <div class="w-full" v-if="queryFormModel.map">
     <MapEditor :showMapSelector="false" ref="mapEditorRef" :showMenu="false" />
   </div>
   <PointList :pointList="pointList" class="mt-6">

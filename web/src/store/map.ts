@@ -14,3 +14,5 @@ export const useMapStore = defineStore('map',{
     }
   }
 });
+
+useMapStore().getMaps()

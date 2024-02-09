@@ -32,5 +32,5 @@ export const getWechatArticleList = (params: ArticleListParams) => {
 }
 // 获取每日最新文章
 export const wechatArticleListLatest = () => {
-  return request.get(ARTICLELISTLATEST)
+  return request.get<Record<string, any[]>>(ARTICLELISTLATEST)
 }

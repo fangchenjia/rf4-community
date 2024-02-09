@@ -1,5 +1,5 @@
 <template>
-  <n-form ref="formRef" :model="positionModel" :rules="positionRules" label-width="auto" size="small">
+  <n-form ref="formRef" :model="positionModel" :rules="(positionRules as FormRules)" label-width="auto" size="small">
     <n-grid :cols="24" :x-gap="24">
       <n-form-item-gi :span="12" label="标题" path="title">
         <n-input v-model:value="positionModel.title" placeholder="标题 如：34图抢钱啦??" />
@@ -114,6 +114,7 @@ import { uploadImg } from "@/api/common";
 import { submitPoint } from "@/api/point";
 import type { Point } from "@/types/point";
 import { useRouter } from "vue-router";
+import { FormRules } from "naive-ui";
 const router = useRouter();
 const submitLoading = ref(false);
 
@@ -243,7 +244,7 @@ const baitsInputHandle = (val) => {
   }
 };
 // 图片上传
-const customRequest = ({ file, data, onFinish, onError }: any) => {
+const customRequest = ({ file, onFinish, onError }: any) => {
   const formData = new FormData();
   formData.append("file", file.file);
   formData.append("type", "position");
@@ -276,7 +277,7 @@ const submitHandle = () => {
       params.equipmentImages = equipmentImageList.value.map((item) => item.url);
       params.fishImages = fishImageList.value.map((item) => item.url);
       params.canvasJson = JSON.stringify(mapEditorRef.value?.getJson());
-      params.baits = positionModel.value.baits?.join(",");
+      params.baits = ((positionModel.value.baits as unknown) as [])?.join(",");
       submitLoading.value = true;
       submitPoint(params)
         .then(() => {

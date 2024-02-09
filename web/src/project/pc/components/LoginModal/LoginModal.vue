@@ -1,18 +1,7 @@
 <template>
-  <n-config-provider
-    :theme="appStore.theme === 'dark' ? darkTheme : undefined"
-    :theme-overrides="appStore.themeOverrides"
-  >
+  <n-config-provider :theme="appStore.theme === 'dark' ? darkTheme : undefined" :theme-overrides="appStore.themeOverrides">
     <n-modal v-model:show="showModal" :mask-closable="false">
-      <n-card
-        closable
-        class="login-modal"
-        :bordered="false"
-        size="small"
-        role="dialog"
-        :on-close="() => (showModal = false)"
-        aria-modal="true"
-      >
+      <n-card closable class="login-modal" :bordered="false" size="small" role="dialog" :on-close="() => (showModal = false)" aria-modal="true">
         <template #header> {{ modalTitle }} </template>
         <template #header-extra v-if="routeQueue.length !== 0">
           <ChevronBackSharp
@@ -26,13 +15,7 @@
 
         <!-- 登录表单 -->
         <template v-if="currentModalType === modalType.LOGIN">
-          <n-form
-            ref="loginFormRef"
-            :model="loginForm"
-            size="large"
-            :show-label="false"
-            :rules="loginFormRules"
-          >
+          <n-form ref="loginFormRef" :model="loginForm" size="large" :show-label="false" :rules="(loginFormRules as FormRules)">
             <n-form-item path="mobile">
               <n-input v-model:value="loginForm.mobile" round placeholder="请输入手机号">
                 <template #prefix>
@@ -41,29 +24,14 @@
               </n-input>
             </n-form-item>
             <n-form-item path="password">
-              <n-input
-                v-model:value="loginForm.password"
-                round
-                type="password"
-                show-password-on="click"
-                placeholder="请输入密码"
-              >
+              <n-input v-model:value="loginForm.password" round type="password" show-password-on="click" placeholder="请输入密码">
                 <template #prefix>
                   <n-icon :component="Lock" />
                 </template>
               </n-input>
             </n-form-item>
             <n-form-item>
-              <n-button
-                class="w-full"
-                attr-type="button"
-                type="primary"
-                round
-                @click="loginHandle"
-                :loading="loginFormLoading"
-              >
-                登录
-              </n-button>
+              <n-button class="w-full" attr-type="button" type="primary" round @click="loginHandle" :loading="loginFormLoading"> 登录 </n-button>
             </n-form-item>
           </n-form>
           <div class="flex justify-between">
@@ -99,25 +67,10 @@
         </template>
 
         <!-- 注册表单 -->
-        <template
-          v-if="
-            currentModalType === modalType.REGISTER ||
-            currentModalType === modalType.FORGET_PASSWORD
-          "
-        >
-          <n-form
-            ref="registerFormRef"
-            :model="registerForm"
-            size="large"
-            :show-label="false"
-            :rules="registerFormRules"
-          >
+        <template v-if="currentModalType === modalType.REGISTER || currentModalType === modalType.FORGET_PASSWORD">
+          <n-form ref="registerFormRef" :model="registerForm" size="large" :show-label="false" :rules="(registerFormRules as FormRules)">
             <n-form-item path="mobile">
-              <n-input
-                v-model:value="registerForm.mobile"
-                round
-                placeholder="请输入手机号"
-              >
+              <n-input v-model:value="registerForm.mobile" round placeholder="请输入手机号">
                 <template #prefix>
                   <n-icon :component="MobileAlt" />
                 </template>
@@ -127,12 +80,7 @@
             <n-form-item path="captcha">
               <n-row>
                 <n-col :span="14">
-                  <n-input
-                    v-model:value="registerForm.captcha"
-                    :input-props="{ autocomplete: 'off' }"
-                    round
-                    placeholder="请输入图形验证码"
-                  >
+                  <n-input v-model:value="registerForm.captcha" :input-props="{ autocomplete: 'off' }" round placeholder="请输入图形验证码">
                     <template #prefix>
                       <n-icon :component="VerifiedUserRound" />
                     </template>
@@ -144,12 +92,7 @@
               </n-row>
             </n-form-item>
             <n-form-item path="smsCode">
-              <n-input
-                v-model:value="registerForm.smsCode"
-                round
-                :input-props="{ autocomplete: 'off' }"
-                placeholder="请输入短信验证码"
-              >
+              <n-input v-model:value="registerForm.smsCode" round :input-props="{ autocomplete: 'off' }" placeholder="请输入短信验证码">
                 <template #prefix>
                   <n-icon :component="SmsRound" />
                 </template>
@@ -181,11 +124,7 @@
                 type="primary"
                 round
                 :loading="registerFormLoading"
-                @click="
-                  currentModalType === modalType.REGISTER
-                    ? registerHandle()
-                    : resetPasswordHandle()
-                "
+                @click="currentModalType === modalType.REGISTER ? registerHandle() : resetPasswordHandle()"
               >
                 {{ currentModalType === modalType.REGISTER ? "注册" : "重置密码" }}
               </n-button>
@@ -197,18 +136,8 @@
         <template #footer>
           <div class="ml-1 mb-2">
             <n-checkbox v-model:checked="protocolChecked" />&nbsp;我已阅读并同意
-            <n-button text tag="a" :href="userAgreement" target="_blank" type="primary">
-              《用户协议》
-            </n-button>
-            <n-button
-              text
-              tag="a"
-              :href="privacyAgreement"
-              target="_blank"
-              type="primary"
-            >
-              《隐私协议》
-            </n-button>
+            <n-button text tag="a" :href="userAgreement" target="_blank" type="primary"> 《用户协议》 </n-button>
+            <n-button text tag="a" :href="privacyAgreement" target="_blank" type="primary"> 《隐私协议》 </n-button>
           </div>
         </template>
       </n-card>
@@ -218,12 +147,12 @@
 
 <script lang="ts" setup name="loginModal">
 import { userInfo } from "@/api/user";
-import { darkTheme } from "naive-ui";
+import { FormRules, darkTheme } from "naive-ui";
 import { useAppStore } from "@pc/stores/app";
 import { ref, computed } from "vue";
 import { type FormInst } from "naive-ui";
-import { useLoginForm } from "./useLoginForm";
-import { useRegisterForm } from "./useRegisterForm";
+import { useLoginForm } from "@/common/Login/useLoginForm";
+import { useRegisterForm } from "@/common/Login/useRegisterForm";
 import { MobileAlt, Lock } from "@vicons/fa";
 import { ChevronBackSharp } from "@vicons/ionicons5";
 import { VerifiedUserRound, SmsRound } from "@vicons/material";

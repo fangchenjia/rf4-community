@@ -1,14 +1,16 @@
 // axios-extension.d.ts
-import axios, { AxiosRequestConfig } from 'axios';
+import axios from 'axios';
 
-declare interface Window {
-  $message: {
-    success: (message: string) => void;
-    error: (message: string) => void;
+declare global {
+  interface Window {
+    $message: {
+      success: (message: string) => void;
+      error: (message: string) => void;
+    };
   };
 }
 
-declare module 'axios' {
+declare module axios {
   export interface AxiosRequestConfig {
     showLoading?: boolean;
   }

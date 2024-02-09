@@ -76,11 +76,11 @@ import { DocumentAdd } from "@vicons/carbon";
 import { DotCircleRegular } from "@vicons/fa";
 import { mapItems } from "@/config/map";
 import { ref } from "vue";
-import Editor from "./core";
-import WorkspacePlugin from "./plugins/WorkspacePlugin";
-import MapPlugin from "./plugins/MapPlugin";
-import DrawPlugin from "./plugins/DrawPlugin";
-import DomPlugin from "./plugins/DomPlugin";
+import Editor from "@/common/MapEditor/core";
+import WorkspacePlugin from "@/common/MapEditor/plugins/WorkspacePlugin";
+import MapPlugin from "@/common/MapEditor/plugins/MapPlugin";
+import DrawPlugin from "@/common/MapEditor/plugins/DrawPlugin";
+import DomPlugin from "@/common/MapEditor/plugins/DomPlugin";
 import { renderIcon } from "@pc/utils/render";
 import { fabric } from "fabric";
 
@@ -144,8 +144,8 @@ const themeVars = useThemeVars();
 
 let mapPlugin: EditorPluginTempl | null = null;
 const curMapVal = ref("0");
-let curPoint = ref(["", ""]); // 当前点击的点位
-let curMousePoint = ref(["", ""]); // 当前鼠标位置的点位
+let curPoint = ref<[string, string]>(["", ""]); // 当前点击的点位
+let curMousePoint = ref<[string, string]>(["", ""]); // 当前鼠标位置的点位
 let editor: Editor | null = null;
 
 const mapModeOptions = [

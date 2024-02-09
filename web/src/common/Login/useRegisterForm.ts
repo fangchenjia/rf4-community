@@ -3,7 +3,14 @@ import { CAPTCHA } from '@/api';
 import { smsCode } from '@/api/common';
 import { generateRandomPixelAvatar } from '@/utils';
 
-export const useRegisterForm = () => {
+export const useRegisterForm = ({ruleOptions} = {
+  ruleOptions: {
+    blurEventName: 'blur',
+    validateType: '0', // 0 native 1 vant
+  }
+}) => {
+  const blurEventName = ruleOptions.blurEventName;
+  const validateType = ruleOptions.validateType;
   const registerForm = ref({
     mobile: '', // 手机号
     password: '', // 密码
@@ -15,21 +22,29 @@ export const useRegisterForm = () => {
   // 第几次输入密码
   const passwordInputNum = ref(0);
   const passwordPlaceholder = ref('请输入密码');
-  const validatePasswordConfirm = (rule: any, value: string, callback: any) => {
+  const validatePasswordConfirm = (...params: any) => {
+    let value = null;
+    let callback = null;
+    if (validateType === '0') {
+      value = params[1];
+      callback = params[2];
+    } else {
+      value = params[0];
+    }
     if(!value) {
-      callback(new Error('请输入密码'));
-      return;
+      callback && callback(new Error('请输入密码'));
+      return '请输入密码';
     }
     // 校验格式
     if(!/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/.test(value)) {
-      callback(new Error('请输入6-20位数字和字母组合'));
-      return;
+      callback && callback(new Error('请输入6-20位数字和字母组合'));
+      return '请输入6-20位数字和字母组合';
     }
     // 当用户已经输入过密码时，第二次输入密码也校验成功后，如果用户再次点击输入框而不修改时，不再校验
     if(passwordCache && passwordCache === value) {
       passwordInputNum.value = 0;
-      callback();
-      return;
+      callback && callback();
+      return true;
     }
     passwordInputNum.value++;
     if (passwordInputNum.value === 1) {
@@ -37,24 +52,26 @@ export const useRegisterForm = () => {
       passwordCache = value;
       registerForm.value.password = '';
       passwordPlaceholder.value = '请再次输入密码确认';
-      callback();
+      callback && callback();
     }else if (passwordInputNum.value === 2) {
       if(value !== passwordCache) {
         registerForm.value.password = '';
-        callback(new Error('两次输入密码不一致'));
+        callback && callback(new Error('两次输入密码不一致'));
+        return '两次输入密码不一致';
       }
       passwordInputNum.value = 0;
       passwordPlaceholder.value = '请输入密码';
     }
+    return true;
   }
   const registerFormRules = ref({
     mobile: [
-      { key: 'mobile', required: true, message: '请输入手机号码', trigger: 'blur' }, 
-      { key: 'mobile', pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur'}
+      { key: 'mobile', required: true, message: '请输入手机号码', trigger: blurEventName }, 
+      { key: 'mobile', pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号码', trigger: blurEventName}
     ],
-    password: [{ key: 'password', validator: validatePasswordConfirm, trigger: 'blur'}],
-    captcha: [{ key: 'captcha', required: true, message: '请输入图形验证码', trigger: 'blur' }, {key: 'captcha', pattern: /^[a-zA-Z0-9]{4}$/, message: '请输入正确的图形验证码', trigger: 'blur'}],
-    smsCode: [{required: true, message: '请输入短信验证码', trigger: 'blur' }, {pattern: /^[0-9]{6}$/, message: '请输入6位数字短信验证码', trigger: 'blur'}]
+    password: [{ key: 'password', validator: validatePasswordConfirm, trigger: blurEventName}],
+    captcha: [{ key: 'captcha', required: true, message: '请输入图形验证码', trigger: blurEventName }, {key: 'captcha', pattern: /^[a-zA-Z0-9]{4}$/, message: '请输入正确的图形验证码', trigger: blurEventName}],
+    smsCode: [{required: true, message: '请输入短信验证码', trigger: blurEventName }, {pattern: /^[0-9]{6}$/, message: '请输入6位数字短信验证码', trigger: blurEventName}]
   });
   // 图形验证码
   const captchaImg = ref('');

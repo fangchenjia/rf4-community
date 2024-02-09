@@ -1,6 +1,7 @@
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
+import { VantResolver } from '@vant/auto-import-resolver';
 import viteCompression from 'vite-plugin-compression'
 import { visualizer } from 'rollup-plugin-visualizer'
 import importToCDN from 'vite-plugin-cdn-import'
@@ -91,7 +92,7 @@ export default defineConfig({
       ]
     }),
     Components({ // 自动导入NaiveUI
-      resolvers: [NaiveUiResolver()]
+      resolvers: [NaiveUiResolver(),VantResolver()]
     }),
     visualizer({open: true}),
     viteCompression({
