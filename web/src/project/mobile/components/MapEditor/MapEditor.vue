@@ -5,7 +5,7 @@
       <canvas id="canvas"></canvas>
     </div>
     <van-cell v-if="showMapSelector" title="地图" is-link :value="checkedMapText" icon="map-marked" @click="() => (showMapPicker = true)" />
-    <van-cell title="坐标" icon="location" class="position">
+    <van-cell v-if="showPosition" title="坐标" icon="location" class="position">
       <template #value>
         <div class="flex">
           <van-field v-model="curPoint[0]" placeholder="X" @blur="echoPositionMarker" />
@@ -47,6 +47,14 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  showPosition: {
+    type: Boolean,
+    default: true,
+  },
+  readonly: {
+    type: Boolean,
+    default: false,
+  },
   position: {
     type: [],
     default: () => {
@@ -55,13 +63,28 @@ const props = defineProps({
   },
 });
 
+watch(
+  () => props.readonly,
+  (val) => {
+    nextTick(() => {
+      editor?.setMapFindSwitch(val);
+    });
+  },
+  { immediate: true }
+);
+
 // 暴露组件方法
 defineExpose({
   setMap: (val: string) => {
     editor.setCurMap(val);
+    const mapItem = mapItems.find((item) => item.value === val) || mapItems.find((item) => item.label.includes(val));
+    checkedMapText.value = mapItem?.label || "";
   },
   setJson: (val: any) => {
     editor?.importObjects(val);
+  },
+  setPoint: (point: string[]) => {
+    editor?.setMapClickPosition({ x: Number(point[0]), y: Number(point[1]) });
   },
   setPointList: (pointList: { x: number; y: number; options?: fabric.ICircleOptions }[]) => {
     editor?.clear();

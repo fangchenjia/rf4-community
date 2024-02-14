@@ -9,6 +9,7 @@
     "paths": {
       "@/*": ["src/*"],
       "@pc/*": ["src/project/pc/*"],
+      "@mobile/*": ["src/project/mobile/*"],
     }
   }
 }

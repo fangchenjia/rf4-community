@@ -1,7 +1,7 @@
 import { fabric } from 'fabric'
 import Editor from '../core'
 import { throttle } from 'lodash'
-import { downFile } from '@/utils'
+import { downFile, isMobile } from '@/utils'
 
 class WorkspacePlugin {
   public canvas: fabric.Canvas
@@ -216,6 +216,8 @@ class WorkspacePlugin {
     })
 
     this.canvas.on('mouse:move', function (this: ExtCanvas, opt) {
+      // h5 禁用拖拽
+      if (isMobile()) return
       if (this.isDragging) {
         This.canvas.discardActiveObject()
         // This.canvas.defaultCursor = 'grabbing'

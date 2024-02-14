@@ -10,8 +10,8 @@
         <span class="text-tiny text-slate-500">{{ curFishSelectedText }}</span>
       </li>
     </ul>
-    <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="getPointList">
-      <van-cell v-for="item in pointList" :key="item._id" :title="item.title">
+    <van-list v-model:loading="loading" :finished="finished" finished-text="没有更多了" @load="getPointList" class="p-1 bg-slate-50">
+      <van-cell v-for="item in pointList" :key="item._id" :title="item.title" class="mb-1 rounded">
         <template #label>
           <div class="flex items-center justify-between">
             <div class="flex flex-col items-start justify-between h-9">
@@ -60,7 +60,14 @@
                 <span class="ml-1">{{ item.likes.length }}</span>
               </div>
             </li>
-            <li class="flex items-center">
+            <li
+              class="flex items-center"
+              @click="
+                router.push({
+                  path: `/point-detail/${item._id}`,
+                })
+              "
+            >
               <span>查看详情</span>
               <van-icon name="arrow" />
             </li>
@@ -86,6 +93,9 @@ import { getPoints } from "@/api/point";
 import { useMapStore } from "@/store/map";
 import { PickerConfirmEventParams } from "vant";
 import { formatTimeAgo } from "@/utils";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 const mapStore = useMapStore();
 
 // 选择器是否显示

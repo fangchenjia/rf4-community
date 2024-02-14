@@ -8,9 +8,9 @@ const active = ref(0);
 
 <template>
   <AppHeader />
-  <van-tabs v-model:active="active" shrink class="mt-1">
+  <van-tabs v-model:active="active" shrink>
     <van-tab title="最新投稿">
-      <div class="px-1 bg-white">
+      <div>
         <PointList />
       </div>
     </van-tab>

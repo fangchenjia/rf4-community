@@ -18,10 +18,10 @@
         >
       </li>
     </ul>
-    <ul class="px-1.5">
+    <ul class="p-1 bg-slate-50">
       <li v-for="item in wechatAccountList[activeWechatAccount].dataList" :key="item.key">
-        <a class="flex items-center justify-between pb-1 text-slate-900" :href="item.url" target="_blank">
-          <van-text-ellipsis :content="item.title" rows="2" class="flex-1 article-title pb-1 text-tiny" />
+        <a class="flex items-center justify-between p-1.5 text-slate-900 bg-white mb-1 rounded" :href="item.url" target="_blank">
+          <van-text-ellipsis :content="item.title" rows="2" class="flex-1 text-tiny" />
           <img class="w-6 h-6 ml-1 rounded-sm" :src="item.cover_img_1_1" />
         </a>
       </li>
@@ -64,7 +64,7 @@ const onMapPickerConfirm = ({ selectedOptions }: PickerConfirmEventParams) => {
   mapSelectHandle();
 };
 
-let curSelectedValue = "";
+let curSelectedValue = "0";
 const curSelectedText = ref("全部地图");
 // 公众号列表
 type ExtendedAccount = Account & {
@@ -127,8 +127,4 @@ const mapSelectHandle = () => {
     });
 };
 </script>
-<style scoped lang="scss">
-.article-title {
-  border-bottom: 1px solid #eee;
-}
-</style>
+<style scoped lang="scss"></style>
