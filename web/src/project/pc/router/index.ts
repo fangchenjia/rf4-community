@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import loginModal from '@pc/components/LoginModal'
 import { useUserStore } from "@/store/user";
+import { userInfo } from '@/api/index';
 const userStore = useUserStore();
 
 const router = createRouter({
@@ -69,7 +70,16 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+  // query是否有accessToken
+  if (to.query?.accessToken) {
+    userStore.setToken(to.query?.accessToken);
+    // 获取用户信息
+    await userInfo().then(({data}) => {
+      userStore.setUserInfo(data);
+      userStore.isLogin = true;
+    });
+  }
   if (to.meta.requireAuth) {
     if (!userStore.isLogin) {
       loginModal.open()

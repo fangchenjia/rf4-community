@@ -12,6 +12,9 @@ import SiteRecommend from "@pc/views/modules/SiteRecommend.vue";
 import UserPointRank from "@pc/views/modules/UserPointRank.vue";
 import MainLayout from "../components/MainLayout.vue";
 import { useMapStore } from "@/store/map";
+import { useMediaQuery } from '@vueuse/core';
+
+const isLargeScreen = useMediaQuery('(min-width: 1024px)')
 // 首页初始化地图
 useMapStore().getMaps();
 // 跳转路由添加progress
@@ -121,12 +124,15 @@ function convertToGameTime(realTime) {
   <MainLayout>
     <!-- 左部 nav -->
     <template #left-nav>
-      <n-card :content-style="{ padding: 0 }" :bordered="false" class="rounded w-44">
+      <n-card :content-style="{ padding: 0 }" :bordered="false" class="rounded w-44" v-if="isLargeScreen">
         <n-menu :options="menuOptions" />
       </n-card>
     </template>
     <!-- 主体部分 -->
     <template #main>
+      <n-card :content-style="{ padding: 0 }" :bordered="false" class="mb-5" v-if="!isLargeScreen">
+        <n-menu :options="menuOptions" mode="horizontal"/>
+      </n-card>
       <n-card :bordered="false" class="rounded">
         <router-view />
       </n-card>

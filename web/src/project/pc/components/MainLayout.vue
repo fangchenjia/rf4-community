@@ -9,7 +9,7 @@
       <slot name="main"></slot>
     </main>
     <!-- 右部 aside -->
-    <aside>
+    <aside class="pr-5">
       <slot name="right-aside"></slot>
     </aside>
   </section>
