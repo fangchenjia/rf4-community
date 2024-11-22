@@ -60,21 +60,21 @@ export default defineConfig({
   plugins: [
     importToCDN({
       modules: [
-        {
-          name: 'lodash',
-          var: '_',
-          path: 'https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.min.js'
-        },
-        {
-          name: 'fabric',
-          var: 'window',
-          path: 'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js'
-        },
-        {
-          name: 'moment',
-          var: 'moment',
-          path: 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js'
-        }
+        // {
+        //   name: 'lodash',
+        //   var: '_',
+        //   path: 'https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.21/lodash.min.js'
+        // },
+        // {
+        //   name: 'fabric',
+        //   var: 'window',
+        //   path: 'https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js'
+        // },
+        // {
+        //   name: 'moment',
+        //   var: 'moment',
+        //   path: 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js'
+        // }
       ]
     }),
     vue(),
